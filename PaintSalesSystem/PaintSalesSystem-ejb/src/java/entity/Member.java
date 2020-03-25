@@ -20,16 +20,16 @@ import javax.persistence.InheritanceType;
  */
 @Entity
 @Inheritance(strategy=InheritanceType.JOINED)
-public class Membership extends Customer {
+public class Member extends Customer {
     
     private BigInteger loyaltyPoints;
 
-    public Membership() {
+    public Member() {
         super();
         loyaltyPoints = BigInteger.ZERO;
     }
 
-    public Membership(BigInteger loyaltyPoints) {
+    public Member(BigInteger loyaltyPoints) {
         this();
         this.loyaltyPoints = loyaltyPoints;
     }

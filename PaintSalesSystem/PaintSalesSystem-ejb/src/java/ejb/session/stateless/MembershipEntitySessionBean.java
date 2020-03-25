@@ -5,7 +5,7 @@
  */
 package ejb.session.stateless;
 
-import entity.Membership;
+import entity.Member;
 import java.util.List;
 import java.util.Set;
 import javax.ejb.Stateless;
@@ -43,11 +43,11 @@ public class MembershipEntitySessionBean implements MembershipEntitySessionBeanL
     
     
     @Override
-    public Long createNewMembership(Membership newMembership) throws UnknownPersistenceException,InputDataValidationException
+    public Long createNewMembership(Member newMembership) throws UnknownPersistenceException,InputDataValidationException
     {
         try
         {
-            Set<ConstraintViolation<Membership>> constraintViolations = validator.validate(newMembership);
+            Set<ConstraintViolation<Member>> constraintViolations = validator.validate(newMembership);
             if(constraintViolations.isEmpty())
             {
                 em.persist(newMembership);
@@ -70,7 +70,7 @@ public class MembershipEntitySessionBean implements MembershipEntitySessionBeanL
     
     
     @Override
-    public List<Membership> retrieveAllMemberships()
+    public List<Member> retrieveAllMemberships()
     {
         Query query = em.createQuery("SELECT m FROM Membership m");
         return query.getResultList();
@@ -78,9 +78,9 @@ public class MembershipEntitySessionBean implements MembershipEntitySessionBeanL
     
     
     @Override
-    public Membership retrieveMembershipByMembershipId(Long membershipId) throws MembershipNotFoundException
+    public Member retrieveMembershipByMembershipId(Long membershipId) throws MembershipNotFoundException
     {
-        Membership membership = em.find(Membership.class,membershipId);
+        Member membership = em.find(Member.class,membershipId);
         
         if(membership != null)
         {
@@ -100,7 +100,7 @@ public class MembershipEntitySessionBean implements MembershipEntitySessionBeanL
     @Override
     public void deleteMembership(Long membershipId) throws MembershipNotFoundException, DeleteMembershipException
     {
-        Membership membershipToRemove = retrieveMembershipByMembershipId(membershipId);
+        Member membershipToRemove = retrieveMembershipByMembershipId(membershipId);
         
         if(membershipToRemove.getTransactions().isEmpty())
         {
@@ -114,7 +114,7 @@ public class MembershipEntitySessionBean implements MembershipEntitySessionBeanL
     
     
     
-    private String prepareInputDataValidationErrorsMessage(Set<ConstraintViolation<Membership>>constraintViolations)
+    private String prepareInputDataValidationErrorsMessage(Set<ConstraintViolation<Member>>constraintViolations)
     {
         String msg = "Input data validation error!:";
             

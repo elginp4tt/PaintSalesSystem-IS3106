@@ -5,7 +5,7 @@
  */
 package ejb.session.stateless;
 
-import entity.Membership;
+import entity.Member;
 import java.util.List;
 import javax.ejb.Local;
 import util.exception.DeleteMembershipException;
@@ -22,10 +22,10 @@ public interface MembershipEntitySessionBeanLocal {
 
     public void deleteMembership(Long membershipId) throws MembershipNotFoundException, DeleteMembershipException;
 
-    public Membership retrieveMembershipByMembershipId(Long membershipId) throws MembershipNotFoundException;
+    public Member retrieveMembershipByMembershipId(Long membershipId) throws MembershipNotFoundException;
 
-    public List<Membership> retrieveAllMemberships();
+    public List<Member> retrieveAllMemberships();
 
-    public Long createNewMembership(Membership newMembership) throws UnknownPersistenceException, InputDataValidationException;
+    public Long createNewMembership(Member newMembership) throws UnknownPersistenceException, InputDataValidationException;
     
 }

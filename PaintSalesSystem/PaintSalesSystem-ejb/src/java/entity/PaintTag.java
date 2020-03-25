@@ -19,7 +19,7 @@ import javax.persistence.ManyToMany;
  * @author matto
  */
 @Entity
-public class Tag implements Serializable {
+public class PaintTag implements Serializable {
 
     private static final long serialVersionUID = 1L;
     @Id
@@ -31,11 +31,11 @@ public class Tag implements Serializable {
     @ManyToMany
     private List<Paint> paints;
 
-    public Tag() {
+    public PaintTag() {
         paints = new ArrayList();
     }
 
-    public Tag(String name) {
+    public PaintTag(String name) {
         this();
         this.name = name;
     }
@@ -58,10 +58,10 @@ public class Tag implements Serializable {
     @Override
     public boolean equals(Object object) {
         // TODO: Warning - this method won't work in the case the tagId fields are not set
-        if (!(object instanceof Tag)) {
+        if (!(object instanceof PaintTag)) {
             return false;
         }
-        Tag other = (Tag) object;
+        PaintTag other = (PaintTag) object;
         if ((this.tagId == null && other.tagId != null) || (this.tagId != null && !this.tagId.equals(other.tagId))) {
             return false;
         }

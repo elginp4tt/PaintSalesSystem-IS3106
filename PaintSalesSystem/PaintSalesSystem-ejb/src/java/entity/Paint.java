@@ -41,7 +41,7 @@ public class Paint implements Serializable {
     @ManyToMany(mappedBy = "paints")
     private List<PaintCategory> paintCategories;
     @ManyToMany(mappedBy = "paints")
-    private List<Tag> tags;
+    private List<PaintTag> tags;
     
     public Paint() {
         paintCategories = new ArrayList<>();
@@ -161,14 +161,14 @@ public class Paint implements Serializable {
     /**
      * @return the tags
      */
-    public List<Tag> getTags() {
+    public List<PaintTag> getTags() {
         return tags;
     }
 
     /**
      * @param tags the tags to set
      */
-    public void setTags(List<Tag> tags) {
+    public void setTags(List<PaintTag> tags) {
         this.tags = tags;
     }
     
