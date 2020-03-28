@@ -64,7 +64,7 @@ public class PaintSessionBean implements PaintSessionBeanLocal {
     }
     
 @Override
-    public Paint createNewPaint(Paint newPaint, Long categoryId, List<Long> tagIds) throws PaintExistException, UnknownPersistenceException, InputDataValidationException, CreateNewPaintException
+    public Paint createNewPaint(Paint newPaint, List<Long> categoryIds, List<Long> tagIds) throws PaintExistException, UnknownPersistenceException, InputDataValidationException, CreateNewPaintException
     {
         Set<ConstraintViolation<Paint>>constraintViolations = validator.validate(newPaint);
         
@@ -72,20 +72,20 @@ public class PaintSessionBean implements PaintSessionBeanLocal {
         {  
             try
             {
-                if(categoryId == null)
+                if(categoryIds == null || categoryIds.isEmpty())
                 {
-                    throw new CreateNewPaintException("The new product must be associated a leaf category");
+                    throw new CreateNewPaintException("The new paint must be associated a leaf category");
                 }
                 
-                PaintCategory paintCategory = paintCategorySessionBeanLocal.retrieveCategoryByCategoryId(categoryId);
+                for(Long categoryId:categoryIds) {
+                    PaintCategory paintCategory = paintCategorySessionBeanLocal.retrieveCategoryByCategoryId(categoryId);
                 
-                if(!paintCategory.getSubCategoryEntities().isEmpty())
-                {
-                    throw new CreateNewPaintException("Selected category for the new product is not a leaf category");
+                    if(!paintCategory.getSubCategoryEntities().isEmpty())
+                    {
+                        throw new CreateNewPaintException("Selected category for the new paint is not a leaf category");
+                    }
+                    newPaint.getPaintCategories().add(paintCategory);
                 }
-                
-                em.persist(newPaint);
-                newPaint.getPaintCategories().add(paintCategory);
                 
                 if(tagIds != null && (!tagIds.isEmpty()))
                 {
@@ -96,6 +96,8 @@ public class PaintSessionBean implements PaintSessionBeanLocal {
                     }
                 }
                 
+                em.persist(newPaint);
+
                 em.flush();
 
                 return newPaint;
@@ -365,7 +367,7 @@ public class PaintSessionBean implements PaintSessionBeanLocal {
                 }
                 else
                 {
-                    throw new UpdatePaintException("Colour Code of product record to be updated does not match the existing record");
+                    throw new UpdatePaintException("Colour Code of paint record to be updated does not match the existing record");
                 }
             }
             else
@@ -375,7 +377,7 @@ public class PaintSessionBean implements PaintSessionBeanLocal {
         }
         else
         {
-            throw new PaintNotFoundException("Paint ID not provided for product to be updated");
+            throw new PaintNotFoundException("Paint ID not provided for paint to be updated");
         }
     }
     
