@@ -1,6 +1,7 @@
 package ejb.session.stateless;
 
 import entity.Customer;
+import entity.Member;
 import java.util.List;
 import java.util.Set;
 import javax.ejb.Stateless;
@@ -61,6 +62,12 @@ public class CustomerEntitySessionBean implements CustomerEntitySessionBeanLocal
             throw new UnknownPersistenceException(ex.getMessage());
             
         }
+    }
+    
+    public Long createNewMember() {
+        Customer newMember = new Member();
+
+        return newMember.getCustomerId();
     }
     
 

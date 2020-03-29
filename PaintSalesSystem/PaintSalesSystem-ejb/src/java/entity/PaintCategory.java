@@ -14,6 +14,9 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.ManyToMany;
+import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
+import javax.validation.constraints.Size;
 
 /**
  *
@@ -30,11 +33,22 @@ public class PaintCategory implements Serializable {
     @Column(nullable = false, unique = true)
     private String categoryName;
     
+    @Column(nullable = false, length = 128)
+    @Size(max = 128)
+    private String description;
+    
+    @OneToMany(mappedBy = "parentCategoryEntity")
+    private List<PaintCategory> subCategoryEntities;
+    
+    @ManyToOne
+    private PaintCategory parentCategoryEntity;
+    
     @ManyToMany
     private List<Paint> paints;
 
     public PaintCategory() {
         paints = new ArrayList<>();
+        subCategoryEntities = new ArrayList<>();
     }
 
     public PaintCategory(String categoryName) {
@@ -101,6 +115,48 @@ public class PaintCategory implements Serializable {
      */
     public void setPaints(List<Paint> paints) {
         this.paints = paints;
+    }
+
+    /**
+     * @return the description
+     */
+    public String getDescription() {
+        return description;
+    }
+
+    /**
+     * @param description the description to set
+     */
+    public void setDescription(String description) {
+        this.description = description;
+    }
+
+    /**
+     * @return the subCategoryEntities
+     */
+    public List<PaintCategory> getSubCategoryEntities() {
+        return subCategoryEntities;
+    }
+
+    /**
+     * @param subCategoryEntities the subCategoryEntities to set
+     */
+    public void setSubCategoryEntities(List<PaintCategory> subCategoryEntities) {
+        this.subCategoryEntities = subCategoryEntities;
+    }
+
+    /**
+     * @return the parentCategoryEntity
+     */
+    public PaintCategory getParentCategoryEntity() {
+        return parentCategoryEntity;
+    }
+
+    /**
+     * @param parentCategoryEntity the parentCategoryEntity to set
+     */
+    public void setParentCategoryEntity(PaintCategory parentCategoryEntity) {
+        this.parentCategoryEntity = parentCategoryEntity;
     }
     
 }
