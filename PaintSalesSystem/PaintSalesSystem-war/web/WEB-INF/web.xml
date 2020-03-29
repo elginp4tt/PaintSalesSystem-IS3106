@@ -4,6 +4,10 @@
         <param-name>javax.faces.PROJECT_STAGE</param-name>
         <param-value>Production</param-value>
     </context-param>
+    <listener>
+        <description>ServletContextListener, HttpSessionListener</description>
+        <listener-class>web.listener.WebApplicationListener</listener-class>
+    </listener>
     <servlet>
         <servlet-name>Faces Servlet</servlet-name>
         <servlet-class>javax.faces.webapp.FacesServlet</servlet-class>
@@ -18,6 +22,10 @@
             30
         </session-timeout>
     </session-config>
+    <context-param>
+        <param-name>primefaces.THEME</param-name>
+        <param-value>yourtheme</param-value>
+    </context-param>
     <welcome-file-list>
         <welcome-file>index.xhtml</welcome-file>
     </welcome-file-list>
