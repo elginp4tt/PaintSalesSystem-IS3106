@@ -6,6 +6,7 @@
 package jsf.managedbean;
 
 import entity.Paint;
+import java.io.Serializable;
 import javax.inject.Named;
 import javax.faces.view.ViewScoped;
 
@@ -15,7 +16,8 @@ import javax.faces.view.ViewScoped;
  */
 @Named(value = "viewPaintManagedBean")
 @ViewScoped
-public class ViewPaintManagedBean {
+public class ViewPaintManagedBean implements Serializable
+{
 
     private Paint paintToView;
     

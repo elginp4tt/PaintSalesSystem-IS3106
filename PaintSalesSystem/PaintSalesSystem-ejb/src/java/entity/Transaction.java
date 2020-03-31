@@ -32,7 +32,7 @@ public class Transaction implements Serializable {
     @JoinColumn(nullable = false)
     private Customer customer;
 
-    @OneToMany(mappedBy = "transaction")
+    @OneToMany
     private List<TransactionLineItem> transactionLineItems;
     
     public Transaction() {

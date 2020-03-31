@@ -70,7 +70,36 @@ public class EmployeeSessionBean implements EmployeeSessionBeanLocal {
             }
         }
     }
+    
+    
+    @Override
+    public Employee createNewEmployee(Employee newEmployee) throws InputDataValidationException, UnknownPersistenceException, EmployeeUsernameExistException {
 
+        try {
+            Set<ConstraintViolation<Employee>> constraintViolations = validator.validate(newEmployee);
+            if (constraintViolations.isEmpty()) {
+                em.persist(newEmployee);
+                em.flush();
+                return newEmployee;
+            } else {
+                throw new InputDataValidationException(prepareInputDataValidationErrorsMessage(constraintViolations));
+            }
+        } catch (PersistenceException ex) {
+            if (ex.getCause() != null && ex.getCause().getClass().getName().equals("org.eclipse.persistence.exceptions.DatabaseException")) {
+                if (ex.getCause().getCause() != null && ex.getCause().getCause().getClass().getName().equals("java.sql.SQLIntegrityConstraintViolationException")) {
+                    throw new EmployeeUsernameExistException();
+                } else {
+                    throw new UnknownPersistenceException(ex.getMessage());
+                }
+            } else {
+                throw new UnknownPersistenceException(ex.getMessage());
+            }
+        }
+    }
+    
+
+    
+    @Override
     public List<Employee> retrieveAllEmployee() {
         Query query = em.createQuery("SELECT e FROM Employee e");
 

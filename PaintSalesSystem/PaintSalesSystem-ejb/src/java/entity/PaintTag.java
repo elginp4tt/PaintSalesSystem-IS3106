@@ -25,8 +25,7 @@ public class PaintTag implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long tagId;
-    
-    private String name;
+    private String tagName;
     
     @ManyToMany
     private List<Paint> paints;
@@ -37,7 +36,7 @@ public class PaintTag implements Serializable {
 
     public PaintTag(String name) {
         this();
-        this.name = name;
+        this.tagName = name;
     }
 
     public Long getTagId() {
@@ -73,19 +72,7 @@ public class PaintTag implements Serializable {
         return "entity.Tag[ id=" + tagId + " ]";
     }
 
-    /**
-     * @return the name
-     */
-    public String getName() {
-        return name;
-    }
-
-    /**
-     * @param name the name to set
-     */
-    public void setName(String name) {
-        this.name = name;
-    }
+    
 
     /**
      * @return the paints
@@ -99,6 +86,14 @@ public class PaintTag implements Serializable {
      */
     public void setPaints(List<Paint> paints) {
         this.paints = paints;
+    }
+
+    public String getTagName() {
+        return tagName;
+    }
+
+    public void setTagName(String tagName) {
+        this.tagName = tagName;
     }
     
 }

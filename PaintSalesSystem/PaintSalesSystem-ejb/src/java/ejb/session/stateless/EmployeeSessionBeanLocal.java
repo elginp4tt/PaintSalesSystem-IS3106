@@ -6,7 +6,11 @@
 package ejb.session.stateless;
 
 import entity.Employee;
+import java.util.List;
 import javax.ejb.Local;
+import util.exception.EmployeeUsernameExistException;
+import util.exception.InputDataValidationException;
+import util.exception.UnknownPersistenceException;
 
 /**
  *
@@ -14,6 +18,10 @@ import javax.ejb.Local;
  */
 @Local
 public interface EmployeeSessionBeanLocal {
+
+    public Employee createNewEmployee(Employee newEmployee) throws InputDataValidationException, UnknownPersistenceException, EmployeeUsernameExistException;
+
+    public List<Employee> retrieveAllEmployee();
 
     
 }

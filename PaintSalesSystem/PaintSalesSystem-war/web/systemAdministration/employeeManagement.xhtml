@@ -1,0 +1,167 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+                xmlns:h="http://xmlns.jcp.org/jsf/html"
+                xmlns:f="http://xmlns.jcp.org/jsf/core"
+                template="/template/defaultTemplate.xhtml"
+                xmlns:ez="http://xmlns.jcp.org/jsf/composite/ezcomp"
+                xmlns:p="http://primefaces.org/ui">
+
+    <ui:define name="content">
+        
+        <div>
+            <h3>Employee Management</h3>
+            
+            <h:form>
+                <p:menubar>
+
+                    <p:submenu label="File" icon="ui-icon-document">
+                        <p:menuitem value="Create New Employee" onclick="PF('dialogCreateNewEmployee').show()" icon="fa fa-plus" />
+                    </p:submenu>   
+                    
+                </p:menubar>
+                <br/>
+            </h:form>
+            
+            
+            
+            <h:form id="formAllEmployee">
+                <p:messages id="messages" redisplay="false" closable="true" />
+                
+                <p:dataTable id="dataTableAllEmployees" widgetVar="dataTableAllEmployees" value="#{employeeManagementManagedBean.employees}" 
+                             var="employee" rowKey="#{employee.employeeId}" rowIndexVar="row"
+                             filteredValue="#{employeeManagementManagedBean.filteredEmployees}"
+                             rows="10" paginator="true" paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}" rowsPerPageTemplate="10,20,50">
+                
+                    <f:facet name="header">
+                        <p:outputPanel style="text-align: right;">
+                            <h:outputText value="Search all fields:" />
+                            <p:inputText id="globalFilter" onkeyup="PF('dataTableAllEmployees').filter()" style="width:300px" placeholder="Enter keyword"/>
+                        </p:outputPanel>
+                    </f:facet>
+                    
+                    
+                    <p:column headerText="First Name" sortBy="#{employee.firstName}" filterBy="#{employee.firstName}" filterMatchMode="contains">
+                        <h:outputText value="#{employee.firstName}" />
+                    </p:column>
+                    
+                    <p:column headerText="Last Name" sortBy="#{employee.lastName}" filterBy="#{employee.lastName}" filterMatchMode="contains">
+                        <h:outputText value="#{employee.lastName}" />
+                    </p:column>
+                    
+                    <p:column headerText="Access Right" sortBy="#{employee.accessRightEnum}" filterBy="#{employee.accessRightEnum}" filterMatchMode="contains">
+                        <h:outputText value="#{employee.accessRightEnum}" />
+                    </p:column>
+                    
+                    <p:column headerText="Userame" sortBy="#{employee.username}" filterBy="#{employee.username}" filterMatchMode="contains">
+                        <h:outputText value="#{employee.username}" />
+                    </p:column>
+                    
+                    <p:column headerText="Action" style="text-align: center;">
+                        <p:commandButton update="ccViewEmployee:formViewEmployee" oncomplete="PF('dialogViewEmployee').show()" icon="ui-icon-document" title="View">
+                            <f:setPropertyActionListener value="#{employee}" target="#{employeeManagementManagedBean.employeeToView}" />
+                        </p:commandButton>
+                        <p:commandButton icon="ui-icon-pencil" />
+                        <p:commandButton icon="ui-icon-trash">
+                            <p:confirm header="Confirmation" message="Are you sure?" icon="ui-icon-alert" />
+                        </p:commandButton>
+                    </p:column>
+                
+                </p:dataTable>
+                
+                <p:confirmDialog global="true" showEffect="fade" hideEffect="fade">
+                    <p:commandButton value="Yes" type="button" styleClass="ui-confirmdialog-yes" icon="ui-icon-check" />
+                    <p:commandButton value="No" type="button" styleClass="ui-confirmdialog-no" icon="ui-icon-close" />
+                </p:confirmDialog>
+                
+            </h:form>
+            
+            <ez:viewEmployee id="ccViewEmployee" />
+            
+            
+            <h:form id="formCreateNewEmployee">
+                <p:dialog id="dialogCreateNewEmployee" widgetVar="dialogCreateNewEmployee" header="Create New Employee" closable="true">
+                    
+                    <p:panelGrid>
+                        <p:row>
+                            <p:column>
+                                <p:outputLabel for="firstName" value="First Name" style="font-weight: bold;" />
+                            </p:column>
+                            <p:column>
+                                <p:inputText id="firstName" value="#{employeeManagementManagedBean.newEmployee.firstName}" required="true" requiredMessage="First name is required" />
+                            </p:column>
+                            <p:column>
+                                <p:message for="firstName" />
+                            </p:column>
+                        </p:row>
+                        
+                        <p:row>
+                            <p:column>
+                                <p:outputLabel for="lastName" value="Last Name" style="font-weight: bold;" />
+                            </p:column>
+                            <p:column>
+                                <p:inputText id="lastName" value="#{employeeManagementManagedBean.newEmployee.lastName}" required="true" requiredMessage="First name is required" />
+                            </p:column>
+                            <p:column>
+                                <p:message for="lastName" />
+                            </p:column>
+                        </p:row>
+                        
+                        <p:row>
+                            <p:column>
+                                <p:outputLabel for="selAccessRight" value="Access Right" style="font-weight: bold;" />
+                            </p:column>
+                            <p:column>
+                                <p:selectOneMenu id="selAccessRight" value="#{employeeManagementManagedBean.newEmployee.accessRightEnum}">
+                                    <f:selectItem itemValue="NORMAL" itemLabel="Normal Staff" noSelectionOption="true"/>
+                                    <f:selectItem itemValue="MANAGER" itemLabel="Manager" />
+                                </p:selectOneMenu>
+                            </p:column>
+                            <p:column>
+                                <p:message for="selAccessRight" />
+                            </p:column>
+                        </p:row>
+                        
+                        
+                        <p:row>
+                            <p:column>
+                                <p:outputLabel for="username" value="Username" style="font-weight: bold;" />
+                            </p:column>
+                            <p:column>
+                                <p:inputText id="username" value="#{employeeManagementManagedBean.newEmployee.username}" required="true" requiredMessage="Username is required" />
+                            </p:column>
+                            <p:column>
+                                <p:message for="username" />
+                            </p:column>
+                        </p:row>
+                        
+                        <p:row>
+                            <p:column>
+                                <p:outputLabel for="password" value="Password" style="font-weight: bold;" />
+                            </p:column>
+                            <p:column>
+                                <p:inputText id="password" value="#{employeeManagementManagedBean.newEmployee.password}" required="true" requiredMessage="Password is required" />
+                            </p:column>
+                            <p:column>
+                                <p:message for="password" />
+                            </p:column>
+                        </p:row>
+                        
+                        
+                        
+                        <p:row>
+                            <p:column colspan="3">
+                                <p:commandButton type="reset" value="Clear" />&nbsp;
+                                <p:commandButton value="Create New Employee" update="@form formAllEmployee:dataTableAllEmployees" actionListener="#{employeeManagementManagedBean.createNewEmployee}" oncomplete="PF('dialogCreateNewEmployee').show();" />
+                            </p:column>
+                        </p:row>
+                        
+                    </p:panelGrid>
+                </p:dialog>
+                
+            </h:form>
+            
+        </div>
+    </ui:define>
+
+</ui:composition>
