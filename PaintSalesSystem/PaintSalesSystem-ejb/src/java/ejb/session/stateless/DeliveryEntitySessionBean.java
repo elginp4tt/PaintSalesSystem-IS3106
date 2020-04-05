@@ -7,8 +7,11 @@ package ejb.session.stateless;
 
 
 import entity.Delivery;
+import entity.DeliveryServiceTransaction;
+import entity.Employee;
 import java.util.List;
 import java.util.Set;
+import javax.ejb.EJB;
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
@@ -20,6 +23,7 @@ import javax.validation.Validator;
 import javax.validation.ValidatorFactory;
 import util.exception.DeleteDeliveryException;
 import util.exception.DeliveryNotFoundException;
+import util.exception.EmployeeNotFoundException;
 import util.exception.InputDataValidationException;
 import util.exception.UnknownPersistenceException;
 import util.exception.UpdateDeliveryException;
@@ -31,9 +35,13 @@ import util.exception.UpdateDeliveryException;
 @Stateless
 public class DeliveryEntitySessionBean implements DeliveryEntitySessionBeanLocal {
 
+
     @PersistenceContext(unitName = "PaintSalesSystem-ejbPU")
     private EntityManager em;
 
+    
+    @EJB
+    private EmployeeSessionBeanLocal employeeSessionBeanLocal;
     
     private final ValidatorFactory validatorFactory;
     private final Validator validator;
@@ -99,7 +107,7 @@ public class DeliveryEntitySessionBean implements DeliveryEntitySessionBeanLocal
     
     
     @Override
-    public void updateDelivery(Delivery delivery) throws DeliveryNotFoundException, InputDataValidationException
+    public void updateDelivery(Delivery delivery, Long employeeId, Long deliveryServiceTransactionId) throws DeliveryNotFoundException, EmployeeNotFoundException, InputDataValidationException
     {
         if(delivery != null && delivery.getDeliveryId()!= null)
         {
@@ -109,9 +117,21 @@ public class DeliveryEntitySessionBean implements DeliveryEntitySessionBeanLocal
             {
                 Delivery deliveryToUpdate = retrieveDeliveryByDeliveryId(delivery.getDeliveryId());
                 
+                /*
+                
+                we need to check the availability of employee
+                */
+                if(employeeId != null && (!deliveryToUpdate.getEmployeeId().equals(employeeId)))
+                {
+                    Employee employeeToUpdate = employeeSessionBeanLocal.retrieveEmployeeById(employeeId);
+                    
+                    deliveryToUpdate.setEmployee(employeeToUpdate);
+                }
+                
+                
+                
                 deliveryToUpdate.setLocationAddress(delivery.getLocationAddress());
                 deliveryToUpdate.setPostalCode(delivery.getPostalCode());
-                deliveryToUpdate.setDeliveryTime(delivery.getDeliveryTime());
             }
             else
             {

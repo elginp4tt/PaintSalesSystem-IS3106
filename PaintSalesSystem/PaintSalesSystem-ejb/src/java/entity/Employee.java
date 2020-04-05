@@ -32,7 +32,16 @@ public class Employee implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long employeeId;
-    
+    @Column(nullable = false, unique = true, length = 32)
+    @NotNull
+    @Size(min = 4, max = 32)
+    private String username;
+    @Column(columnDefinition = "CHAR(32) NOT NULL")
+    @NotNull
+    private String password;
+    //salt is for password encryption
+    @Column(columnDefinition = "CHAR(32) NOT NULL")
+    private String salt;
     @Column(nullable = false, length = 32)
     @NotNull
     @Size(max = 32)
@@ -45,15 +54,7 @@ public class Employee implements Serializable {
     @Column(nullable = false)
     @NotNull
     private AccessRightEnum accessRightEnum;
-    @Column(nullable = false, unique = true, length = 32)
-    @NotNull
-    @Size(min = 4, max = 32)
-    private String username;
-    @Column(columnDefinition = "CHAR(32) NOT NULL")
-    @NotNull
-    private String password;
-    @Column(columnDefinition = "CHAR(32) NOT NULL")
-    private String salt;
+    
     
     @OneToMany(mappedBy = "employee")
     private List<PaintService> paintServices;
@@ -68,23 +69,20 @@ public class Employee implements Serializable {
         deliveries = new ArrayList<>();
     }
 
-    public Employee(String firstName, String lastName, String username, String password) {
+    public Employee(String username, String password, String firstName, String lastName, AccessRightEnum accessRightEnum) {
+        
         this();
+        this.username = username;
+        this.password = password;
         this.firstName = firstName;
         this.lastName = lastName;
-        this.username = username;
-        
-        
-        setPassword(password);
-    }
-    
-    public Long getEmployeeId() {
-        return employeeId;
+        this.accessRightEnum = accessRightEnum;
     }
 
-    public void setEmployeeId(Long employeeId) {
-        this.employeeId = employeeId;
-    }
+    
+    
+    
+    
 
     @Override
     public int hashCode() {
@@ -111,6 +109,18 @@ public class Employee implements Serializable {
         return "entity.Employee[ id=" + employeeId + " ]";
     }
 
+    
+    
+    public Long getEmployeeId() {
+        return employeeId;
+    }
+
+    public void setEmployeeId(Long employeeId) {
+        this.employeeId = employeeId;
+    }
+    
+    
+    
     /**
      * @return the firstName
      */
