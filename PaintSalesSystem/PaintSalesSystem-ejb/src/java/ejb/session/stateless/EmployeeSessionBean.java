@@ -46,6 +46,7 @@ public class EmployeeSessionBean implements EmployeeSessionBeanLocal {
         validator = validatorFactory.getValidator();
     }
 
+    @Override
     public Employee createNewEmployee(String firstName, String lastName, String username, String password) throws InputDataValidationException, UnknownPersistenceException, EmployeeUsernameExistException {
         Employee newEmployee = new Employee(firstName, lastName, username, password);
 
@@ -71,12 +72,13 @@ public class EmployeeSessionBean implements EmployeeSessionBeanLocal {
         }
     }
 
+    @Override
     public List<Employee> retrieveAllEmployee() {
         Query query = em.createQuery("SELECT e FROM Employee e");
 
         return query.getResultList();
     }
-
+    @Override
     public Employee retrieveEmployeeById(Long employeeId) throws EmployeeNotFoundException {
         Employee employeeEntity = em.find(Employee.class, employeeId);
 
@@ -87,6 +89,7 @@ public class EmployeeSessionBean implements EmployeeSessionBeanLocal {
         }
     }
 
+    @Override
     public Employee retrieveEmployeeByUsername(String username) throws EmployeeNotFoundException {
         Query query = em.createQuery("Select e FROM Employee e WHERE e.username = :inUsername");
         query.setParameter("inUsername", username);
@@ -97,31 +100,33 @@ public class EmployeeSessionBean implements EmployeeSessionBeanLocal {
             throw new EmployeeNotFoundException("Employee Username " + username + " does not exist!");
         }
     }
-    
+
     //Can be changed into update anything about employee later
+    @Override
     public Employee updateEmployeePassword(String username, String oldPassword, String newPassword) throws EmployeeNotFoundException, UpdateEmployeeException, InputDataValidationException {
         Employee employeeEntityInDB = retrieveEmployeeByUsername(username);
-        Employee preupdateEmployee = new Employee(employeeEntityInDB.getFirstName(), employeeEntityInDB.getLastName(), employeeEntityInDB.getUsername(),employeeEntityInDB.getPassword());
-        
-        Set<ConstraintViolation<Employee>>constraintViolations = validator.validate(preupdateEmployee);
-        if (constraintViolations.isEmpty()){
-            if (username.equals(employeeEntityInDB.getUsername())){
-                if (oldPassword.equals(employeeEntityInDB.getPassword())){
+        Employee preupdateEmployee = new Employee(employeeEntityInDB.getFirstName(), employeeEntityInDB.getLastName(), employeeEntityInDB.getUsername(), employeeEntityInDB.getPassword());
+
+        Set<ConstraintViolation<Employee>> constraintViolations = validator.validate(preupdateEmployee);
+        if (constraintViolations.isEmpty()) {
+            if (username.equals(employeeEntityInDB.getUsername())) {
+                if (oldPassword.equals(employeeEntityInDB.getPassword())) {
                     employeeEntityInDB.setPassword(newPassword);
                     return employeeEntityInDB;
                 } else {
                     throw new UpdateEmployeeException("Old Password of Employee does not match the exisiting record");
                 }
             } else {
-                    throw new UpdateEmployeeException("Username of Employee does not match the exisiting record");
-                
-            } 
+                throw new UpdateEmployeeException("Username of Employee does not match the exisiting record");
+
+            }
         } else {
             throw new InputDataValidationException(prepareInputDataValidationErrorsMessage(constraintViolations));
-        } 
+        }
     }
 
     //Do i neeed to hash password?
+    @Override
     public Employee employeeLogin(String username, String password) throws InvalidLoginCredentialException {
         try {
             Employee employeeEntity = retrieveEmployeeByUsername(username);
@@ -137,12 +142,13 @@ public class EmployeeSessionBean implements EmployeeSessionBeanLocal {
         }
     }
 
+    @Override
     public void deleteEmployee(Long employeeId) throws EmployeeNotFoundException, DeleteEmployeeException {
         Employee employeeToRemove = retrieveEmployeeById(employeeId);
-        if (employeeToRemove.getDeliveries().isEmpty() && employeeToRemove.getPaintServices().isEmpty()){
+        if (employeeToRemove.getDeliveries().isEmpty() && employeeToRemove.getPaintServices().isEmpty()) {
             em.remove(employeeToRemove);
         } else {
-            throw new DeleteEmployeeException ("Employee Id " + employeeId + " is associated with exisiting deliveries or paint services transaction(s) and cannot be deleted!");
+            throw new DeleteEmployeeException("Employee Id " + employeeId + " is associated with exisiting deliveries or paint services transaction(s) and cannot be deleted!");
         }
     }
 

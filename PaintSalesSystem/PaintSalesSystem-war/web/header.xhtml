@@ -8,6 +8,10 @@
     <header style="text-align: right;">
         <h:panelGroup rendered="#{sessionScope.isLogin == false}">
             <h:form id="loginForm">
+                <p:outputLabel for="username" value="username"/> &nbsp;
+                <p:inputText id="username" value="#{loginManagedBean.username}" size="16" required="true" requiredMessage="Username is required" maxlength="32">
+                    <f:validateLength minimum="4" />
+                </p:inputText>
             </h:form>
         </h:panelGroup>
 
