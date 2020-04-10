@@ -30,10 +30,7 @@ public class TransactionLineItem implements Serializable {
     private String itemName;
     private BigInteger quantity;
     private BigDecimal price;
-
-    @ManyToOne(optional = false)
-    @JoinColumn(nullable = false)
-    private Transaction transaction;
+    
     
     public TransactionLineItem() {
     }
@@ -120,18 +117,4 @@ public class TransactionLineItem implements Serializable {
         this.price = price;
     }
 
-    /**
-     * @return the transaction
-     */
-    public Transaction getTransaction() {
-        return transaction;
-    }
-
-    /**
-     * @param transaction the transaction to set
-     */
-    public void setTransaction(Transaction transaction) {
-        this.transaction = transaction;
-    }
-    
 }

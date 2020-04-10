@@ -37,7 +37,10 @@ public class PaintService implements Serializable {
     private String postalCode;
     @Temporal(TemporalType.TIMESTAMP)
     @Column(nullable = false)
-    private Date paintServiceTime;
+    private Date paintServiceStartTime;
+    @Temporal(TemporalType.TIMESTAMP)
+    @Column(nullable = false)
+    private Date paintServiceEndTime;
     
     //Edited to directly retrieve employee and deliveryServiceTransaction ids from entities
     //Removed setters for said fields
@@ -56,13 +59,28 @@ public class PaintService implements Serializable {
         this.employee = employee;
     }
     
-    public Long getPaintServiceId() {
-        return paintServiceId;
+    
+    public void setEmployee(Employee employee) 
+    {
+        if(this.employee != null)
+        {
+            if(this.employee.getPaintServices().contains(this))
+            {
+                this.employee.getPaintServices().remove(this);
+            }
+        }
+        this.employee = employee;
+        
+        if(this.employee != null)
+        {
+            if(!this.employee.getPaintServices().contains(this))
+            {
+                this.employee.getPaintServices().add(this);
+            }
+        }
     }
-
-    public void setPaintServiceId(Long paintServiceId) {
-        this.paintServiceId = paintServiceId;
-    }
+    
+    
 
     @Override
     public int hashCode() {
@@ -89,6 +107,16 @@ public class PaintService implements Serializable {
         return "entity.PaintService[ id=" + paintServiceId + " ]";
     }
 
+    
+    public Long getPaintServiceId() {
+        return paintServiceId;
+    }
+
+    public void setPaintServiceId(Long paintServiceId) {
+        this.paintServiceId = paintServiceId;
+    }
+    
+    
     /**
      * @return the paintServiceTransactionId
      */
@@ -124,12 +152,6 @@ public class PaintService implements Serializable {
         return employee;
     }
 
-    /**
-     * @param employee the employee to set
-     */
-    public void setEmployee(Employee employee) {
-        this.employee = employee;
-    }
 
     /**
      * @return the locationAddress
@@ -159,12 +181,20 @@ public class PaintService implements Serializable {
         this.postalCode = postalCode;
     }
 
-    public Date getPaintServiceTime() {
-        return paintServiceTime;
+    public Date getPaintServiceStartTime() {
+        return paintServiceStartTime;
     }
 
-    public void setPaintServiceTime(Date paintServiceTime) {
-        this.paintServiceTime = paintServiceTime;
+    public void setPaintServiceStartTime(Date paintServiceStartTime) {
+        this.paintServiceStartTime = paintServiceStartTime;
+    }
+
+    public Date getPaintServiceEndTime() {
+        return paintServiceEndTime;
+    }
+
+    public void setPaintServiceEndTime(Date paintServiceEndTime) {
+        this.paintServiceEndTime = paintServiceEndTime;
     }
     
 }

@@ -109,7 +109,6 @@ public class PaintServiceEntitySessionBean implements PaintServiceEntitySessionB
                 
                 paintServiceToUpdate.setLocationAddress(paintService.getLocationAddress());
                 paintServiceToUpdate.setPostalCode(paintService.getPostalCode());
-                paintServiceToUpdate.setPaintServiceTime(paintService.getPaintServiceTime());
             }
             else
             {

@@ -36,7 +36,10 @@ public class Delivery implements Serializable {
     private String postalCode;
     @Temporal(TemporalType.TIMESTAMP)
     @Column(nullable = false)
-    private Date deliveryTime;
+    private Date deliveryStartTime;
+    @Temporal(TemporalType.TIMESTAMP)
+    @Column(nullable = false)
+    private Date deliveryEndTime;
     
     //Edited to directly retrieve employee and deliveryServiceTransaction ids from entities
     //Removed setters for said fields
@@ -56,13 +59,29 @@ public class Delivery implements Serializable {
         this.employee = employee;
     }
     
-    public Long getDeliveryId() {
-        return deliveryId;
+    
+    
+    public void setEmployee(Employee employee) 
+    {
+        if(this.employee != null)
+        {
+            if(this.employee.getDeliveries().contains(this))
+            {
+                this.employee.getDeliveries().remove(this);
+            }
+        }
+        this.employee = employee;
+        
+        if(this.employee != null)
+        {
+            if(!this.employee.getDeliveries().contains(this))
+            {
+                this.employee.getDeliveries().add(this);
+            }
+        }
     }
-
-    public void setDeliveryId(Long deliveryId) {
-        this.deliveryId = deliveryId;
-    }
+    
+    
 
     @Override
     public int hashCode() {
@@ -90,6 +109,15 @@ public class Delivery implements Serializable {
     }
     
     
+    public Long getDeliveryId() {
+        return deliveryId;
+    }
+
+    public void setDeliveryId(Long deliveryId) {
+        this.deliveryId = deliveryId;
+    }
+    
+    
     
     /**
      * @return the deliveryServiceTransactionId
@@ -114,12 +142,7 @@ public class Delivery implements Serializable {
         return employee;
     }
 
-    /**
-     * @param employee the employee to set
-     */
-    public void setEmployee(Employee employee) {
-        this.employee = employee;
-    }
+    
 
     /**
      * @return the deliveryServiceTransaction
@@ -163,18 +186,22 @@ public class Delivery implements Serializable {
         this.postalCode = postalCode;
     }
 
-    /**
-     * @return the deliveryTime
-     */
-    public Date getDeliveryTime() {
-        return deliveryTime;
+    
+
+    public Date getDeliveryStartTime() {
+        return deliveryStartTime;
     }
 
-    /**
-     * @param deliveryTime the deliveryTime to set
-     */
-    public void setDeliveryTime(Date deliveryTime) {
-        this.deliveryTime = deliveryTime;
+    public void setDeliveryStartTime(Date deliveryStartTime) {
+        this.deliveryStartTime = deliveryStartTime;
+    }
+
+    public Date getDeliveryEndTime() {
+        return deliveryEndTime;
+    }
+
+    public void setDeliveryEndTime(Date deliveryEndTime) {
+        this.deliveryEndTime = deliveryEndTime;
     }
     
 }

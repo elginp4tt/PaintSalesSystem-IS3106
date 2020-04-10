@@ -55,7 +55,7 @@ public class FilterPaintsByTagsManagedBean implements Serializable
         
         for(PaintTag tagEntity:tagEntities)
         {
-            selectItems.add(new SelectItem(tagEntity.getTagId(), tagEntity.getName(), tagEntity.getName()));
+            selectItems.add(new SelectItem(tagEntity.getTagId(), tagEntity.getTagName(), tagEntity.getTagName()));
         }
         
         

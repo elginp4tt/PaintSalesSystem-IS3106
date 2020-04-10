@@ -132,7 +132,7 @@ public class PaintTagSessionBean implements PaintTagSessionBeanLocal {
                 PaintTag paintTagToUpdate = retrieveTagByTagId(paintTag.getTagId());
                 
                 Query query = em.createQuery("SELECT t FROM PaintTag t WHERE t.name = :inName AND t.tagId <> :inTagId");
-                query.setParameter("inName", paintTag.getName());
+                query.setParameter("inName", paintTag.getTagName());
                 query.setParameter("inTagId", paintTag.getTagId());
                 
                 if(!query.getResultList().isEmpty())
@@ -140,7 +140,7 @@ public class PaintTagSessionBean implements PaintTagSessionBeanLocal {
                     throw new UpdateTagException("The name of the tag to be updated is duplicated");
                 }
                 
-                paintTagToUpdate.setName(paintTag.getName());                               
+                paintTagToUpdate.setTagName(paintTag.getTagName());                               
             }
             else
             {

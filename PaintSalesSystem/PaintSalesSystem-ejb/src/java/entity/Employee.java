@@ -10,11 +10,16 @@ import java.util.ArrayList;
 import java.util.List;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.OneToMany;
+import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
+import util.enumeration.AccessRightEnum;
+import util.security.CryptographicHelper;
 
 /**
  *
@@ -27,16 +32,29 @@ public class Employee implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long employeeId;
-    
+    @Column(nullable = false, unique = true, length = 32)
+    @NotNull
+    @Size(min = 4, max = 32)
+    private String username;
+    @Column(columnDefinition = "CHAR(32) NOT NULL")
+    @NotNull
+    private String password;
+    //salt is for password encryption
+    @Column(columnDefinition = "CHAR(32) NOT NULL")
+    private String salt;
     @Column(nullable = false, length = 32)
+    @NotNull
+    @Size(max = 32)
     private String firstName;
     @Column(nullable = false, length = 32)
+    @NotNull
+    @Size(max = 32)
     private String lastName;
-    @Column(nullable = false, unique = true, length = 32)
-    private String username;
+    @Enumerated(EnumType.STRING)
     @Column(nullable = false)
-    @Size(min = 6, max = 16)
-    private String password;
+    @NotNull
+    private AccessRightEnum accessRightEnum;
+    
     
     @OneToMany(mappedBy = "employee")
     private List<PaintService> paintServices;
@@ -44,25 +62,27 @@ public class Employee implements Serializable {
     private List<Delivery> deliveries;
 
     public Employee() {
+        
+        this.salt = CryptographicHelper.getInstance().generateRandomString(32);
+
         paintServices = new ArrayList<>();
         deliveries = new ArrayList<>();
     }
 
-    public Employee(String firstName, String lastName, String username, String password) {
+    public Employee(String username, String password, String firstName, String lastName, AccessRightEnum accessRightEnum) {
+        
         this();
-        this.firstName = firstName;
-        this.lastName = lastName;
         this.username = username;
         this.password = password;
-    }
-    
-    public Long getEmployeeId() {
-        return employeeId;
+        this.firstName = firstName;
+        this.lastName = lastName;
+        this.accessRightEnum = accessRightEnum;
     }
 
-    public void setEmployeeId(Long employeeId) {
-        this.employeeId = employeeId;
-    }
+    
+    
+    
+    
 
     @Override
     public int hashCode() {
@@ -89,6 +109,18 @@ public class Employee implements Serializable {
         return "entity.Employee[ id=" + employeeId + " ]";
     }
 
+    
+    
+    public Long getEmployeeId() {
+        return employeeId;
+    }
+
+    public void setEmployeeId(Long employeeId) {
+        this.employeeId = employeeId;
+    }
+    
+    
+    
     /**
      * @return the firstName
      */
@@ -141,9 +173,30 @@ public class Employee implements Serializable {
     /**
      * @param password the password to set
      */
-    public void setPassword(String password) {
-        this.password = password;
+    public void setPassword(String password) 
+    {
+        if(password != null)
+        {
+            this.password = CryptographicHelper.getInstance().byteArrayToHexString(CryptographicHelper.getInstance().doMD5Hashing(password + this.salt));
+        }
+        else
+        {
+            this.password = null;
+        }
     }
+    
+    
+    public String getSalt() {
+        return salt;
+    }
+    
+    
+    
+    public void setSalt(String salt) {
+        this.salt = salt;
+    }
+    
+    
 
     /**
      * @return the paintServices
@@ -171,6 +224,14 @@ public class Employee implements Serializable {
      */
     public void setDeliveries(List<Delivery> deliveries) {
         this.deliveries = deliveries;
+    }
+
+    public AccessRightEnum getAccessRightEnum() {
+        return accessRightEnum;
+    }
+
+    public void setAccessRightEnum(AccessRightEnum accessRightEnum) {
+        this.accessRightEnum = accessRightEnum;
     }
     
 }

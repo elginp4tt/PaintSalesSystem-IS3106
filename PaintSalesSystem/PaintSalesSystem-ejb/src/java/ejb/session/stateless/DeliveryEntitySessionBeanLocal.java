@@ -10,6 +10,7 @@ import java.util.List;
 import javax.ejb.Local;
 import util.exception.DeleteDeliveryException;
 import util.exception.DeliveryNotFoundException;
+import util.exception.EmployeeNotFoundException;
 import util.exception.InputDataValidationException;
 import util.exception.UnknownPersistenceException;
 import util.exception.UpdateDeliveryException;
@@ -28,8 +29,8 @@ public interface DeliveryEntitySessionBeanLocal {
 
     public Long createNewDelivery(Delivery newDelivery) throws UnknownPersistenceException, InputDataValidationException;
 
-    public void updateDelivery(Delivery delivery) throws DeliveryNotFoundException, InputDataValidationException;
-
     public void deleteDelivery(Long deliveryId) throws DeliveryNotFoundException, DeleteDeliveryException;
+
+    public void updateDelivery(Delivery delivery, Long employeeId, Long deliveryServiceTransactionId) throws DeliveryNotFoundException, EmployeeNotFoundException, InputDataValidationException;
     
 }

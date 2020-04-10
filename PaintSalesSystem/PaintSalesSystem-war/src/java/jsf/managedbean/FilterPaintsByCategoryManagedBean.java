@@ -10,6 +10,7 @@ import ejb.session.stateless.PaintSessionBeanLocal;
 import entity.Paint;
 import entity.PaintCategory;
 import java.io.IOException;
+import java.io.Serializable;
 import java.util.List;
 import javax.annotation.PostConstruct;
 import javax.ejb.EJB;
@@ -28,7 +29,8 @@ import util.exception.CategoryNotFoundException;
  */
 @Named(value = "filterPaintsByCategoryManagedBean")
 @ViewScoped
-public class FilterPaintsByCategoryManagedBean {
+public class FilterPaintsByCategoryManagedBean implements Serializable
+{
 
     @EJB
     private PaintCategorySessionBeanLocal paintCategorySessionBeanLocal;
