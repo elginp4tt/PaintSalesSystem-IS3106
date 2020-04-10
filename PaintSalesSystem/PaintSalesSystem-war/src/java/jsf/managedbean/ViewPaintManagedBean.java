@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 ///*
 // * To change this license header, choose License Headers in Project Properties.
 // * To change this template file, choose Tools | Templates
@@ -39,7 +38,6 @@
 //    }
 //    
 //}
-=======
 /*
  * To change this license header, choose License Headers in Project Properties.
  * To change this template file, choose Tools | Templates
@@ -82,4 +80,3 @@ public class ViewPaintManagedBean implements Serializable
     }
     
 }
->>>>>>> 7ddae1b1ab25be928ba9bec84c3863c969d1271f

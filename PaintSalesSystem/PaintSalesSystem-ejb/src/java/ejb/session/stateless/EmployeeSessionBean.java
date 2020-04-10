@@ -43,16 +43,13 @@ import util.exception.UpdateEmployeeException;
 @Stateless
 public class EmployeeSessionBean implements EmployeeSessionBeanLocal {
 
-
     @PersistenceContext(unitName = "PaintSalesSystem-ejbPU")
     private EntityManager em;
-    
-    
+
     @EJB
     private DeliveryEntitySessionBeanLocal deliveryEntitySessionBeanLocal;
     @EJB
     private PaintServiceEntitySessionBeanLocal paintServiceEntitySessionBeanLocal;
-    
 
     private final ValidatorFactory validatorFactory;
     private final Validator validator;
@@ -62,11 +59,9 @@ public class EmployeeSessionBean implements EmployeeSessionBeanLocal {
         validator = validatorFactory.getValidator();
     }
 
-<<<<<<< HEAD
-    @Override
-    public Employee createNewEmployee(String firstName, String lastName, String username, String password) throws InputDataValidationException, UnknownPersistenceException, EmployeeUsernameExistException {
-        Employee newEmployee = new Employee(firstName, lastName, username, password);
-=======
+//    @Override
+//    public Employee createNewEmployee(String firstName, String lastName, String username, String password) throws InputDataValidationException, UnknownPersistenceException, EmployeeUsernameExistException {
+//        Employee newEmployee = new Employee(firstName, lastName, username, password);
 //    public Employee createNewEmployee(String firstName, String lastName, String username, String password) throws InputDataValidationException, UnknownPersistenceException, EmployeeUsernameExistException {
 //        Employee newEmployee = new Employee(firstName, lastName, username, password);
 //
@@ -91,47 +86,31 @@ public class EmployeeSessionBean implements EmployeeSessionBeanLocal {
 //            }
 //        }
 //    }
-    
-    
     @Override
     public Employee createNewEmployee(Employee newEmployee) throws InputDataValidationException, UnknownPersistenceException, EmployeeUsernameExistException {
->>>>>>> 7ddae1b1ab25be928ba9bec84c3863c969d1271f
-
         Set<ConstraintViolation<Employee>> constraintViolations = validator.validate(newEmployee);
-        
-        if(constraintViolations.isEmpty())
-        {
-            try
-            {
+
+        if (constraintViolations.isEmpty()) {
+            try {
                 em.persist(newEmployee);
                 em.flush();
                 return newEmployee;
-            }
-            catch (PersistenceException ex) 
-            {
-                if (ex.getCause() != null && ex.getCause().getClass().getName().equals("org.eclipse.persistence.exceptions.DatabaseException")) 
-                {
-                    if (ex.getCause().getCause() != null && ex.getCause().getCause().getClass().getName().equals("java.sql.SQLIntegrityConstraintViolationException")) 
-                    {
+            } catch (PersistenceException ex) {
+                if (ex.getCause() != null && ex.getCause().getClass().getName().equals("org.eclipse.persistence.exceptions.DatabaseException")) {
+                    if (ex.getCause().getCause() != null && ex.getCause().getCause().getClass().getName().equals("java.sql.SQLIntegrityConstraintViolationException")) {
                         throw new EmployeeUsernameExistException();
-                    } 
-                    else 
-                    {
+                    } else {
                         throw new UnknownPersistenceException(ex.getMessage());
                     }
-                } 
-                else 
-                {
+                } else {
                     throw new UnknownPersistenceException(ex.getMessage());
                 }
             }
-        }
-        else {
+        } else {
             throw new InputDataValidationException(prepareInputDataValidationErrorsMessage(constraintViolations));
         }
-        
+
     }
-    
 
     @Override
     public List<Employee> retrieveAllEmployee() {
@@ -139,99 +118,69 @@ public class EmployeeSessionBean implements EmployeeSessionBeanLocal {
 
         return query.getResultList();
     }
-<<<<<<< HEAD
-=======
-    
-    
-    
 
     @Override
-    public void updateEmployee(Employee employee, List<Long> deliveryIds, List<Long> paintServiceIds) throws EmployeeNotFoundException, DeliveryNotFoundException, PaintServiceNotFoundException, UpdateEmployeeException, InputDataValidationException
-    {
-        if(employee != null & employee.getEmployeeId() != null)
-        {
-            Set<ConstraintViolation<Employee>>constraintViolations = validator.validate(employee);
-            
-            if(constraintViolations.isEmpty())
-            {
+    public void updateEmployee(Employee employee, List<Long> deliveryIds, List<Long> paintServiceIds) throws EmployeeNotFoundException, DeliveryNotFoundException, PaintServiceNotFoundException, UpdateEmployeeException, InputDataValidationException {
+        if (employee != null & employee.getEmployeeId() != null) {
+            Set<ConstraintViolation<Employee>> constraintViolations = validator.validate(employee);
+
+            if (constraintViolations.isEmpty()) {
                 Employee employeeToUpdate = retrieveEmployeeById(employee.getEmployeeId());
-                
-                if(employeeToUpdate.getUsername().equals(employee.getUsername()))
-                {
-                    
-                    if(deliveryIds != null)
-                    {
-                        for(Delivery delivery:employeeToUpdate.getDeliveries())
-                        {
+
+                if (employeeToUpdate.getUsername().equals(employee.getUsername())) {
+
+                    if (deliveryIds != null) {
+                        for (Delivery delivery : employeeToUpdate.getDeliveries()) {
                             delivery.setEmployee(null);
                         }
                         employeeToUpdate.getDeliveries().clear();
-                        
-                        for(Long deliveryId:deliveryIds)
-                        {
+
+                        for (Long deliveryId : deliveryIds) {
                             Delivery delivery = deliveryEntitySessionBeanLocal.retrieveDeliveryByDeliveryId(deliveryId);
                             delivery.setEmployee(employeeToUpdate);
                         }
                     }
-                    
-                    if(paintServiceIds != null)
-                    {
-                        for(PaintService paintService:employeeToUpdate.getPaintServices())
-                        {
+
+                    if (paintServiceIds != null) {
+                        for (PaintService paintService : employeeToUpdate.getPaintServices()) {
                             paintService.setEmployee(null);
                         }
                         employeeToUpdate.getPaintServices().clear();
-                        
-                        for(Long paintServiceId:paintServiceIds)
-                        {
+
+                        for (Long paintServiceId : paintServiceIds) {
                             PaintService paintService = paintServiceEntitySessionBeanLocal.retrievePaintServiceByPaintServiceId(paintServiceId);
                             paintService.setEmployee(employeeToUpdate);
                         }
                     }
-                    
-                    
+
                     employeeToUpdate.setFirstName(employee.getFirstName());
                     employeeToUpdate.setLastName(employee.getLastName());
                     employeeToUpdate.setAccessRightEnum(employee.getAccessRightEnum());
                     //username and password are not updated through this method
-                }
-                else
-                {
+                } else {
                     throw new UpdateEmployeeException("Username of employee record to be updated does not match the existing record");
                 }
-            }
-            else
-            {
+            } else {
                 throw new InputDataValidationException(prepareInputDataValidationErrorsMessage(constraintViolations));
             }
-        }
-        else
-        {
+        } else {
             throw new EmployeeNotFoundException("Employee ID not provided for employee to be updated");
         }
     }
-    
-    
+
     @Override
-    public void deleteEmployee(Long employeeId) throws EmployeeNotFoundException, DeleteEmployeeException 
-    {
+    public void deleteEmployee(Long employeeId) throws EmployeeNotFoundException, DeleteEmployeeException {
         Employee employeeToRemove = retrieveEmployeeById(employeeId);
-        
-        if (employeeToRemove.getDeliveries().isEmpty() && employeeToRemove.getPaintServices().isEmpty())
-        {
+
+        if (employeeToRemove.getDeliveries().isEmpty() && employeeToRemove.getPaintServices().isEmpty()) {
             em.remove(employeeToRemove);
-        } 
-        else 
-        {
-            throw new DeleteEmployeeException ("Employee Id " + employeeId + " is associated with exisiting deliveries or paint services transaction(s) and cannot be deleted!");
+        } else {
+            throw new DeleteEmployeeException("Employee Id " + employeeId + " is associated with exisiting deliveries or paint services transaction(s) and cannot be deleted!");
         }
     }
-    
-    
-    
-    
->>>>>>> 7ddae1b1ab25be928ba9bec84c3863c969d1271f
+
     @Override
+
     public Employee retrieveEmployeeById(Long employeeId) throws EmployeeNotFoundException {
         Employee employeeEntity = em.find(Employee.class, employeeId);
 
@@ -241,99 +190,67 @@ public class EmployeeSessionBean implements EmployeeSessionBeanLocal {
             throw new EmployeeNotFoundException("Employee Id " + employeeId + " does not exist!");
         }
     }
-    
-    
-    
-    
+
     @Override
-    public List<Employee> retrieveAvailableEmployeeByDate(Date startTime, Date endTime)
-    {
-        
+    public List<Employee> retrieveAvailableEmployeeByDate(Date startTime, Date endTime) {
+
         List<Employee> result = new ArrayList<>();
         Boolean isAvailable;
-        for(Employee employee: retrieveAllEmployee())
-        {
+        for (Employee employee : retrieveAllEmployee()) {
             isAvailable = true;
-            for(PaintService ps: employee.getPaintServices())
-            {
-                if(checkOverlap(ps.getPaintServiceStartTime(),ps.getPaintServiceEndTime(),startTime,endTime))
-                {
+            for (PaintService ps : employee.getPaintServices()) {
+                if (checkOverlap(ps.getPaintServiceStartTime(), ps.getPaintServiceEndTime(), startTime, endTime)) {
                     isAvailable = false;
                     break;
                 }
             }
-            
-            if(isAvailable)
-            {
-                for(Delivery delivery: employee.getDeliveries())
-                {
-                    if(checkOverlap(delivery.getDeliveryStartTime(), delivery.getDeliveryEndTime(), startTime, endTime))
-                    {
+
+            if (isAvailable) {
+                for (Delivery delivery : employee.getDeliveries()) {
+                    if (checkOverlap(delivery.getDeliveryStartTime(), delivery.getDeliveryEndTime(), startTime, endTime)) {
                         isAvailable = false;
                         break;
                     }
                 }
             }
-            
-            if(isAvailable)
-            {
+
+            if (isAvailable) {
                 result.add(employee);
             }
         }
-        
+
         return result;
     }
-    
-    
+
     //return true if two intervals overlap, else return false
-    public boolean checkOverlap(Date startA, Date endA, Date startB, Date endB)
-    {
+    public boolean checkOverlap(Date startA, Date endA, Date startB, Date endB) {
         Calendar calendarStartB = Calendar.getInstance();
         calendarStartB.setTime(startB);
         calendarStartB.add(Calendar.HOUR_OF_DAY, 1);
-        
-        
+
         Calendar calendarEndB = Calendar.getInstance();
         calendarEndB.setTime(startB);
         calendarEndB.add(Calendar.HOUR_OF_DAY, 1);
-        
-        if(startA.before(calendarStartB.getTime()))
-        {
-            if(endA.before(calendarStartB.getTime()) || endA.equals(calendarStartB.getTime()))
-            {
+
+        if (startA.before(calendarStartB.getTime())) {
+            if (endA.before(calendarStartB.getTime()) || endA.equals(calendarStartB.getTime())) {
                 return false;
-            }
-            else
-            {
+            } else {
                 return true;
             }
-        }
-        else if(startA.equals(calendarStartB.getTime()))
-        {
+        } else if (startA.equals(calendarStartB.getTime())) {
             return true;
-        }
-        else if(startA.after(calendarStartB.getTime()) && startA.before(calendarEndB.getTime()))
-        {
+        } else if (startA.after(calendarStartB.getTime()) && startA.before(calendarEndB.getTime())) {
             return true;
-        }
-//        else if(startA.equals(calendarStartB.getTime()) || startA.after(calendarStartB.getTime()))
-//        {
-//            return false;
-//        }
-        else
-        {
+        } //        else if(startA.equals(calendarStartB.getTime()) || startA.after(calendarStartB.getTime()))
+        //        {
+        //            return false;
+        //        }
+        else {
             return false;
         }
-    
+
     }
-    
-    
-    
-    
-    
-    
-    
-    
 
     @Override
     public Employee retrieveEmployeeByUsername(String username) throws EmployeeNotFoundException {
@@ -348,11 +265,10 @@ public class EmployeeSessionBean implements EmployeeSessionBeanLocal {
     }
 
     //Can be changed into update anything about employee later
-<<<<<<< HEAD
     @Override
     public Employee updateEmployeePassword(String username, String oldPassword, String newPassword) throws EmployeeNotFoundException, UpdateEmployeeException, InputDataValidationException {
         Employee employeeEntityInDB = retrieveEmployeeByUsername(username);
-        Employee preupdateEmployee = new Employee(employeeEntityInDB.getFirstName(), employeeEntityInDB.getLastName(), employeeEntityInDB.getUsername(), employeeEntityInDB.getPassword());
+        Employee preupdateEmployee = new Employee(employeeEntityInDB.getUsername(), newPassword, employeeEntityInDB.getFirstName(), employeeEntityInDB.getLastName(), employeeEntityInDB.getAccessRightEnum());
 
         Set<ConstraintViolation<Employee>> constraintViolations = validator.validate(preupdateEmployee);
         if (constraintViolations.isEmpty()) {
@@ -371,7 +287,6 @@ public class EmployeeSessionBean implements EmployeeSessionBeanLocal {
             throw new InputDataValidationException(prepareInputDataValidationErrorsMessage(constraintViolations));
         }
     }
-=======
 //    public Employee updateEmployeePassword(String username, String oldPassword, String newPassword) throws EmployeeNotFoundException, UpdateEmployeeException, InputDataValidationException {
 //        Employee employeeEntityInDB = retrieveEmployeeByUsername(username);
 //        Employee preupdateEmployee = new Employee(employeeEntityInDB.getFirstName(), employeeEntityInDB.getLastName(), employeeEntityInDB.getUsername(),employeeEntityInDB.getPassword());
@@ -393,7 +308,6 @@ public class EmployeeSessionBean implements EmployeeSessionBeanLocal {
 //            throw new InputDataValidationException(prepareInputDataValidationErrorsMessage(constraintViolations));
 //        } 
 //    }
->>>>>>> 7ddae1b1ab25be928ba9bec84c3863c969d1271f
 
     //Do i neeed to hash password?
     @Override
@@ -411,22 +325,6 @@ public class EmployeeSessionBean implements EmployeeSessionBeanLocal {
             throw new InvalidLoginCredentialException("Username does not exist or invalid password!");
         }
     }
-
-<<<<<<< HEAD
-    @Override
-    public void deleteEmployee(Long employeeId) throws EmployeeNotFoundException, DeleteEmployeeException {
-        Employee employeeToRemove = retrieveEmployeeById(employeeId);
-        if (employeeToRemove.getDeliveries().isEmpty() && employeeToRemove.getPaintServices().isEmpty()) {
-            em.remove(employeeToRemove);
-        } else {
-            throw new DeleteEmployeeException("Employee Id " + employeeId + " is associated with exisiting deliveries or paint services transaction(s) and cannot be deleted!");
-        }
-    }
-=======
-    
-    
->>>>>>> 7ddae1b1ab25be928ba9bec84c3863c969d1271f
-
     private String prepareInputDataValidationErrorsMessage(Set<ConstraintViolation<Employee>> constraintViolations) {
         String msg = "Input data validation error!:";
 
