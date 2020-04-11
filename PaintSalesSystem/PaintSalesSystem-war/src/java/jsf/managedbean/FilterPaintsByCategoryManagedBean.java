@@ -16,6 +16,7 @@ import javax.annotation.PostConstruct;
 import javax.ejb.EJB;
 import javax.faces.context.FacesContext;
 import javax.faces.event.ActionEvent;
+import javax.faces.model.SelectItem;
 import javax.inject.Named;
 import javax.faces.view.ViewScoped;
 import javax.inject.Inject;
@@ -42,10 +43,13 @@ public class FilterPaintsByCategoryManagedBean implements Serializable
     
     private TreeNode treeNode;
     private TreeNode selectedTreeNode;
-    
+    private String condition;
+    private List<Long> selectedCategoryIds;
+    private List<SelectItem> selectItems;
     private List<Paint> paints;
     
     public FilterPaintsByCategoryManagedBean() {
+        condition = "OR";
     }
     
     @PostConstruct
@@ -88,14 +92,13 @@ public class FilterPaintsByCategoryManagedBean implements Serializable
     {
         if(selectedTreeNode != null)
         {               
-            try
+            if(selectedCategoryIds != null &&  selectedCategoryIds.size() > 0)
             {
-                PaintCategory ce = (PaintCategory)selectedTreeNode.getData();
-                setPaints(paintSessionBeanLocal.filterPaintsByCategory(ce.getPaintCategoryId()));
+                paints = paintSessionBeanLocal.filterPaintsByCategories(getSelectedCategoryIds(), getCondition());
             }
-            catch(CategoryNotFoundException ex)
+            else
             {
-                setPaints(paintSessionBeanLocal.retrieveAllPaints());
+                paints = paintSessionBeanLocal.retrieveAllPaints();
             }
         }
         else
@@ -159,6 +162,48 @@ public class FilterPaintsByCategoryManagedBean implements Serializable
      */
     public void setPaints(List<Paint> paints) {
         this.paints = paints;
+    }
+
+    /**
+     * @return the selectedCategoryIds
+     */
+    public List<Long> getSelectedCategoryIds() {
+        return selectedCategoryIds;
+    }
+
+    /**
+     * @param selectedCategoryIds the selectedCategoryIds to set
+     */
+    public void setSelectedCategoryIds(List<Long> selectedCategoryIds) {
+        this.selectedCategoryIds = selectedCategoryIds;
+    }
+
+    /**
+     * @return the selectItems
+     */
+    public List<SelectItem> getSelectItems() {
+        return selectItems;
+    }
+
+    /**
+     * @param selectItems the selectItems to set
+     */
+    public void setSelectItems(List<SelectItem> selectItems) {
+        this.selectItems = selectItems;
+    }
+
+    /**
+     * @return the condition
+     */
+    public String getCondition() {
+        return condition;
+    }
+
+    /**
+     * @param condition the condition to set
+     */
+    public void setCondition(String condition) {
+        this.condition = condition;
     }
     
 }

@@ -97,7 +97,7 @@ public class PaintCategorySessionBean implements PaintCategorySessionBeanLocal
     @Override
     public List<PaintCategory> retrieveAllCategories()
     {
-        Query query = em.createQuery("SELECT pc FROM PaintCategory pc ORDER BY pc.name ASC");
+        Query query = em.createQuery("SELECT pc FROM PaintCategory pc ORDER BY pc.categoryName ASC");
         List<PaintCategory> categoryEntities = query.getResultList();
         
         for(PaintCategory paintCategory:categoryEntities)
@@ -115,7 +115,7 @@ public class PaintCategorySessionBean implements PaintCategorySessionBeanLocal
     @Override
     public List<PaintCategory> retrieveAllRootCategories()
     {
-        Query query = em.createQuery("SELECT pc FROM PaintCategory pc WHERE pc.parentPaintCategory IS NULL ORDER BY pc.name ASC");
+        Query query = em.createQuery("SELECT pc FROM PaintCategory pc WHERE pc.parentPaintCategory IS NULL ORDER BY pc.categoryName ASC");
         List<PaintCategory> rootCategoryEntities = query.getResultList();
         
         for(PaintCategory rootPaintCategory:rootCategoryEntities)
@@ -133,7 +133,7 @@ public class PaintCategorySessionBean implements PaintCategorySessionBeanLocal
     @Override
     public List<PaintCategory> retrieveAllLeafCategories()
     {
-        Query query = em.createQuery("SELECT pc FROM PaintCategory pc WHERE pc.subCategoryEntities IS EMPTY ORDER BY pc.name ASC");
+        Query query = em.createQuery("SELECT pc FROM PaintCategory pc WHERE pc.subCategoryEntities IS EMPTY ORDER BY pc.categoryName ASC");
         List<PaintCategory> leafCategoryEntities = query.getResultList();
         
         for(PaintCategory leafPaintCategory:leafCategoryEntities)
@@ -149,7 +149,7 @@ public class PaintCategorySessionBean implements PaintCategorySessionBeanLocal
     @Override
     public List<PaintCategory> retrieveAllCategoriesWithoutPaint()
     {
-        Query query = em.createQuery("SELECT pc FROM PaintCategory pc WHERE pc.productEntities IS EMPTY ORDER BY pc.name ASC");
+        Query query = em.createQuery("SELECT pc FROM PaintCategory pc WHERE pc.paints IS EMPTY ORDER BY pc.categoryName ASC");
         List<PaintCategory> rootCategoryEntities = query.getResultList();
         
         for(PaintCategory rootPaintCategory:rootCategoryEntities)
@@ -190,7 +190,7 @@ public class PaintCategorySessionBean implements PaintCategorySessionBeanLocal
             {
                 PaintCategory paintCategoryToUpdate = retrieveCategoryByCategoryId(paintCategory.getPaintCategoryId());
                 
-                Query query = em.createQuery("SELECT pc FROM PaintCategory pc WHERE pc.name = :inName AND pc.categoryId <> :inCategoryId");
+                Query query = em.createQuery("SELECT pc FROM PaintCategory pc WHERE pc.categoryName = :inName AND pc.paintCategoryId <> :inCategoryId");
                 query.setParameter("inName", paintCategory.getCategoryName());
                 query.setParameter("inCategoryId", paintCategory.getPaintCategoryId());
                 

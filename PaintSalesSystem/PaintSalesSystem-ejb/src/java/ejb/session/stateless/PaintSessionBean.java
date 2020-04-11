@@ -134,7 +134,7 @@ public class PaintSessionBean implements PaintSessionBeanLocal {
     @Override
     public List<Paint> retrieveAllPaints()
     {
-        Query query = em.createQuery("SELECT p FROM Paint p ORDER BY p.skuCode ASC");        
+        Query query = em.createQuery("SELECT p FROM Paint p ORDER BY p.colourCode ASC");        
         List<Paint> paints = query.getResultList();
         
         for(Paint paint:paints)
@@ -153,7 +153,7 @@ public class PaintSessionBean implements PaintSessionBeanLocal {
     @Override
     public List<Paint> searchPaintsByName(String searchString)
     {
-        Query query = em.createQuery("SELECT p FROM Paint p WHERE p.name LIKE :inSearchString ORDER BY p.skuCode ASC");
+        Query query = em.createQuery("SELECT p FROM Paint p WHERE p.name LIKE :inSearchString ORDER BY p.colourCode ASC");
         query.setParameter("inSearchString", "%" + searchString + "%");
         List<Paint> paints = query.getResultList();
         
@@ -165,43 +165,68 @@ public class PaintSessionBean implements PaintSessionBeanLocal {
         
         return paints;
     }
-    
-    
-    
-    // Newly addded in v5.1
-    
+        
     @Override
-    public List<Paint> filterPaintsByCategory(Long categoryId) throws CategoryNotFoundException
+    public List<Paint> filterPaintsByCategories(List<Long> categoryIds, String condition)
     {
         List<Paint> paints = new ArrayList<>();
-        PaintCategory paintCategory = paintCategorySessionBeanLocal.retrieveCategoryByCategoryId(categoryId);
         
-        if(paintCategory.getSubCategoryEntities().isEmpty())
+        if(categoryIds == null || categoryIds.isEmpty() || (!condition.equals("AND") && !condition.equals("OR")))
         {
-            paints = paintCategory.getPaints();            
+            return paints;
         }
         else
         {
-            for(PaintCategory subPaintCategory:paintCategory.getSubCategoryEntities())
+            if(condition.equals("OR"))
             {
-                paints.addAll(addSubCategoryPaints(subPaintCategory));
+                Query query = em.createQuery("SELECT DISTINCT p FROM Paint p, IN (p.paintCategories) pc WHERE pc.paintCategoryId IN :inCategoryIds ORDER BY p.colourCode ASC");
+                query.setParameter("inCategoryIds", categoryIds);
+                paints = query.getResultList();                                                          
             }
-        }
-        
-        for(Paint paint:paints)
-        {
-            paint.getPaintCategories();
-            paint.getTags().size();
-        }
-        
-        Collections.sort(paints, new Comparator<Paint>()
+            else // AND
+            {
+                String selectClause = "SELECT p FROM Paint p";
+                String whereClause = "";
+                Boolean firstCategory = true;
+                Integer categoryCount = 1;
+
+                for(Long categoryId:categoryIds)
+                {
+                    selectClause += ", IN (p.paintCategories) pc" + categoryCount;
+
+                    if(firstCategory)
+                    {
+                        whereClause = "WHERE pc1.paintCategoryId = " + categoryId;
+                        firstCategory = false;
+                    }
+                    else
+                    {
+                        whereClause += " AND te" + categoryCount + ".tagId = " + categoryId; 
+                    }
+                    
+                    categoryCount++;
+                }
+                
+                String jpql = selectClause + " " + whereClause + " ORDER BY p.colourCode ASC";
+                Query query = em.createQuery(jpql);
+                paints = query.getResultList();                                
+            }
+            
+            for(Paint paint:paints)
+            {
+                paint.getPaintCategories().size();
+                paint.getTags().size();
+            }
+            
+            Collections.sort(paints, new Comparator<Paint>()
             {
                 public int compare(Paint pe1, Paint pe2) {
                     return pe1.getColourCode().compareTo(pe2.getColourCode());
                 }
             });
-
-        return paints;
+            
+            return paints;
+        }
     }
     
     
@@ -219,7 +244,7 @@ public class PaintSessionBean implements PaintSessionBeanLocal {
         {
             if(condition.equals("OR"))
             {
-                Query query = em.createQuery("SELECT DISTINCT pe FROM Paint pe, IN (pe.tagEntities) te WHERE te.tagId IN :inTagIds ORDER BY pe.skuCode ASC");
+                Query query = em.createQuery("SELECT DISTINCT pe FROM Paint pe, IN (pe.tagEntities) te WHERE te.tagId IN :inTagIds ORDER BY pe.colourCode ASC");
                 query.setParameter("inTagIds", tagIds);
                 paints = query.getResultList();                                                          
             }
@@ -247,7 +272,7 @@ public class PaintSessionBean implements PaintSessionBeanLocal {
                     tagCount++;
                 }
                 
-                String jpql = selectClause + " " + whereClause + " ORDER BY pe.skuCode ASC";
+                String jpql = selectClause + " " + whereClause + " ORDER BY pe.colourCode ASC";
                 Query query = em.createQuery(jpql);
                 paints = query.getResultList();                                
             }
