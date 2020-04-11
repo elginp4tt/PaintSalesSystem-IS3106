@@ -54,15 +54,14 @@ public class Employee implements Serializable {
     @Column(nullable = false)
     @NotNull
     private AccessRightEnum accessRightEnum;
-    
-    
+
     @OneToMany(mappedBy = "employee")
     private List<PaintService> paintServices;
     @OneToMany(mappedBy = "employee")
     private List<Delivery> deliveries;
 
     public Employee() {
-        
+
         this.salt = CryptographicHelper.getInstance().generateRandomString(32);
 
         paintServices = new ArrayList<>();
@@ -70,7 +69,7 @@ public class Employee implements Serializable {
     }
 
     public Employee(String username, String password, String firstName, String lastName, AccessRightEnum accessRightEnum) {
-        
+
         this();
         this.username = username;
         this.password = password;
@@ -78,7 +77,6 @@ public class Employee implements Serializable {
         this.lastName = lastName;
         this.accessRightEnum = accessRightEnum;
     }
-    
 
     @Override
     public int hashCode() {
@@ -105,8 +103,6 @@ public class Employee implements Serializable {
         return "entity.Employee[ id=" + employeeId + " ]";
     }
 
-    
-    
     public Long getEmployeeId() {
         return employeeId;
     }
@@ -114,9 +110,7 @@ public class Employee implements Serializable {
     public void setEmployeeId(Long employeeId) {
         this.employeeId = employeeId;
     }
-    
-    
-    
+
     /**
      * @return the firstName
      */
@@ -169,30 +163,21 @@ public class Employee implements Serializable {
     /**
      * @param password the password to set
      */
-    public void setPassword(String password) 
-    {
-        if(password != null)
-        {
+    public void setPassword(String password) {
+        if (password != null) {
             this.password = CryptographicHelper.getInstance().byteArrayToHexString(CryptographicHelper.getInstance().doMD5Hashing(password + this.salt));
-        }
-        else
-        {
+        } else {
             this.password = null;
         }
     }
-    
-    
+
     public String getSalt() {
         return salt;
     }
-    
-    
-    
+
     public void setSalt(String salt) {
         this.salt = salt;
     }
-    
-    
 
     /**
      * @return the paintServices
@@ -229,5 +214,5 @@ public class Employee implements Serializable {
     public void setAccessRightEnum(AccessRightEnum accessRightEnum) {
         this.accessRightEnum = accessRightEnum;
     }
-    
+
 }
