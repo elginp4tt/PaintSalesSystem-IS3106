@@ -78,10 +78,6 @@ public class Employee implements Serializable {
         this.lastName = lastName;
         this.accessRightEnum = accessRightEnum;
     }
-
-    
-    
-    
     
 
     @Override
