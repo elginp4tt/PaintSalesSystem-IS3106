@@ -53,6 +53,7 @@ public class PaintTagResource {
      * @return an instance of java.lang.String
      */
     @GET
+    @Path("/paintTag")
     @Produces(MediaType.APPLICATION_JSON)
     public Response retrieveAllPaintTags() {
         try {

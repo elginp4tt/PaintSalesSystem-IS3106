@@ -57,6 +57,7 @@ public class PaintResource {
      * @return an instance of java.lang.String
      */
     @GET
+    @Path("/paint")
     @Produces(MediaType.APPLICATION_JSON)
     public Response retrieveAllPaints() {
         try {
@@ -79,6 +80,7 @@ public class PaintResource {
      * @param content representation for the resource
      */
     @PUT
+    @Path("/paint")
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
     public Response createNewPaint(CreateNewPaintReq createNewPaintReq) {

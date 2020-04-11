@@ -53,6 +53,7 @@ public class PaintCategoryResource {
      * @return an instance of java.lang.String
      */
     @GET
+    @Path("/paintCategory")
     @Produces(MediaType.APPLICATION_JSON)
     public Response retrieveAllPaintCategories() {
         try {
