@@ -115,7 +115,7 @@ public class PaintCategorySessionBean implements PaintCategorySessionBeanLocal
     @Override
     public List<PaintCategory> retrieveAllRootCategories()
     {
-        Query query = em.createQuery("SELECT pc FROM PaintCategory pc WHERE pc.parentPaintCategory IS NULL ORDER BY pc.categoryName ASC");
+        Query query = em.createQuery("SELECT pc FROM PaintCategory pc WHERE pc.parentCategoryEntity IS NULL ORDER BY pc.categoryName ASC");
         List<PaintCategory> rootCategoryEntities = query.getResultList();
         
         for(PaintCategory rootPaintCategory:rootCategoryEntities)

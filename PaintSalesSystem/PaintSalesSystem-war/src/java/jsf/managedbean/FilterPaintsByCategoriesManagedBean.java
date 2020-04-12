@@ -22,17 +22,15 @@ import javax.faces.view.ViewScoped;
 import javax.inject.Inject;
 import org.primefaces.model.DefaultTreeNode;
 import org.primefaces.model.TreeNode;
-import util.exception.CategoryNotFoundException;
 
 /**
  *
  * @author matto
  */
-@Named(value = "filterPaintsByCategoryManagedBean")
+@Named(value = "filterPaintsByCategoriesManagedBean")
 @ViewScoped
-public class FilterPaintsByCategoryManagedBean implements Serializable
+public class FilterPaintsByCategoriesManagedBean implements Serializable
 {
-
     @EJB
     private PaintCategorySessionBeanLocal paintCategorySessionBeanLocal;
     @EJB
@@ -48,7 +46,7 @@ public class FilterPaintsByCategoryManagedBean implements Serializable
     private List<SelectItem> selectItems;
     private List<Paint> paints;
     
-    public FilterPaintsByCategoryManagedBean() {
+    public FilterPaintsByCategoriesManagedBean() {
         condition = "OR";
     }
     
@@ -206,4 +204,17 @@ public class FilterPaintsByCategoryManagedBean implements Serializable
         this.condition = condition;
     }
     
+     /**
+     * @return the viewPaintManagedBean
+     */
+    public ViewPaintManagedBean getViewPaintManagedBean() {
+        return viewPaintManagedBean;
+    }
+
+    /**
+     * @param viewPaintManagedBean the viewPaintManagedBean to set
+     */
+    public void setViewPaintManagedBean(ViewPaintManagedBean viewPaintManagedBean) {
+        this.viewPaintManagedBean = viewPaintManagedBean;
+    }
 }
