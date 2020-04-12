@@ -18,12 +18,12 @@
             <p:breadCrumb homeDisplay ="false">
                 <p:menuitem value="System Administration" rendered="#{cc.attrs.pageName == 'paintManagement' ||
                                                                         cc.attrs.pageName == 'searchPaintsByName' ||
-                                                                        cc.attrs.pageName == 'filterPaintsByCategory' ||
+                                                                        cc.attrs.pageName == 'filterPaintsByCategories' ||
                                                                         cc.attrs.pageName == 'filterPaintsByTags'}" />
                 
                 <p:menuitem value="Paint Management" url="#{application.contextPath}/systemAdministration/paintManagement.xhtml" rendered="#{cc.attrs.pageName == 'paintManagement'}" />
                 <p:menuitem value="Search Paints by Name" url="#{application.contextPath}/systemAdministration/searchPaintsByName.xhtml" rendered="#{cc.attrs.pageName == 'searchPaintsByName'}" />
-                <p:menuitem value="Filter Paints by Category" url="#{application.contextPath}/systemAdministration/filterPaintsByCategory.xhtml" rendered="#{cc.attrs.pageName == 'filterPaintsByCategory'}" />
+                <p:menuitem value="Filter Paints by Category" url="#{application.contextPath}/systemAdministration/filterPaintsByCategories.xhtml" rendered="#{cc.attrs.pageName == 'filterPaintsByCategories'}" />
                 <p:menuitem value="Filter Paints by Tags" url="#{application.contextPath}/systemAdministration/filterPaintsByTags.xhtml" rendered="#{cc.attrs.pageName == 'filterPaintsByTags'}" />            
             </p:breadCrumb>
         </h:form>
