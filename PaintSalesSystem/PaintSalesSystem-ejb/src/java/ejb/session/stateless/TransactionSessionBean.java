@@ -51,7 +51,7 @@ public class TransactionSessionBean implements TransactionSessionBeanLocal {
         Transaction newTransaction = new Transaction();
         for (TransactionLineItem lineItem : transactionLineItems) {
             newTransaction.getTransactionLineItems().add(lineItem);
-            lineItem.setTransaction(newTransaction);
+//            lineItem.setTransaction(newTransaction);
         }
 
         newTransaction.setCustomer(customerToUpdate);
