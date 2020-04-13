@@ -1,0 +1,75 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+                xmlns:h="http://xmlns.jcp.org/jsf/html"
+                xmlns:f="http://xmlns.jcp.org/jsf/core"
+                template="/template/defaultTemplate.xhtml"
+                xmlns:ez="http://xmlns.jcp.org/jsf/composite/ezcomp"
+                xmlns:p="http://primefaces.org/ui">
+
+    <ui:define name="content">
+        
+        <ez:Breadcrumb pageName="searchPaintsByName" />
+        
+        <div>
+            <h3>Search Paints by Name</h3>                        
+
+            <h:form id="formMain">
+                                
+                <br />
+                
+                <div style="text-align: center;">
+                
+                    <p:inputText id="txtSearchString" value="#{searchPaintsByColourCodeManagedBean.searchString}" style="font-size: x-large;">
+                        <p:ajax event="keyup" process="@this" update="formMain:dataTableMain" listener="#{searchPaintsByColourCodeManagedBean.searchPaint}" />
+                    </p:inputText>
+                    &nbsp;
+                    <p:commandButton value="Search" style="font-size: x-large;">
+                        <p:ajax event="click" process="@this formMain:txtSearchString" update="formMain:dataTableMain" listener="#{searchPaintsByColourCodeManagedBean.searchPaint}" />
+                    </p:commandButton>
+
+                </div>
+                
+                <br />
+                
+                <p:dataTable id="dataTableMain" widgetVar="dataTableMain" value="#{searchPaintsByColourCodeManagedBean.paints}" var="paint" rowKey="#{paint.paintId}" rowIndexVar="row"                             
+                             rows="10" paginator="true" paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}" rowsPerPageTemplate="10,20,50">
+                    
+                    <p:column headerText="Colour Code" sortBy="#{paint.colourCode}">
+                        <h:outputText value="#{paint.colourCode}" />
+                    </p:column>
+
+                    <p:column headerText="Paint ID" sortBy="#{paint.paintId}">
+                        <h:outputText value="#{paint.paintId}" />
+                    </p:column>                            
+
+                    <p:column headerText="Name" sortBy="#{paint.name}">
+                        <h:outputText value="#{paint.name}" />
+                    </p:column>
+
+                    <p:column headerText="Quantity on Hand" sortBy="#{paint.quantityOnHand}">
+                        <h:outputText value="#{paint.quantityOnHand}" />
+                    </p:column>
+
+                    <p:column headerText="Unit Price" sortBy="#{paint.price}">
+                        <h:outputText value="#{paint.price}">
+                            <f:convertNumber minFractionDigits="2" maxFractionDigits="2" type="currency" currencyCode="SGD" />
+                        </h:outputText>
+                    </p:column>
+
+                    <p:column headerText="Action" >
+                        <p:commandButton update="ccViewPaint:formViewPaint" oncomplete="PF('dialogViewPaint').show()" icon="ui-icon-document" title="View">
+                            <f:setPropertyActionListener value="#{paint}" target="#{searchPaintsByColourCodeManagedBean.viewPaintManagedBean.paintToView}" />
+                        </p:commandButton>                        
+                    </p:column>
+
+                </p:dataTable>
+                                
+            </h:form>
+            
+            <ez:ViewPaint id="ccViewPaint" />
+        </div>
+        
+    </ui:define>
+
+</ui:composition>

@@ -90,7 +90,7 @@ public class PaintTagSessionBean implements PaintTagSessionBeanLocal {
     @Override
     public List<PaintTag> retrieveAllTags()
     {
-        Query query = em.createQuery("SELECT t FROM PaintTag t ORDER BY t.name ASC");
+        Query query = em.createQuery("SELECT t FROM PaintTag t ORDER BY t.tagName ASC");
         List<PaintTag> tagEntities = query.getResultList();
         
         for(PaintTag paintTag:tagEntities)
@@ -131,7 +131,7 @@ public class PaintTagSessionBean implements PaintTagSessionBeanLocal {
             {
                 PaintTag paintTagToUpdate = retrieveTagByTagId(paintTag.getTagId());
                 
-                Query query = em.createQuery("SELECT t FROM PaintTag t WHERE t.name = :inName AND t.tagId <> :inTagId");
+                Query query = em.createQuery("SELECT t FROM PaintTag t WHERE t.tagName = :inName AND t.tagId <> :inTagId");
                 query.setParameter("inName", paintTag.getTagName());
                 query.setParameter("inTagId", paintTag.getTagId());
                 

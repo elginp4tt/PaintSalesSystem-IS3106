@@ -20,7 +20,7 @@ public class PaintTransaction extends TransactionLineItem {
     @Column(nullable = false)
     private BigInteger volume;
 
-    @OneToOne(mappedBy = "paintTransaction")
+    @OneToOne
     private Paint paint;
     
     public PaintTransaction() {

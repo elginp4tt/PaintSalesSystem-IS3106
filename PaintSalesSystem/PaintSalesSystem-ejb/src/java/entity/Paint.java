@@ -15,7 +15,11 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.ManyToMany;
-import javax.persistence.OneToOne;
+import javax.validation.constraints.DecimalMin;
+import javax.validation.constraints.Digits;
+import javax.validation.constraints.Max;
+import javax.validation.constraints.Min;
+import javax.validation.constraints.Positive;
 
 /**
  *
@@ -33,11 +37,23 @@ public class Paint implements Serializable {
     private String name;
     @Column(nullable = false, unique = true)
     private String colourCode;
-    @Column(nullable = false)
+    @Column(nullable = false, precision = 11, scale = 2)
+    @DecimalMin("0.00")
+    @Digits(integer = 9, fraction = 2)     
     private BigDecimal price;
+    @Column(nullable = false)
+    @Min(0)
+    private Integer quantityOnHand;
+    @Column(nullable = false)
+    @Min(0)
+    private Integer reorderQuantity;
+    @Column(nullable = false)
+    @Positive
+    @Min(1)
+    @Max(5)
+    private Integer paintRating;
 
-    @OneToOne
-    private PaintTransaction paintTransaction;
+
     @ManyToMany(mappedBy = "paints")
     private List<PaintCategory> paintCategories;
     @ManyToMany(mappedBy = "paints")
@@ -48,13 +64,15 @@ public class Paint implements Serializable {
         tags = new ArrayList<>();
     }
 
-    public Paint(String name, String colourCode, BigDecimal price) {
-        this();
+    public Paint(String name, String colourCode, BigDecimal price, Integer quantityOnHand, Integer reorderQuantity, Integer paintRating) {
         this.name = name;
         this.colourCode = colourCode;
         this.price = price;
-    }    
-    
+        this.quantityOnHand = quantityOnHand;
+        this.reorderQuantity = reorderQuantity;
+        this.paintRating = paintRating;
+    }
+
     public Long getPaintId() {
         return paintId;
     }
@@ -131,20 +149,6 @@ public class Paint implements Serializable {
     }
 
     /**
-     * @return the paintTransaction
-     */
-    public PaintTransaction getPaintTransaction() {
-        return paintTransaction;
-    }
-
-    /**
-     * @param paintTransaction the paintTransaction to set
-     */
-    public void setPaintTransaction(PaintTransaction paintTransaction) {
-        this.paintTransaction = paintTransaction;
-    }
-
-    /**
      * @return the paintCategories
      */
     public List<PaintCategory> getPaintCategories() {
@@ -170,6 +174,48 @@ public class Paint implements Serializable {
      */
     public void setTags(List<PaintTag> tags) {
         this.tags = tags;
+    }
+
+    /**
+     * @return the quantityOnHand
+     */
+    public Integer getQuantityOnHand() {
+        return quantityOnHand;
+    }
+
+    /**
+     * @param quantityOnHand the quantityOnHand to set
+     */
+    public void setQuantityOnHand(Integer quantityOnHand) {
+        this.quantityOnHand = quantityOnHand;
+    }
+
+    /**
+     * @return the reorderQuantity
+     */
+    public Integer getReorderQuantity() {
+        return reorderQuantity;
+    }
+
+    /**
+     * @param reorderQuantity the reorderQuantity to set
+     */
+    public void setReorderQuantity(Integer reorderQuantity) {
+        this.reorderQuantity = reorderQuantity;
+    }
+
+    /**
+     * @return the paintRating
+     */
+    public Integer getPaintRating() {
+        return paintRating;
+    }
+
+    /**
+     * @param paintRating the paintRating to set
+     */
+    public void setPaintRating(Integer paintRating) {
+        this.paintRating = paintRating;
     }
     
 }
