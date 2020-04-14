@@ -21,6 +21,8 @@ import javax.faces.event.ActionEvent;
 import javax.inject.Named;
 import javax.faces.view.ViewScoped;
 import javax.inject.Inject;
+import org.primefaces.model.DefaultScheduleModel;
+import org.primefaces.model.ScheduleModel;
 import util.exception.DeliveryNotFoundException;
 import util.exception.EmployeeNotFoundException;
 import util.exception.InputDataValidationException;
@@ -38,13 +40,7 @@ import util.exception.UpdatePaintServiceException;
 public class PaintServiceManagementManagedBean implements Serializable
 {
 
-    public List<Employee> getAvailableEmployee() {
-        return availableEmployee;
-    }
-
-    public void setAvailableEmployee(List<Employee> availableEmployee) {
-        this.availableEmployee = availableEmployee;
-    }
+    
 
     @EJB(name = "EmployeeSessionBeanLocal")
     private EmployeeSessionBeanLocal employeeSessionBeanLocal;
@@ -59,6 +55,7 @@ public class PaintServiceManagementManagedBean implements Serializable
     //general
     private String radioSelection;
     private List<Employee> employees;
+    private ScheduleModel eventModel;
     
     private List<PaintService> allPaintServices;
     private List<PaintService> filteredPaintServices;
@@ -75,7 +72,8 @@ public class PaintServiceManagementManagedBean implements Serializable
     
     public PaintServiceManagementManagedBean() 
     {
-        radioSelection = "";
+        radioSelection = "table";
+        eventModel = new DefaultScheduleModel();
     }
     
     @PostConstruct
@@ -245,6 +243,22 @@ public class PaintServiceManagementManagedBean implements Serializable
 
     public void setPostalCodeUpdate(String postalCodeUpdate) {
         this.postalCodeUpdate = postalCodeUpdate;
+    }
+    
+    public List<Employee> getAvailableEmployee() {
+        return availableEmployee;
+    }
+
+    public void setAvailableEmployee(List<Employee> availableEmployee) {
+        this.availableEmployee = availableEmployee;
+    }
+    
+    public ScheduleModel getEventModel() {
+        return eventModel;
+    }
+    
+    public void setEventModel(ScheduleModel eventModel) {
+        this.eventModel = eventModel;
     }
     
 }

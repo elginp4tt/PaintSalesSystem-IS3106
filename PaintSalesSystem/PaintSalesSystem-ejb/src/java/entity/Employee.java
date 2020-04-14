@@ -29,6 +29,8 @@ import util.security.CryptographicHelper;
 @Entity
 public class Employee implements Serializable {
 
+    
+
     private static final long serialVersionUID = 1L;
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -62,6 +64,9 @@ public class Employee implements Serializable {
     
     @OneToMany(mappedBy = "employee")
     private List<Delivery> deliveries;
+    
+    @OneToMany
+    private List<MessageOfTheDay> motds;
 
     
     
@@ -71,6 +76,7 @@ public class Employee implements Serializable {
 
         paintServices = new ArrayList<>();
         deliveries = new ArrayList<>();
+        motds = new ArrayList<>();
     }
 
     public Employee(String username, String password, String firstName, String lastName, AccessRightEnum accessRightEnum) {
@@ -235,6 +241,19 @@ public class Employee implements Serializable {
 
     public void setAccessRightEnum(AccessRightEnum accessRightEnum) {
         this.accessRightEnum = accessRightEnum;
+    }
+    
+    public List<MessageOfTheDay> getMotds() {
+        return motds;
+    }
+    
+    public void addMessageOfTheDay(MessageOfTheDay motd)
+    {
+        motds.add(motd);
+    }
+
+    public void setMotds(List<MessageOfTheDay> motds) {
+        this.motds = motds;
     }
     
 }

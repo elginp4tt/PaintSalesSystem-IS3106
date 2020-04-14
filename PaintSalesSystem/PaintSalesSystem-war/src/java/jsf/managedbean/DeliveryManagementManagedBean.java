@@ -72,7 +72,7 @@ public class DeliveryManagementManagedBean implements Serializable{
     
     public DeliveryManagementManagedBean()
     {
-        radioSelection = "";
+        radioSelection = "table";
         eventModel = eventModel = new DefaultScheduleModel();
     }
     

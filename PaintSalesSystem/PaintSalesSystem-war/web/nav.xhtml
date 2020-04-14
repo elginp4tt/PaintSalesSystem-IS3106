@@ -4,23 +4,40 @@
                 xmlns:h="http://xmlns.jcp.org/jsf/html"
                 xmlns:f="http://xmlns.jcp.org/jsf/core"
                 xmlns:p="http://primefaces.org/ui">
-
+    
     <nav class="nav">
-        <h3> Navigation </h3>
+        <!--<h3> Navigation </h3>-->
+        <f:facet name="header">
+            <p:outputLabel value="Navigation" />
+        </f:facet>
+        
+        
         <h:form>
-            <p:menu style="width:200px;">
-                <p:submenu label="System">
-                    <p:menuitem value="Home" outcome="/index" icon="fa fa-home" />
-                </p:submenu>
+            <p:menu style="width: auto" widgetVar="menu" toggleable="true">
+                
                 <p:submenu label="System Administration">
-                    <p:menuitem value="Paint Management" outcome="/systemAdministration/paintManagement.xhtml" icon="fa fa-tags" />
-                    <p:menuitem value="Search Paints by Colour Code" outcome="/systemAdministration/searchPaintsByColourCode.xhtml" icon="fa fa-search" />
-                    <p:menuitem value="Filter Paints by Category" outcome="/systemAdministration/filterPaintsByCategories.xhtml" icon="fa fa-filter" />
-                    <p:menuitem value="Filter Paints by Tags" outcome="/systemAdministration/filterPaintsByTags.xhtml" icon="fa fa-filter" />                
-                </p:submenu>                        
+                    <p:menuitem value="Employee Management" outcome="/systemAdministration/employeeManagement.xhtml" />
+                </p:submenu>
+                
+                <p:submenu label="Paint Management">
+                    <p:menuitem value="Paint Management" outcome="/paintManagement/paintManagement.xhtml" />
+                    <p:menuitem value="Search Paints by Colour Code" outcome="/paintManagement/searchPaintsByColourCode.xhtml" />
+                    <p:menuitem value="Filter Paints by Category" outcome="/paintManagement/filterPaintsByCategories.xhtml" />
+                    <p:menuitem value="Filter Paints by Tags" outcome="/paintManagement/filterPaintsByTags.xhtml" />                
+                </p:submenu>
+                
+                <p:submenu label="Delivery Management">
+                    <p:menuitem value="View All Deliveries" outcome="/deliveryManagement/deliveryManagement.xhtml" />
+                    <p:menuitem value="Filter Deliveries" url="#{application.contextPath}/deliveryManagement/filterDelivery.xhtml" />
+                </p:submenu>
+                
+                <p:submenu label="Paint Service Management">
+                    <p:menuitem value="View All Paint Services" outcome="/paintServiceManagement/paintServiceManagement.xhtml" />
+                    <p:menuitem value="Filter Paint Service" outcome="/paintServiceManagement/filterPaintService.xhtml" />
+                </p:submenu>
             </p:menu>
         </h:form>
     </nav>
-
+    
 </ui:composition>
 

@@ -9,19 +9,19 @@
     
     <ui:define name="content">
         
-        
+        <ez:Breadcrumb pageName="paintServiceManagement" />
         <h3>Paint Service Management</h3>
         
         <p:tabView id="paintServiceManagementTabView" widgetVar="paintServiceManagementTabView" dynamic="true">
             
-            <p:tab title="View All Paint Services">
+            <p:tab title="View All">
                 
                 <h:form id="formAllPaintServices">
                     
                     <p:selectOneRadio id="radio" value="#{paintServiceManagementManagedBean.radioSelection}">
                         <f:selectItem itemLabel="Calendar View" itemValue="calendar" />
                         <f:selectItem itemLabel="Table View" itemValue="table" />
-                        <f:ajax event="change" execute="@this" render="@form" />
+                        <f:ajax event="change" execute="@this" render="formAllPaintServices" />
                     </p:selectOneRadio>
                     
                     <p:separator />
@@ -69,15 +69,21 @@
                             </p:commandButton>
                             
                             <p:commandButton update=":paintServiceManagementTabView:formUpdatePaintService" 
-                                             oncomplete="PF('paintServiceManagementTabView').select(2)"
+                                             oncomplete="PF('paintServiceManagementTabView').select(1)"
                                              actionListener="#{paintServiceManagementManagedBean.doUpdate}" 
                                              icon="ui-icon-pencil" title="Update">
                                 <f:attribute name="paintServiceToUpdate" value="#{ps}" />
                             </p:commandButton>
                         </p:column>
                         
-                        
                     </p:dataTable>
+                    
+                    <p:schedule widgetVar="schedule" 
+                                value="#{paintServiceManagementManagedBean.eventModel}" 
+                                rendered="#{paintServiceManagementManagedBean.checkRadioCalendar()}">
+                        
+                        
+                    </p:schedule>
                     
                 </h:form>
                 
@@ -85,85 +91,10 @@
                 
             </p:tab>
             
-            <p:tab title="Filter Paint Service">
-                <h:form>
-                    
-                    <p:growl showDetail="true"/>
-                    
-                    <p:menuButton value="Filter By:">
-                        <p:menuitem value="Year" update="@form" actionListener="#{filterPaintServiceManagedBean.updateSelection}">
-                            <f:attribute name="selection" value="year" />
-                        </p:menuitem>
-                        <p:menuitem value="Specific Date" update="@form" actionListener="#{filterPaintServiceManagedBean.updateSelection}">
-                            <f:attribute name="selection" value="date" />
-                        </p:menuitem>
-                        <p:menuitem value="Interval" update="@form" actionListener="#{filterPaintServiceManagedBean.updateSelection}">
-                            <f:attribute name="selection" value="interval" />
-                        </p:menuitem>
-                    </p:menuButton>
-                    <p:separator />
-                    
-                    
-                    
-                    <p:dataTable id="dataTableFilterPaintService" widgetVar="dataTableFilterPaintService" value="#{filterPaintServiceManagedBean.filteredPaintServices}"
-                                 var="ps"
-                                 rowKey="#{ps.paintServiceId}" rowIndexVar="row"
-                                 paginatorAlwaysVisible="false" paginatorPosition="top"
-                                 rows="10" paginator="true" paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}" rowsPerPageTemplate="10,20,50">
-                        
-                        <f:facet name="header">
-                            <p:inputMask id="year" mask="9999" placeholder="2020"
-                                         value="#{filterPaintServiceManagedBean.yearToFilter}" 
-                                         rendered="#{filterPaintServiceManagedBean.isYearFilterSelected}" />
-                                     
-                            <p:datePicker value="#{filterPaintServiceManagedBean.dateToFilter}"
-                                          rendered="#{filterPaintServiceManagedBean.isDateFilterSelected}" 
-                                          converter="dateConverter"/>
-                            
-                            <p:outputLabel value="From: " rendered="#{filterPaintServiceManagedBean.isIntervalFilterSelected}"  />
-                            <p:datePicker value="#{filterPaintServiceManagedBean.startDateFilter}"
-                                          rendered="#{filterPaintServiceManagedBean.isIntervalFilterSelected}" 
-                                          converter="dateConverter"/>
-                            <p:outputLabel value="To: " rendered="#{filterPaintServiceManagedBean.isIntervalFilterSelected}" />
-                            <p:datePicker value="#{filterPaintServiceManagedBean.endDateFilter}"
-                                          rendered="#{filterPaintServiceManagedBean.isIntervalFilterSelected}" 
-                                          converter="dateConverter"/>
-                            
-                            <p:commandButton value="Start Filtering" 
-                                             actionListener="#{filterPaintServiceManagedBean.filter}" 
-                                             process="@form"
-                                             update="@form"/>
-                            
-                        </f:facet>
-                        
-                        
-                        <p:column headerText="Location Address" sortBy="#{ps.locationAddress}" filterBy="#{ps.locationAddress}" filterMatchMode="contains">
-                            <h:outputText value="#{ps.locationAddress}" />
-                        </p:column>
-                        
-                        <p:column headerText="Postal Code" sortBy="#{ps.postalCode}" filterBy="#{ps.postalCode}" filterMatchMode="contains">
-                            <h:outputText value="#{ps.postalCode}" />
-                        </p:column>
-                        
-                        <p:column headerText="Start Time" sortBy="#{ps.paintServiceStartTime}" filterBy="#{ps.paintServiceStartTime}" filterMatchMode="contains">
-                            <h:outputText value="#{ps.paintServiceStartTime}" converter="dateConverter" />
-                        </p:column>
-                        
-                        <p:column headerText="End Time" sortBy="#{ps.paintServiceEndTime}" filterBy="#{ps.paintServiceEndTime}" filterMatchMode="contains">
-                            <h:outputText value="#{ps.paintServiceEndTime}" converter="dateConverter" />
-                        </p:column>
-                        
-                        <p:column headerText="Employee ID" sortBy="#{ps.employee.employeeId}" filterBy="#{ps.employee.employeeId}" filterMatchMode="contains">
-                            <h:outputText value="#{ps.employee.employeeId}" />
-                        </p:column>
-                        
-                    </p:dataTable>
-                    
-                </h:form>
-            </p:tab>
             
             
-            <p:tab title="Update Paint Service">
+            
+            <p:tab title="Update">
                 
                 <h:form id="formUpdatePaintService">
                     

@@ -14,6 +14,7 @@ import entity.Customer;
 import entity.Delivery;
 import entity.DeliveryServiceTransaction;
 import entity.Employee;
+import entity.MessageOfTheDay;
 import entity.PaintService;
 import entity.PaintServiceTransaction;
 import entity.Transaction;
@@ -132,6 +133,9 @@ public class DataInitSessionBean
             newPaintService2.setLocationAddress("address1");
             newPaintService2.setPostalCode("123456");
             
+            MessageOfTheDay messageOfTheDay1 = new MessageOfTheDay("Important", "TEXT1", dateFormat.parse("15/04/2020 05:00"));
+            MessageOfTheDay messageOfTheDay2 = new MessageOfTheDay("Important", "TEXT2", dateFormat.parse("15/04/2020 05:10"));
+            
             
             newCustomer1.addTransaction(newTransaction1);
             newTransaction1.addSaleTransactionLineItemEntity(newDeliveryTransaction1);
@@ -146,6 +150,9 @@ public class DataInitSessionBean
             newEmployee2.addDelivery(newDelivery2);
             newEmployee3.addPaintService(newPaintService1);
             newEmployee3.addPaintService(newPaintService2);
+            newEmployee1.addMessageOfTheDay(messageOfTheDay1);
+            newEmployee1.addMessageOfTheDay(messageOfTheDay2);
+
             
             
             em.persist(newCustomer1);
@@ -161,6 +168,8 @@ public class DataInitSessionBean
             em.persist(newEmployee1);
             em.persist(newEmployee2);
             em.persist(newEmployee3);
+            em.persist(messageOfTheDay1);
+            em.persist(messageOfTheDay2);
             
         }
         catch(Exception ex)
