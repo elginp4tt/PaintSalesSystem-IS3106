@@ -26,8 +26,7 @@ import util.exception.PaintNotFoundException;
 import util.exception.UnknownPersistenceException;
 
 
-
-@Named
+@Named(value = "paintManagedBean")
 @ViewScoped
 
 public class PaintManagedBean implements Serializable
@@ -67,9 +66,9 @@ public class PaintManagedBean implements Serializable
     @PostConstruct
     public void postConstruct()
     {
-        paints = paintSessionBeanLocal.retrieveAllPaints();
-        setCategoryEntities(paintCategorySessionBeanLocal.retrieveAllLeafCategories());
-        tagEntities = paintTagSessionBeanLocal.retrieveAllTags();
+        setPaints(paintSessionBeanLocal.retrieveAllPaints());
+        setCategoryEntities(getPaintCategorySessionBeanLocal().retrieveAllLeafCategories());
+        setTagEntities(getPaintTagSessionBeanLocal().retrieveAllTags());
     }
     
     
@@ -88,17 +87,17 @@ public class PaintManagedBean implements Serializable
         
         try
         {
-            Paint pe = paintSessionBeanLocal.createNewPaint(newPaint, categoryIdsNew, tagIdsNew);
-            paints.add(pe);
+            Paint pe = paintSessionBeanLocal.createNewPaint(getNewPaint(), getCategoryIdsNew(), getTagIdsNew());
+            getPaints().add(pe);
             
-            if(filteredPaints != null)
+            if(getFilteredPaints() != null)
             {
-                filteredPaints.add(pe);
+                getFilteredPaints().add(pe);
             }
             
-            newPaint = new Paint();
-            categoryIdsNew = null;
-            tagIdsNew = null;
+            setNewPaint(new Paint());
+            setCategoryIdsNew(null);
+            setTagIdsNew(null);
             
 
             FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "New paint created successfully (Paint ID: " + pe.getPaintId() + ")", null));
@@ -113,18 +112,18 @@ public class PaintManagedBean implements Serializable
     
     public void doUpdatePaint(ActionEvent event)
     {
-        selectedPaintToUpdate = (Paint)event.getComponent().getAttributes().get("paintEntityToUpdate");
+        setSelectedPaintToUpdate((Paint)event.getComponent().getAttributes().get("paintEntityToUpdate"));
         
-        categoryIdsUpdate = new ArrayList<>();
-        for(PaintCategory paintCategory:selectedPaintToUpdate.getPaintCategories())
+        setCategoryIdsUpdate(new ArrayList<>());
+        for(PaintCategory paintCategory:getSelectedPaintToUpdate().getPaintCategories())
         {
-            categoryIdsUpdate.add(paintCategory.getPaintCategoryId());
+            getCategoryIdsUpdate().add(paintCategory.getPaintCategoryId());
         }
         
-        tagIdsUpdate = new ArrayList<>();
-        for(PaintTag tagEntity:selectedPaintToUpdate.getTags())
+        setTagIdsUpdate(new ArrayList<>());
+        for(PaintTag tagEntity:getSelectedPaintToUpdate().getTags())
         {
-            tagIdsUpdate.add(tagEntity.getTagId());
+            getTagIdsUpdate().add(tagEntity.getTagId());
         }
     }
     
@@ -134,21 +133,21 @@ public class PaintManagedBean implements Serializable
     {        
         try
         {
-            paintSessionBeanLocal.updatePaint(selectedPaintToUpdate, categoryIdsUpdate, tagIdsUpdate);
+            paintSessionBeanLocal.updatePaint(getSelectedPaintToUpdate(), getCategoryIdsUpdate(), getTagIdsUpdate());
                         
-            selectedPaintToUpdate.getPaintCategories().clear();
-            for(PaintCategory c:categoryEntities) {
-                if(categoryIdsUpdate.contains(c.getPaintCategoryId())) {
-                    selectedPaintToUpdate.getPaintCategories().add(c);
+            getSelectedPaintToUpdate().getPaintCategories().clear();
+            for(PaintCategory c:getCategoryEntities()) {
+                if(getCategoryIdsUpdate().contains(c.getPaintCategoryId())) {
+                    getSelectedPaintToUpdate().getPaintCategories().add(c);
                 }
             }
             
-            selectedPaintToUpdate.getTags().clear();
-            for(PaintTag te:tagEntities)
+            getSelectedPaintToUpdate().getTags().clear();
+            for(PaintTag te:getTagEntities())
             {
-                if(tagIdsUpdate.contains(te.getTagId()))
+                if(getTagIdsUpdate().contains(te.getTagId()))
                 {
-                    selectedPaintToUpdate.getTags().add(te);
+                    getSelectedPaintToUpdate().getTags().add(te);
                 }                
             }
 
@@ -173,11 +172,11 @@ public class PaintManagedBean implements Serializable
             Paint paintEntityToDelete = (Paint)event.getComponent().getAttributes().get("paintEntityToDelete");
             paintSessionBeanLocal.deletePaint(paintEntityToDelete.getPaintId());
             
-            paints.remove(paintEntityToDelete);
+            getPaints().remove(paintEntityToDelete);
             
-            if(filteredPaints != null)
+            if(getFilteredPaints() != null)
             {
-                filteredPaints.remove(paintEntityToDelete);
+                getFilteredPaints().remove(paintEntityToDelete);
             }
 
             FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "Paint deleted successfully", null));
@@ -192,77 +191,186 @@ public class PaintManagedBean implements Serializable
         }
     }
 
-    
-    
+    /**
+     * @return the paintCategorySessionBeanLocal
+     */
+    public PaintCategorySessionBeanLocal getPaintCategorySessionBeanLocal() {
+        return paintCategorySessionBeanLocal;
+    }
+
+    /**
+     * @param paintCategorySessionBeanLocal the paintCategorySessionBeanLocal to set
+     */
+    public void setPaintCategorySessionBeanLocal(PaintCategorySessionBeanLocal paintCategorySessionBeanLocal) {
+        this.paintCategorySessionBeanLocal = paintCategorySessionBeanLocal;
+    }
+
+    /**
+     * @return the paintTagSessionBeanLocal
+     */
+    public PaintTagSessionBeanLocal getPaintTagSessionBeanLocal() {
+        return paintTagSessionBeanLocal;
+    }
+
+    /**
+     * @param paintTagSessionBeanLocal the paintTagSessionBeanLocal to set
+     */
+    public void setPaintTagSessionBeanLocal(PaintTagSessionBeanLocal paintTagSessionBeanLocal) {
+        this.paintTagSessionBeanLocal = paintTagSessionBeanLocal;
+    }
+
+    /**
+     * @return the viewPaintManagedBean
+     */
     public ViewPaintManagedBean getViewPaintManagedBean() {
         return viewPaintManagedBean;
     }
 
+    /**
+     * @param viewPaintManagedBean the viewPaintManagedBean to set
+     */
     public void setViewPaintManagedBean(ViewPaintManagedBean viewPaintManagedBean) {
         this.viewPaintManagedBean = viewPaintManagedBean;
     }
-    
-    public List<Paint> getPaintEntities() {
+
+    /**
+     * @return the paints
+     */
+    public List<Paint> getPaints() {
         return paints;
     }
 
-    public void setPaintEntities(List<Paint> paints) {
+    /**
+     * @param paints the paints to set
+     */
+    public void setPaints(List<Paint> paints) {
         this.paints = paints;
     }
 
-    public List<Paint> getFilteredPaintEntities() {
+    /**
+     * @return the filteredPaints
+     */
+    public List<Paint> getFilteredPaints() {
         return filteredPaints;
     }
 
-    public void setFilteredPaintEntities(List<Paint> filteredPaints) {
+    /**
+     * @param filteredPaints the filteredPaints to set
+     */
+    public void setFilteredPaints(List<Paint> filteredPaints) {
         this.filteredPaints = filteredPaints;
     }
 
+    /**
+     * @return the newPaint
+     */
     public Paint getNewPaint() {
         return newPaint;
     }
 
+    /**
+     * @param newPaint the newPaint to set
+     */
     public void setNewPaint(Paint newPaint) {
         this.newPaint = newPaint;
     }
 
+    /**
+     * @return the categoryIdsNew
+     */
+    public List<Long> getCategoryIdsNew() {
+        return categoryIdsNew;
+    }
+
+    /**
+     * @param categoryIdsNew the categoryIdsNew to set
+     */
+    public void setCategoryIdsNew(List<Long> categoryIdsNew) {
+        this.categoryIdsNew = categoryIdsNew;
+    }
+
+    /**
+     * @return the tagIdsNew
+     */
     public List<Long> getTagIdsNew() {
         return tagIdsNew;
     }
 
+    /**
+     * @param tagIdsNew the tagIdsNew to set
+     */
     public void setTagIdsNew(List<Long> tagIdsNew) {
         this.tagIdsNew = tagIdsNew;
     }
 
+    /**
+     * @return the categoryEntities
+     */
     public List<PaintCategory> getCategoryEntities() {
         return categoryEntities;
     }
 
+    /**
+     * @param categoryEntities the categoryEntities to set
+     */
     public void setCategoryEntities(List<PaintCategory> categoryEntities) {
         this.categoryEntities = categoryEntities;
     }
 
-    public List<PaintTag> getTags() {
+    /**
+     * @return the tagEntities
+     */
+    public List<PaintTag> getTagEntities() {
         return tagEntities;
     }
 
+    /**
+     * @param tagEntities the tagEntities to set
+     */
     public void setTagEntities(List<PaintTag> tagEntities) {
         this.tagEntities = tagEntities;
     }
-    
+
+    /**
+     * @return the selectedPaintToUpdate
+     */
     public Paint getSelectedPaintToUpdate() {
         return selectedPaintToUpdate;
     }
 
+    /**
+     * @param selectedPaintToUpdate the selectedPaintToUpdate to set
+     */
     public void setSelectedPaintToUpdate(Paint selectedPaintToUpdate) {
         this.selectedPaintToUpdate = selectedPaintToUpdate;
     }
 
+    /**
+     * @return the categoryIdsUpdate
+     */
+    public List<Long> getCategoryIdsUpdate() {
+        return categoryIdsUpdate;
+    }
+
+    /**
+     * @param categoryIdsUpdate the categoryIdsUpdate to set
+     */
+    public void setCategoryIdsUpdate(List<Long> categoryIdsUpdate) {
+        this.categoryIdsUpdate = categoryIdsUpdate;
+    }
+
+    /**
+     * @return the tagIdsUpdate
+     */
     public List<Long> getTagIdsUpdate() {
         return tagIdsUpdate;
     }
 
+    /**
+     * @param tagIdsUpdate the tagIdsUpdate to set
+     */
     public void setTagIdsUpdate(List<Long> tagIdsUpdate) {
         this.tagIdsUpdate = tagIdsUpdate;
-    }    
+    }
+
 }

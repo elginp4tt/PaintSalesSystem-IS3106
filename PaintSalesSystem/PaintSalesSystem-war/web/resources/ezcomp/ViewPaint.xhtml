@@ -1,0 +1,114 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:cc="http://xmlns.jcp.org/jsf/composite"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:f="http://xmlns.jcp.org/jsf/core"
+      xmlns:p="http://primefaces.org/ui">
+
+    <cc:interface>
+    </cc:interface>
+    
+    <cc:implementation>
+        
+        <h:form id="formViewPaint">
+            
+            <p:dialog id="dialogViewPaint" widgetVar="dialogViewPaint" header="View Paint" closable="true">
+
+                <p:panelGrid>
+                    
+                    <p:row>
+                        <p:column>
+                            <h:outputLabel value="Paint ID: " />
+                        </p:column>
+                        <p:column>
+                            <h:outputText value="#{viewPaintManagedBean.paintToView.paintId}" />
+                        </p:column>
+                    </p:row>
+                    
+                    <p:row>
+                        <p:column>
+                            <h:outputLabel value="Colour Code: " />
+                        </p:column>
+                        <p:column>
+                            <h:outputText value="#{viewPaintManagedBean.paintToView.colourCode}" />
+                        </p:column>
+                    </p:row>
+                    
+                    <p:row>
+                        <p:column>
+                            <h:outputLabel value="Name: " />
+                        </p:column>
+                        <p:column>
+                            <h:outputText value="#{viewPaintManagedBean.paintToView.name}" />
+                        </p:column>
+                    </p:row>
+                    
+                    <p:row>
+                        <p:column>
+                            <h:outputLabel value="Quantity On Hand: " />
+                        </p:column>
+                        <p:column>
+                            <h:outputText value="#{viewPaintManagedBean.paintToView.quantityOnHand}" />
+                        </p:column>
+                    </p:row>
+                    
+                    <p:row>
+                        <p:column>
+                            <h:outputLabel value="Reorder Quantity: " />
+                        </p:column>
+                        <p:column>
+                            <h:outputText value="#{viewPaintManagedBean.paintToView.reorderQuantity}" />
+                        </p:column>
+                    </p:row>
+                    
+                    <p:row>
+                        <p:column>
+                            <h:outputLabel value="Price: " />
+                        </p:column>
+                        <p:column>
+                            <h:outputText value="#{viewPaintManagedBean.paintToView.price}">
+                                <f:convertNumber type="currency" currencySymbol="$" maxIntegerDigits="5" maxFractionDigits="2"/>
+                            </h:outputText>
+                        </p:column>
+                    </p:row>
+                    
+                    <p:row>
+                        <p:column>
+                            <h:outputLabel value="Paint Rating: " />
+                        </p:column>
+                        <p:column>
+                            <p:rating id="productRating" value="#{viewPaintManagedBean.paintToView.paintRating}" stars="5" readonly="true" />
+                        </p:column>
+                    </p:row>
+                    
+                    <p:row>
+                        <p:column>
+                            <h:outputLabel value="Categories: " />
+                        </p:column>
+                        <p:column>
+                            <p:dataList value="#{viewPaintManagedBean.paintToView.paintCategories}" var="paintCategory" type="unordered">
+                                #{paintCategory.categoryName}
+                            </p:dataList>
+                        </p:column>
+                    </p:row>
+                    
+                    <p:row>
+                        <p:column>
+                            <h:outputLabel value="Tag(s): " />
+                        </p:column>
+                        <p:column>
+                            <p:dataList value="#{viewPaintManagedBean.paintToView.tags}" var="tag" type="unordered">
+                                #{tag.tagName}
+                            </p:dataList>
+                        </p:column>
+                    </p:row>
+                    
+                </p:panelGrid>
+
+            </p:dialog>
+            
+        </h:form>
+        
+    </cc:implementation>
+</html>

@@ -1,0 +1,91 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+                xmlns:h="http://xmlns.jcp.org/jsf/html"
+                xmlns:f="http://xmlns.jcp.org/jsf/core"
+                template="/template/defaultTemplate.xhtml"
+                xmlns:ez="http://xmlns.jcp.org/jsf/composite/ezcomp"
+                xmlns:p="http://primefaces.org/ui">
+
+    <ui:define name="content">
+        
+        <ez:Breadcrumb pageName="filterPaintsByTags" />
+        
+        <div>
+            <h3>Filter Paints by Tags</h3>                       
+            
+            <h:form id="formMain">
+                
+                <p:layout>
+                
+                    <p:layoutUnit position="west" resizable="true">
+                        
+                        <p:outputLabel for="selCondition" value="Condition: " style="font-weight: bold;" />
+                        <p:selectOneMenu id="selCondition" value="#{filterPaintsByTagsManagedBean.condition}">
+
+                            <f:selectItem itemValue="OR" itemLabel="OR" itemDescription="OR" />
+                            <f:selectItem itemValue="AND" itemLabel="AND" itemDescription="AND" />
+
+                            <p:ajax process="@form" update="formMain:dataTableMain" listener="#{filterPaintsByTagsManagedBean.filterPaint}" />
+
+                        </p:selectOneMenu>
+
+                        <br /><br />
+
+                        <p:outputLabel for="selTags" value="Tags: " style="font-weight: bold;" />
+                        <p:selectManyMenu id="selTags" value="#{filterPaintsByTagsManagedBean.selectedTagIds}" showCheckbox="true">
+                            <f:selectItems value="#{filterPaintsByTagsManagedBean.selectItems}" />
+
+                            <p:ajax process="@form" update="formMain:dataTableMain" listener="#{filterPaintsByTagsManagedBean.filterPaint}" />
+
+                        </p:selectManyMenu>                                
+
+                    </p:layoutUnit>
+
+                    <p:layoutUnit position="center">
+                        
+                        <p:dataTable id="dataTableMain" widgetVar="dataTableMain" value="#{filterPaintsByTagsManagedBean.paints}" var="paint" rowKey="#{paint.paintId}" rowIndexVar="row"                             
+                             rows="10" paginator="true" paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}" rowsPerPageTemplate="10,20,50">
+                    
+                            <p:column headerText="Colour Code" sortBy="#{paint.colourCode}">
+                                <h:outputText value="#{paint.colourCode}" />
+                            </p:column>
+
+                            <p:column headerText="Paint ID" sortBy="#{paint.paintId}">
+                                <h:outputText value="#{paint.paintId}" />
+                            </p:column>                            
+
+                            <p:column headerText="Name" sortBy="#{paint.name}">
+                                <h:outputText value="#{paint.name}" />
+                            </p:column>
+
+                            <p:column headerText="Quantity on Hand" sortBy="#{paint.quantityOnHand}">
+                                <h:outputText value="#{paint.quantityOnHand}" />
+                            </p:column>
+
+                            <p:column headerText="Unit Price" sortBy="#{paint.price}">
+                                <h:outputText value="#{paint.price}">
+                                    <f:convertNumber minFractionDigits="2" maxFractionDigits="2" type="currency" currencyCode="SGD" />
+                                </h:outputText>
+                            </p:column>
+
+                            <p:column headerText="Action" >
+                                <p:commandButton update="ccViewPaint:formViewPaint" oncomplete="PF('dialogViewPaint').show()" icon="ui-icon-document" title="View">
+                                    <f:setPropertyActionListener value="#{paint}" target="#{filterPaintsByTagsManagedBean.viewPaintManagedBean.paintToView}" />
+                                </p:commandButton>                        
+                            </p:column>
+
+                        </p:dataTable>
+
+                    </p:layoutUnit>
+
+                </p:layout>                                               
+                
+            </h:form>
+            
+            <ez:ViewPaint id="ccViewPaint" />
+        </div>
+        
+    </ui:define>
+
+</ui:composition>

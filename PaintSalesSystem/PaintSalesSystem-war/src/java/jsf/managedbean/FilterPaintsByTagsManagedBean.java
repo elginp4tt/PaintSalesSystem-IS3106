@@ -36,7 +36,7 @@ public class FilterPaintsByTagsManagedBean implements Serializable
     private String condition;
     private List<Long> selectedTagIds;
     private List<SelectItem> selectItems;
-    private List<Paint> paintEntities;
+    private List<Paint> paints;
     
     
     
@@ -83,11 +83,11 @@ public class FilterPaintsByTagsManagedBean implements Serializable
     {        
         if(selectedTagIds != null && selectedTagIds.size() > 0)
         {
-            paintEntities = paintEntitySessionBeanLocal.filterPaintsByTags(selectedTagIds, condition);
+            paints = paintEntitySessionBeanLocal.filterPaintsByTags(selectedTagIds, condition);
         }
         else
         {
-            paintEntities = paintEntitySessionBeanLocal.retrieveAllPaints();
+            paints = paintEntitySessionBeanLocal.retrieveAllPaints();
         }
     }
     
@@ -141,11 +141,11 @@ public class FilterPaintsByTagsManagedBean implements Serializable
         this.selectItems = selectItems;
     }    
 
-    public List<Paint> getPaintEntities() {
-        return paintEntities;
+    public List<Paint> getPaints() {
+        return paints;
     }
 
-    public void setPaintEntities(List<Paint> paintEntities) {
-        this.paintEntities = paintEntities;
+    public void setPaints(List<Paint> paints) {
+        this.paints = paints;
     }
 }

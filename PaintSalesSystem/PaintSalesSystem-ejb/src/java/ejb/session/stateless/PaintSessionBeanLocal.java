@@ -29,8 +29,6 @@ public interface PaintSessionBeanLocal {
 
     public List<Paint> searchPaintsByName(String searchString);
 
-    public List<Paint> filterPaintsByCategory(Long categoryId) throws CategoryNotFoundException;
-
     public List<Paint> filterPaintsByTags(List<Long> tagIds, String condition);
 
     public Paint retrievePaintByPaintId(Long paintId) throws PaintNotFoundException;
@@ -39,8 +37,10 @@ public interface PaintSessionBeanLocal {
 
     public void updatePaint(Paint paint, List<Long> categoryIds, List<Long> tagIds) throws PaintNotFoundException, CategoryNotFoundException, TagNotFoundException, UpdatePaintException, InputDataValidationException;
 
-    public void deletePaint(Long paintId) throws PaintNotFoundException, DeletePaintException;
-
     public Paint createNewPaint(Paint newPaint, List<Long> categoryIds, List<Long> tagIds) throws PaintExistException, UnknownPersistenceException, InputDataValidationException, CreateNewPaintException;
+
+    public List<Paint> filterPaintsByCategories(List<Long> categoryIds, String condition);
+
+    public void deletePaint(Long paintId) throws PaintNotFoundException, DeletePaintException;
     
 }

@@ -1,0 +1,353 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+                xmlns:h="http://xmlns.jcp.org/jsf/html"
+                xmlns:f="http://xmlns.jcp.org/jsf/core"
+                template="/template/defaultTemplate.xhtml"
+                xmlns:ez="http://xmlns.jcp.org/jsf/composite/ezcomp"
+                xmlns:p="http://primefaces.org/ui">
+                    
+    <ui:define name="content">
+        
+        <ez:Breadcrumb pageName="paintManagement" />
+        
+        <div>
+            <h3>Paint Management</h3>
+            
+            <h:form>
+            
+                <p:menubar>
+
+                    <p:submenu label="File" icon="ui-icon-document">
+                        <p:menuitem value="Create New Paint" onclick="PF('dialogCreateNewPaint').show()" icon="fa fa-plus" />
+                    </p:submenu>                                        
+
+                </p:menubar>
+                <br/>
+
+            </h:form>
+            
+            <h:form id="formAllPaints">
+            
+                <p:messages id="messages" redisplay="false" closable="true" />
+
+                <p:dataTable id="dataTableAllPaints" widgetVar="dataTableAllPaints" value="#{paintManagedBean.paints}" var="paint" rowKey="#{paint.paintId}" rowIndexVar="row"
+                             filteredValue="#{paintManagedBean.filteredPaintEntities}"
+                             rows="10" paginator="true" paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}" rowsPerPageTemplate="10,20,50">
+
+                    <f:facet name="header">
+                        <p:outputPanel style="text-align: right;">
+                            <h:outputText value="Search all fields:" />
+                            <p:inputText id="globalFilter" onkeyup="PF('dataTableAllPaints').filter()" style="width:300px" placeholder="Enter keyword"/>
+                        </p:outputPanel>
+                    </f:facet>
+
+                    <p:column headerText="Colour Code" sortBy="#{paint.colourCode}" filterBy="#{paint.colourCode}" filterMatchMode="contains">
+                        <h:outputText value="#{paint.colourCode}" />
+                    </p:column>
+
+                    <p:column headerText="Paint ID" sortBy="#{paint.paintId}" filterBy="#{paint.paintId}" filterMatchMode="contains">
+                        <h:outputText value="#{paint.paintId}" />
+                    </p:column>                            
+
+                    <p:column headerText="Name" sortBy="#{paint.name}" filterBy="#{paint.name}" filterMatchMode="contains">
+                        <h:outputText value="#{paint.name}" />
+                    </p:column>
+
+                    <p:column headerText="Quantity on Hand" sortBy="#{paint.quantityOnHand}" filterBy="#{paint.quantityOnHand}" filterMatchMode="contains">
+                        <h:outputText value="#{paint.quantityOnHand}" />
+                    </p:column>
+
+                    <p:column headerText="Unit Price" sortBy="#{paint.price}" filterBy="#{paint.price}" filterMatchMode="contains" style="text-align: right;">
+                        <h:outputText value="#{paint.price}">
+                            <f:convertNumber minFractionDigits="2" maxFractionDigits="2" type="currency" currencyCode="SGD" />
+                        </h:outputText>
+                    </p:column>
+
+                    <p:column headerText="Action" >
+                        <p:commandButton update="ccViewPaint:formViewPaint" oncomplete="PF('dialogViewPaint').show()" icon="ui-icon-document" title="View">
+                            <f:setPropertyActionListener value="#{paint}" target="#{paintManagedBean.viewPaintManagedBean.paintToView}" />
+                        </p:commandButton>
+                        <p:commandButton actionListener="#{paintManagedBean.doUpdatePaint}" update="formUpdatePaint" oncomplete="PF('dialogUpdatePaint').show()" icon="ui-icon-pencil" title="Update">
+                            <f:attribute name="paintToUpdate" value="#{paint}" />
+                        </p:commandButton>
+                        <p:commandButton icon="ui-icon-trash" actionListener="#{paintManagedBean.deletePaint}" update="formAllPaints:dataTableAllPaints formAllPaints:messages">
+                            <f:attribute name="paintToDelete" value="#{paint}" />
+                            <p:confirm header="Confirmation" message="Are you sure you want to delete #{paint.name} (SKU Code: #{paint.colourCode})?" icon="ui-icon-alert" />
+                        </p:commandButton>
+                    </p:column>
+
+                </p:dataTable>
+
+                <p:confirmDialog global="true" showEffect="fade" hideEffect="fade">
+                    <p:commandButton value="Yes" type="button" styleClass="ui-confirmdialog-yes" icon="ui-icon-check" />
+                    <p:commandButton value="No" type="button" styleClass="ui-confirmdialog-no" icon="ui-icon-close" />
+                </p:confirmDialog>
+
+            </h:form>
+            
+            <h:form id="formCreateNewPaint">
+
+                <p:dialog id="dialogCreateNewPaint" widgetVar="dialogCreateNewPaint" header="Create New Paint" closable="true">
+
+                    <p:messages id="messagesCreateNewPaint" redisplay="false" />
+
+                    <p:panelGrid>
+
+                        <p:row>
+                            <p:column>
+                                <p:outputLabel for="colourCode" value="Colour Code: " style="font-weight: bold;" />
+                            </p:column>
+                            <p:column>
+                                <p:inputText id="colourCode" value="#{paintManagedBean.newPaint.colourCode}" placeholder="COL099" required="true" requiredMessage="Colour code is required" />
+                            </p:column>
+                            <p:column>
+                                <p:message for="colourCode" />
+                            </p:column>
+                        </p:row>
+
+                        <p:row>
+                            <p:column>
+                                <p:outputLabel for="name" value="Name: " style="font-weight: bold;" />
+                            </p:column>
+                            <p:column>
+                                <p:inputText id="name" value="#{paintManagedBean.newPaint.name}" placeholder="Paint 1" required="true" requiredMessage="Name is required" />
+                            </p:column>
+                            <p:column>
+                                <p:message for="name" />
+                            </p:column>
+                        </p:row>
+
+                        <p:row>
+                            <p:column>
+                                <p:outputLabel for="quantityOnHand" value="Quantity On Hand " style="font-weight: bold;" />
+                            </p:column>
+                            <p:column>
+                                <p:spinner id="quantityOnHand" value="#{paintManagedBean.newPaint.quantityOnHand}" placeholder="100" min="0" max="1000000" required="true" requiredMessage="Quantity On Hand is required" />
+                            </p:column>
+                            <p:column>
+                                <p:message for="quantityOnHand" />
+                            </p:column>
+                        </p:row>
+
+                        <p:row>
+                            <p:column>
+                                <p:outputLabel for="reorderQuantity" value="Reorder Quantity " style="font-weight: bold;" />
+                            </p:column>
+                            <p:column>
+                                <p:spinner id="reorderQuantity" value="#{paintManagedBean.newPaint.reorderQuantity}" placeholder="10" min="0" max="1000000" stepFactor="10" required="true" requiredMessage="Reorder Quantity is required" validator="reorderQuantityValidator" />
+                            </p:column>
+                            <p:column>
+                                <p:message for="reorderQuantity" />
+                            </p:column>
+                        </p:row>
+
+                        <p:row>
+                            <p:column>
+                                <p:outputLabel for="price" value="Price " style="font-weight: bold;" />
+                            </p:column>
+                            <p:column>                            
+                                <p:spinner id="price" value="#{paintManagedBean.newPaint.price}" placeholder="10.00" min="0" max="1000000" stepFactor="0.01" required="true" requiredMessage="Price is required" />
+                            </p:column>
+                            <p:column>
+                                <p:message for="price" />
+                            </p:column>
+                        </p:row>
+
+                        <p:row>
+                            <p:column>
+                                <p:outputLabel for="paintRating" value="Paint Rating " style="font-weight: bold;" />
+                            </p:column>
+                            <p:column>
+                                <p:rating id="paintRating" value="#{paintManagedBean.newPaint.paintRating}" stars="5" required="true" requiredMessage="Paint Rating is required" cancel="false">
+                                    <f:validateLongRange minimum="1" maximum="5" />
+                                </p:rating>
+                            </p:column>
+                            <p:column>
+                                <p:message for="paintRating" />
+                            </p:column>
+                        </p:row>
+
+                        <p:row>
+                            <p:column>
+                                <p:outputLabel for="selCategories" value="Categories " style="font-weight: bold;" />
+                            </p:column>
+                            <p:column>
+                                <p:selectManyMenu id="selCategories" value="#{paintManagedBean.categoryIdsNew}" showCheckbox="true">
+                                    <f:selectItems value="#{paintManagedBean.categoryEntities}" var="paintCategory" itemValue="#{paintCategory.paintCategoryId}" itemLabel="#{paintCategory.categoryName}" />
+                                </p:selectManyMenu>
+                            </p:column>
+                            <p:column>
+                                <p:message for="selCategories" />
+                            </p:column>
+                        </p:row>
+
+                        <p:row>
+                            <p:column>
+                                <p:outputLabel for="selTags" value="Tag(s) " style="font-weight: bold;" />
+                            </p:column>
+                            <p:column>
+                                <p:selectManyMenu id="selTags" value="#{paintManagedBean.tagIdsNew}" showCheckbox="true">
+                                    <f:selectItems value="#{paintManagedBean.tagEntities}" var="paintTag" itemValue="#{paintTag.tagId}" itemLabel="#{paintTag.tagName}" />
+                                </p:selectManyMenu>
+                            </p:column>
+                            <p:column>
+                                <p:message for="selTags" />
+                            </p:column>
+                        </p:row>
+
+                        <p:row>
+                            <p:column colspan="3">
+                                <p:commandButton type="reset" value="Clear" />&nbsp;
+                                <p:commandButton  value="Create New Paint" update="@form formAllPaints:dataTableAllPaints" actionListener="#{paintManagedBean.createNewPaint}" oncomplete="PF('dialogCreateNewPaint').show();" />
+                            </p:column>
+                        </p:row>
+
+                    </p:panelGrid>
+
+                </p:dialog>
+
+            </h:form>
+            
+            <ez:ViewPaint id="ccViewPaint" />
+            
+            <h:form id="formUpdatePaint">
+
+                <p:dialog id="dialogUpdatePaint" widgetVar="dialogUpdatePaint" header="Update Paint" closable="true">
+
+                    <p:messages id="messagesUpdatePaint" redisplay="false" />
+
+                    <p:panelGrid>
+
+                        <p:row>
+                            <p:column>
+                                <h:outputLabel value="Paint ID: " />
+                            </p:column>
+                            <p:column>
+                                <h:outputText value="#{paintManagedBean.selectedPaintToUpdate.paintId}" />
+                            </p:column>
+                            <p:column>
+                                &nbsp;
+                            </p:column>
+                        </p:row>
+
+                        <p:row>
+                            <p:column>
+                                <h:outputLabel value="Colour Code: " />
+                            </p:column>
+                            <p:column>
+                                <h:outputText value="#{paintManagedBean.selectedPaintToUpdate.colourCode}" />
+                            </p:column>
+                            <p:column>
+                                &nbsp;
+                            </p:column>
+                        </p:row>
+
+                        <p:row>
+                            <p:column>
+                                <p:outputLabel for="name" value="Name: " />
+                            </p:column>
+                            <p:column>
+                                <p:inputText id="name" value="#{paintManagedBean.selectedPaintToUpdate.name}" placeholder="Paint 1" required="true" requiredMessage="Name is required" />
+                            </p:column>
+                            <p:column>
+                                <p:message for="name" />
+                            </p:column>
+                        </p:row>
+
+                        <p:row>
+                            <p:column>
+                                <p:outputLabel for="quantityOnHand" value="Quantity On Hand " />
+                            </p:column>
+                            <p:column>
+                                <p:spinner id="quantityOnHand" value="#{paintManagedBean.selectedPaintToUpdate.quantityOnHand}" placeholder="100" min="0" max="1000000" required="true" requiredMessage="Quantity On Hand is required" />
+                            </p:column>
+                            <p:column>
+                                <p:message for="quantityOnHand" />
+                            </p:column>
+                        </p:row>
+
+                        <p:row>
+                            <p:column>
+                                <p:outputLabel for="reorderQuantity" value="Reorder Quantity " />
+                            </p:column>
+                            <p:column>
+                                <p:spinner id="reorderQuantity" value="#{paintManagedBean.selectedPaintToUpdate.reorderQuantity}" placeholder="10" min="0" max="1000000" stepFactor="10" required="true" requiredMessage="Reorder Quantity is required" validator="reorderQuantityValidator" />
+                            </p:column>
+                            <p:column>
+                                <p:message for="reorderQuantity" />
+                            </p:column>
+                        </p:row>
+
+                        <p:row>
+                            <p:column>
+                                <p:outputLabel for="price" value="Price " />
+                            </p:column>
+                            <p:column>
+                                <p:spinner id="price" value="#{paintManagedBean.selectedPaintToUpdate.price}" placeholder="10.00" min="0" max="1000000" stepFactor="0.01" required="true" requiredMessage="Price is required" />
+                            </p:column>
+                            <p:column>
+                                <p:message for="price" />
+                            </p:column>
+                        </p:row>
+
+                        <p:row>
+                            <p:column>
+                                <p:outputLabel for="paintRating" value="Paint Rating " />
+                            </p:column>
+                            <p:column>
+                                <p:rating id="paintRating" value="#{paintManagedBean.selectedPaintToUpdate.paintRating}" stars="5" required="true" requiredMessage="Paint Rating is required" cancel="false">
+                                    <f:validateLongRange minimum="1" maximum="5" />
+                                </p:rating>
+                            </p:column>
+                            <p:column>
+                                <p:message for="paintRating" />
+                            </p:column>
+                        </p:row>                    
+
+                        <p:row>
+                            <p:column>
+                                <p:outputLabel for="selCategories" value="Categories " style="font-weight: bold;" />
+                            </p:column>
+                            <p:column>
+                                <p:selectManyMenu id="selCategories" value="#{paintManagedBean.categoryIdsUpdate}" showCheckbox="true">
+                                    <f:selectItems value="#{paintManagedBean.categoryEntities}" var="paintCategory" itemValue="#{paintCategory.paintCategoryId}" itemLabel="#{paintCategory.categoryName}" />
+                                </p:selectManyMenu>
+                            </p:column>
+                            <p:column>
+                                <p:message for="selCategories" />
+                            </p:column>
+                        </p:row>
+
+                        <p:row>
+                            <p:column>
+                                <p:outputLabel for="selTags" value="Tag(s) " style="font-weight: bold;" />
+                            </p:column>
+                            <p:column>
+                                <p:selectManyMenu id="selTags" value="#{paintManagedBean.tagIdsUpdate}" showCheckbox="true">
+                                    <f:selectItems value="#{paintManagedBean.tagEntities}" var="paintTag" itemValue="#{paintTag.tagId}" itemLabel="#{paintTag.tagName}" />
+                                </p:selectManyMenu>
+                            </p:column>
+                            <p:column>
+                                <p:message for="selTags" />
+                            </p:column>
+                        </p:row>
+
+                        <p:row>
+                            <p:column colspan="3">
+                                <p:commandButton value="Update Paint" update="@form formAllPaints:dataTableAllPaints" actionListener="#{paintManagedBean.updatePaint}" oncomplete="PF('dialogUpdatePaint').show();" />
+                            </p:column>
+                        </p:row>
+
+                    </p:panelGrid>
+
+                </p:dialog>
+
+            </h:form>
+            
+        </div>
+
+    </ui:define>
+    
+</ui:composition>
+
