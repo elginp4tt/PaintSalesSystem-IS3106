@@ -15,6 +15,8 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
+import util.exception.EntityInstanceExistsInCollectionException;
+import util.exception.EntityInstanceMissingInCollectionException;
 
 /**
  *
@@ -39,6 +41,8 @@ public class Transaction implements Serializable {
         transactionLineItems = new ArrayList<>();
     }
 
+    
+    
     public Long getTransactionId() {
         return transactionId;
     }
@@ -72,32 +76,48 @@ public class Transaction implements Serializable {
         return "entity.Transaction[ id=" + transactionId + " ]";
     }
 
-    /**
-     * @return the customer
-     */
+    
     public Customer getCustomer() {
         return customer;
     }
-
-    /**
-     * @param customer the customer to set
-     */
+    
     public void setCustomer(Customer customer) {
         this.customer = customer;
     }
-
-    /**
-     * @return the transactionLineItems
-     */
+    
     public List<TransactionLineItem> getTransactionLineItems() {
         return transactionLineItems;
     }
 
-    /**
-     * @param transactionLineItems the transactionLineItems to set
-     */
     public void setTransactionLineItems(List<TransactionLineItem> transactionLineItems) {
         this.transactionLineItems = transactionLineItems;
     }
+
+    public void addSaleTransactionLineItemEntity(TransactionLineItem transactionLineItem) throws EntityInstanceExistsInCollectionException
+    {
+        if(!this.transactionLineItems.contains(transactionLineItem))
+        {
+            this.transactionLineItems.add(transactionLineItem);
+        }
+        else
+        {
+            throw new EntityInstanceExistsInCollectionException("Sale Transaction Line Item already exist");
+        }
+    }
+    
+    
+    
+    public void removeSaleTransactionLineItemEntity(TransactionLineItem transactionLineItem) throws EntityInstanceMissingInCollectionException
+    {
+        if(this.transactionLineItems.contains(transactionLineItem))
+        {
+            this.transactionLineItems.remove(transactionLineItem);
+        }
+        else
+        {
+            throw new EntityInstanceMissingInCollectionException("Sale Transaction Line Item missing");
+        }
+    }
+    
     
 }

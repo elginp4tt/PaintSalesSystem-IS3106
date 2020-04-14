@@ -9,6 +9,10 @@ import entity.Customer;
 import entity.Delivery;
 import entity.Employee;
 import entity.PaintService;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
@@ -61,31 +65,7 @@ public class EmployeeSessionBean implements EmployeeSessionBeanLocal {
         validatorFactory = Validation.buildDefaultValidatorFactory();
         validator = validatorFactory.getValidator();
     }
-
-//    public Employee createNewEmployee(String firstName, String lastName, String username, String password) throws InputDataValidationException, UnknownPersistenceException, EmployeeUsernameExistException {
-//        Employee newEmployee = new Employee(firstName, lastName, username, password);
-//
-//        try {
-//            Set<ConstraintViolation<Employee>> constraintViolations = validator.validate(newEmployee);
-//            if (constraintViolations.isEmpty()) {
-//                em.persist(newEmployee);
-//                em.flush();
-//                return newEmployee;
-//            } else {
-//                throw new InputDataValidationException(prepareInputDataValidationErrorsMessage(constraintViolations));
-//            }
-//        } catch (PersistenceException ex) {
-//            if (ex.getCause() != null && ex.getCause().getClass().getName().equals("org.eclipse.persistence.exceptions.DatabaseException")) {
-//                if (ex.getCause().getCause() != null && ex.getCause().getCause().getClass().getName().equals("java.sql.SQLIntegrityConstraintViolationException")) {
-//                    throw new EmployeeUsernameExistException();
-//                } else {
-//                    throw new UnknownPersistenceException(ex.getMessage());
-//                }
-//            } else {
-//                throw new UnknownPersistenceException(ex.getMessage());
-//            }
-//        }
-//    }
+    
     
     
     @Override
@@ -236,8 +216,9 @@ public class EmployeeSessionBean implements EmployeeSessionBeanLocal {
     
     
     
+    
     @Override
-    public List<Employee> retrieveAvailableEmployeeByDate(Date startTime, Date endTime)
+    public List<Employee> retrieveAvailableEmployee(Date startTime, Date endTime, Long deliveryId, Long paintServicId)
     {
         
         List<Employee> result = new ArrayList<>();
@@ -247,10 +228,13 @@ public class EmployeeSessionBean implements EmployeeSessionBeanLocal {
             isAvailable = true;
             for(PaintService ps: employee.getPaintServices())
             {
-                if(checkOverlap(ps.getPaintServiceStartTime(),ps.getPaintServiceEndTime(),startTime,endTime))
+                if(!ps.getPaintServiceId().equals(paintServicId))
                 {
-                    isAvailable = false;
-                    break;
+                    if(checkOverlap(startTime,endTime,ps.getPaintServiceStartTime(),ps.getPaintServiceEndTime()))
+                    {
+                        isAvailable = false;
+                        break;
+                    }
                 }
             }
             
@@ -258,10 +242,13 @@ public class EmployeeSessionBean implements EmployeeSessionBeanLocal {
             {
                 for(Delivery delivery: employee.getDeliveries())
                 {
-                    if(checkOverlap(delivery.getDeliveryStartTime(), delivery.getDeliveryEndTime(), startTime, endTime))
+                    if(!delivery.getDeliveryId().equals(deliveryId))
                     {
-                        isAvailable = false;
-                        break;
+                        if(checkOverlap(startTime, endTime,delivery.getDeliveryStartTime(), delivery.getDeliveryEndTime()))
+                        {
+                            isAvailable = false;
+                            break;
+                        }
                     }
                 }
             }
@@ -276,56 +263,55 @@ public class EmployeeSessionBean implements EmployeeSessionBeanLocal {
     }
     
     
+    
     //return true if two intervals overlap, else return false
+    //startA, endA are the date of new delivery
+    @Override
     public boolean checkOverlap(Date startA, Date endA, Date startB, Date endB)
     {
-        Calendar calendarStartB = Calendar.getInstance();
-        calendarStartB.setTime(startB);
-        calendarStartB.add(Calendar.HOUR_OF_DAY, 1);
+        
+        DateTimeFormatter ft = DateTimeFormatter.ofPattern("dd/MM/yy HH:mm:ss");
+        DateFormat dateFormat = new SimpleDateFormat("dd/MM/yy HH:mm:ss");
         
         
-        Calendar calendarEndB = Calendar.getInstance();
-        calendarEndB.setTime(startB);
-        calendarEndB.add(Calendar.HOUR_OF_DAY, 1);
+        LocalDateTime startALocal = LocalDateTime.parse(dateFormat.format(startA),ft);
+        LocalDateTime endALocal = LocalDateTime.parse(dateFormat.format(endA),ft);
         
-        if(startA.before(calendarStartB.getTime()))
+        
+        LocalDateTime oneHourBeforeStartB = LocalDateTime.parse(dateFormat.format(startB),ft).minusHours(1);
+        LocalDateTime oneHourAfterEndB = LocalDateTime.parse(dateFormat.format(endB),ft).plusHours(1);
+        
+        
+        if(startALocal.isBefore(oneHourBeforeStartB))
         {
-            if(endA.before(calendarStartB.getTime()) || endA.equals(calendarStartB.getTime()))
+            if(endALocal.isBefore(oneHourBeforeStartB) || endALocal.isEqual(oneHourBeforeStartB))
             {
                 return false;
             }
-            else
+            else if(endALocal.isAfter(oneHourBeforeStartB))
             {
                 return true;
             }
         }
-        else if(startA.equals(calendarStartB.getTime()))
+        else if(startALocal.isEqual(oneHourBeforeStartB))
         {
             return true;
         }
-        else if(startA.after(calendarStartB.getTime()) && startA.before(calendarEndB.getTime()))
+        else if(startALocal.isAfter(oneHourBeforeStartB) && startALocal.isBefore(oneHourAfterEndB))
         {
             return true;
         }
-//        else if(startA.equals(calendarStartB.getTime()) || startA.after(calendarStartB.getTime()))
-//        {
-//            return false;
-//        }
-        else
+        else if(startALocal.isEqual(oneHourAfterEndB) || startALocal.isAfter(oneHourAfterEndB))
         {
             return false;
         }
-    
+        
+        return false;
+        
     }
     
     
     
-    
-    
-    
-    
-    
-
     public Employee retrieveEmployeeByUsername(String username) throws EmployeeNotFoundException {
         Query query = em.createQuery("Select e FROM Employee e WHERE e.username = :inUsername");
         query.setParameter("inUsername", username);

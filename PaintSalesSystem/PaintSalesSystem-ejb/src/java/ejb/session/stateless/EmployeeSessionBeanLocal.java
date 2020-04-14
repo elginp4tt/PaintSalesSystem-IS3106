@@ -5,7 +5,9 @@
  */
 package ejb.session.stateless;
 
+import entity.Delivery;
 import entity.Employee;
+import entity.PaintService;
 import java.util.Date;
 import java.util.List;
 import javax.ejb.Local;
@@ -35,7 +37,9 @@ public interface EmployeeSessionBeanLocal {
 
     public Employee retrieveEmployeeById(Long employeeId) throws EmployeeNotFoundException;
 
-    public List<Employee> retrieveAvailableEmployeeByDate(Date startTime, Date endTime);
+    public boolean checkOverlap(Date startA, Date endA, Date startB, Date endB);
+
+    public List<Employee> retrieveAvailableEmployee(Date startTime, Date endTime, Long deliveryId, Long paintServicId);
 
 
     

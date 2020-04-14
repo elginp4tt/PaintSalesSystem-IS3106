@@ -1,0 +1,344 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+                template="/template/defaultTemplate.xhtml"
+                xmlns:f="http://xmlns.jcp.org/jsf/core"
+                xmlns:ez="http://xmlns.jcp.org/jsf/composite/ezcomp"
+                xmlns:p="http://primefaces.org/ui"
+                xmlns:h="http://xmlns.jcp.org/jsf/html">
+    
+    <ui:define name="content">
+        
+        
+        <h3>Paint Service Management</h3>
+        
+        <p:tabView id="paintServiceManagementTabView" widgetVar="paintServiceManagementTabView" dynamic="true">
+            
+            <p:tab title="View All Paint Services">
+                
+                <h:form id="formAllPaintServices">
+                    
+                    <p:selectOneRadio id="radio" value="#{paintServiceManagementManagedBean.radioSelection}">
+                        <f:selectItem itemLabel="Calendar View" itemValue="calendar" />
+                        <f:selectItem itemLabel="Table View" itemValue="table" />
+                        <f:ajax event="change" execute="@this" render="@form" />
+                    </p:selectOneRadio>
+                    
+                    <p:separator />
+                    
+                    
+                    <p:dataTable id="dataTableAllPaintServices" widgetVar="dataTableAllPaintServices" value="#{paintServiceManagementManagedBean.allPaintServices}" 
+                                 var="ps" rowKey="#{ps.paintServiceId}" rowIndexVar="row" 
+                                 rendered="#{paintServiceManagementManagedBean.checkRadioTable()}"
+                                 filteredValue="#{paintServiceManagementManagedBean.filteredPaintServices}"
+                                 rows="10" paginator="true" paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}" rowsPerPageTemplate="10,20,50">
+                        
+                        <f:facet name="header">
+                            <p:outputPanel style="text-align: right;">
+                                <h:outputText value="Search all fields:" />
+                                <p:inputText id="globalFilter" onkeyup="PF('dataTableAllPaintServices').filter()" style="width:300px" placeholder="Enter keyword"/>
+                            </p:outputPanel>
+                        </f:facet>
+                        
+                        
+                        <p:column headerText="Location Address" sortBy="#{ps.locationAddress}" filterBy="#{ps.locationAddress}" filterMatchMode="contains">
+                            <h:outputText value="#{ps.locationAddress}" />
+                        </p:column>
+                        
+                        <p:column headerText="Postal Code" sortBy="#{ps.postalCode}" filterBy="#{ps.postalCode}" filterMatchMode="contains">
+                            <h:outputText value="#{ps.postalCode}" />
+                        </p:column>
+                        
+                        <p:column headerText="Start Time" sortBy="#{ps.paintServiceStartTime}" filterBy="#{ps.paintServiceStartTime}" filterMatchMode="contains">
+                            <h:outputText value="#{ps.paintServiceStartTime}" converter="dateConverter" />
+                        </p:column>
+                        
+                        <p:column headerText="End Time" sortBy="#{ps.paintServiceEndTime}" filterBy="#{ps.paintServiceEndTime}" filterMatchMode="contains">
+                            <h:outputText value="#{ps.paintServiceEndTime}" converter="dateConverter" />
+                        </p:column>
+                        
+                        <p:column headerText="Employee ID" sortBy="#{ps.employee.employeeId}" filterBy="#{ps.employee.employeeId}" filterMatchMode="contains">
+                            <h:outputText value="#{ps.employee.employeeId}" />
+                        </p:column>
+                        
+                        <p:column headerText="Action" style="text-align: center;">
+                            <p:commandButton update=":paintServiceManagementTabView:ccViewPaintService:formViewPaintService" 
+                                             oncomplete="PF('dialogViewPaintService').show()" 
+                                             icon="ui-icon-document" title="View">
+                                <f:setPropertyActionListener value="#{ps}" target="#{paintServiceManagementManagedBean.viewPaintServiceManagedBean.paintServiceToView}" />
+                            </p:commandButton>
+                            
+                            <p:commandButton update=":paintServiceManagementTabView:formUpdatePaintService" 
+                                             oncomplete="PF('paintServiceManagementTabView').select(2)"
+                                             actionListener="#{paintServiceManagementManagedBean.doUpdate}" 
+                                             icon="ui-icon-pencil" title="Update">
+                                <f:attribute name="paintServiceToUpdate" value="#{ps}" />
+                            </p:commandButton>
+                        </p:column>
+                        
+                        
+                    </p:dataTable>
+                    
+                </h:form>
+                
+                <ez:viewPaintService id="ccViewPaintService" />
+                
+            </p:tab>
+            
+            <p:tab title="Filter Paint Service">
+                <h:form>
+                    
+                    <p:growl showDetail="true"/>
+                    
+                    <p:menuButton value="Filter By:">
+                        <p:menuitem value="Year" update="@form" actionListener="#{filterPaintServiceManagedBean.updateSelection}">
+                            <f:attribute name="selection" value="year" />
+                        </p:menuitem>
+                        <p:menuitem value="Specific Date" update="@form" actionListener="#{filterPaintServiceManagedBean.updateSelection}">
+                            <f:attribute name="selection" value="date" />
+                        </p:menuitem>
+                        <p:menuitem value="Interval" update="@form" actionListener="#{filterPaintServiceManagedBean.updateSelection}">
+                            <f:attribute name="selection" value="interval" />
+                        </p:menuitem>
+                    </p:menuButton>
+                    <p:separator />
+                    
+                    
+                    
+                    <p:dataTable id="dataTableFilterPaintService" widgetVar="dataTableFilterPaintService" value="#{filterPaintServiceManagedBean.filteredPaintServices}"
+                                 var="ps"
+                                 rowKey="#{ps.paintServiceId}" rowIndexVar="row"
+                                 paginatorAlwaysVisible="false" paginatorPosition="top"
+                                 rows="10" paginator="true" paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}" rowsPerPageTemplate="10,20,50">
+                        
+                        <f:facet name="header">
+                            <p:inputMask id="year" mask="9999" placeholder="2020"
+                                         value="#{filterPaintServiceManagedBean.yearToFilter}" 
+                                         rendered="#{filterPaintServiceManagedBean.isYearFilterSelected}" />
+                                     
+                            <p:datePicker value="#{filterPaintServiceManagedBean.dateToFilter}"
+                                          rendered="#{filterPaintServiceManagedBean.isDateFilterSelected}" 
+                                          converter="dateConverter"/>
+                            
+                            <p:outputLabel value="From: " rendered="#{filterPaintServiceManagedBean.isIntervalFilterSelected}"  />
+                            <p:datePicker value="#{filterPaintServiceManagedBean.startDateFilter}"
+                                          rendered="#{filterPaintServiceManagedBean.isIntervalFilterSelected}" 
+                                          converter="dateConverter"/>
+                            <p:outputLabel value="To: " rendered="#{filterPaintServiceManagedBean.isIntervalFilterSelected}" />
+                            <p:datePicker value="#{filterPaintServiceManagedBean.endDateFilter}"
+                                          rendered="#{filterPaintServiceManagedBean.isIntervalFilterSelected}" 
+                                          converter="dateConverter"/>
+                            
+                            <p:commandButton value="Start Filtering" 
+                                             actionListener="#{filterPaintServiceManagedBean.filter}" 
+                                             process="@form"
+                                             update="@form"/>
+                            
+                        </f:facet>
+                        
+                        
+                        <p:column headerText="Location Address" sortBy="#{ps.locationAddress}" filterBy="#{ps.locationAddress}" filterMatchMode="contains">
+                            <h:outputText value="#{ps.locationAddress}" />
+                        </p:column>
+                        
+                        <p:column headerText="Postal Code" sortBy="#{ps.postalCode}" filterBy="#{ps.postalCode}" filterMatchMode="contains">
+                            <h:outputText value="#{ps.postalCode}" />
+                        </p:column>
+                        
+                        <p:column headerText="Start Time" sortBy="#{ps.paintServiceStartTime}" filterBy="#{ps.paintServiceStartTime}" filterMatchMode="contains">
+                            <h:outputText value="#{ps.paintServiceStartTime}" converter="dateConverter" />
+                        </p:column>
+                        
+                        <p:column headerText="End Time" sortBy="#{ps.paintServiceEndTime}" filterBy="#{ps.paintServiceEndTime}" filterMatchMode="contains">
+                            <h:outputText value="#{ps.paintServiceEndTime}" converter="dateConverter" />
+                        </p:column>
+                        
+                        <p:column headerText="Employee ID" sortBy="#{ps.employee.employeeId}" filterBy="#{ps.employee.employeeId}" filterMatchMode="contains">
+                            <h:outputText value="#{ps.employee.employeeId}" />
+                        </p:column>
+                        
+                    </p:dataTable>
+                    
+                </h:form>
+            </p:tab>
+            
+            
+            <p:tab title="Update Paint Service">
+                
+                <h:form id="formUpdatePaintService">
+                    
+                    <p:growl id="growl" showDetail="true" />
+                    
+                    <p:separator />
+                    
+                    <p:panelGrid style="width: 100%; size: auto;" >
+                        
+                        <p:row>
+                            <p:column>
+                                <p:outputLabel value="Paint Service ID: " />
+                            </p:column>
+                            <p:column>
+                                <p:outputLabel id="paintServiceId" value="#{paintServiceManagementManagedBean.selectedPaintServiceToUpdate.paintServiceId}"/>
+                            </p:column>
+                            <p:column>
+                                <p:message for="paintServiceId" />
+                            </p:column>
+                        </p:row>
+                        
+                        <p:row>
+                            <p:column>
+                                <p:outputLabel value="Location Address: " />
+                            </p:column>
+                            <p:column>
+                                <p:inputText id="addressUpdate" value="#{paintServiceManagementManagedBean.addressUpdate}" required="true">
+                                    <f:validateLength minimum="1" />
+                                </p:inputText>
+                            </p:column>
+                            <p:column>
+                                <p:message for="addressUpdate" />
+                            </p:column>
+                        </p:row>
+                        
+                        <p:row>
+                            <p:column>
+                                <p:outputLabel value="Postal Code: " />
+                            </p:column>
+                            <p:column>
+                                <p:inputMask id="postalCodeUpdate" mask="999999" value="#{paintServiceManagementManagedBean.postalCodeUpdate}" required="true">
+                                    <f:validateLength minimum="6" />
+                                </p:inputMask>
+                            </p:column>
+                            <p:column>
+                                <p:message for="postalCodeUpdate" />
+                            </p:column>
+                        </p:row>
+                        
+                        
+                        <p:row>
+                            <p:column>
+                                <p:outputLabel value="Delivery Start At " />
+                            </p:column>
+                            <p:column>
+                                <p:datePicker id="startTimeUpdate"
+                                              value="#{paintServiceManagementManagedBean.startTimeUpdate}" 
+                                              showTime="true" showSeconds="true" 
+                                              hideOnDateTimeSelect ="true"
+                                              required="true" converter="dateConverter" />
+                            </p:column>
+                            <p:column>
+                                <p:message for="startTimeUpdate" />
+                            </p:column>
+                        </p:row>
+                        
+                        <p:row>
+                            <p:column>
+                                <p:outputLabel value="Delivery End At " />
+                            </p:column>
+                            <p:column>
+                                <p:datePicker id="endTimeUpdate" 
+                                              value="#{paintServiceManagementManagedBean.endTimeUpdate}" 
+                                              showTime="true" showSeconds="true" 
+                                              hideOnDateTimeSelect ="true"
+                                              required="true" converter="dateConverter" />
+                            </p:column>
+                            <p:column>
+                                <p:message for="endTimeUpdate" />
+                            </p:column>
+                        </p:row>
+                        
+                        <p:row>
+                            <p:column>
+                                <p:outputLabel value="Assigned Employee ID " />
+                            </p:column>
+                            <p:column>
+                                <p:outputLabel id="employeeIdUpdate" value="#{paintServiceManagementManagedBean.employeeIdUpdate}" />
+                            </p:column>
+                            <p:column>
+                                <p:message for="employeeIdUpdate" />
+                            </p:column>
+                        </p:row>
+                        
+                        
+                        <p:row>
+                            <p:column colspan="3">
+                                <p:commandButton process="@form" 
+                                                 update="@form paintServiceManagementTabView:formReassignEmployee" 
+                                                 actionListener="#{paintServiceManagementManagedBean.updateAvailableEmployeeSelection}"
+                                                 oncomplete="PF('dialogReassignEmployee').show()"
+                                                 value="Re-Assign Employee">
+                                    
+                                </p:commandButton>
+                                
+                                <p:commandButton process="@form"
+                                                 update="@form paintServiceManagementTabView:formAllPaintServices"
+                                                 actionListener="#{paintServiceManagementManagedBean.updatePaintService}" 
+                                                 value="Update">
+                                    <p:confirm header="Confirmation" message="Are you sure about the update?" icon="ui-icon-alert" />
+                                </p:commandButton>
+                            </p:column>
+                        </p:row>
+                        
+                    </p:panelGrid>
+                    
+                    <p:confirmDialog global="true" showEffect="fade" hideEffect="fade">
+                        <p:commandButton value="Yes" type="button" styleClass="ui-confirmdialog-yes" icon="ui-icon-check" />
+                        <p:commandButton value="No" type="button" styleClass="ui-confirmdialog-no" icon="ui-icon-close" />
+                    </p:confirmDialog>
+                    
+                </h:form>
+                
+                <h:form id="formReassignEmployee">
+                    <p:dialog id="dialogReassignEmployee" widgetVar="dialogReassignEmployee" header="Assign Employee" closable="true">
+                        
+                        <p:panelGrid>
+                            <p:row>
+                                <p:column>
+                                    <p:outputLabel value="From: " />
+                                </p:column>
+                                <p:column>
+                                    <p:outputLabel value="#{paintServiceManagementManagedBean.startTimeUpdate}" converter="dateConverter" />
+                                </p:column>
+                            </p:row>
+                            
+                            <p:row>
+                                <p:column>
+                                    <p:outputLabel value="To: " />
+                                </p:column>
+                                <p:column>
+                                    <p:outputLabel value="#{paintServiceManagementManagedBean.endTimeUpdate}" converter="dateConverter" />
+                                </p:column>
+                            </p:row>
+                            
+                            <p:row>
+                                <p:column>
+                                    <p:outputLabel value="Available Employees " />
+                                </p:column>
+                                <p:column>
+                                    <p:selectOneMenu value="#{paintServiceManagementManagedBean.employeeIdUpdate}">
+                                        <f:selectItems value="#{paintServiceManagementManagedBean.availableEmployee}" var="employee" itemLabel="#{employee.employeeId}" itemValue="#{employee.employeeId}" />
+                                    </p:selectOneMenu>
+                                </p:column>
+                            </p:row>
+                            
+                            <p:row>
+                                <p:column colspan="2">
+                                    <p:commandButton process="@form"
+                                                     update="paintServiceManagementTabView:formUpdatePaintService"
+                                                     oncomplete="PF('dialogReassignEmployee').hide()"
+                                                     value="Confirm" />
+                                    <p:commandButton value="Cancel" oncomplete="PF('dialogReassignEmployee').hide()" />
+                                </p:column>
+                            </p:row>
+                            
+                        </p:panelGrid>
+                        
+                    </p:dialog>
+                </h:form>
+                
+            </p:tab>
+            
+        </p:tabView>
+        
+    </ui:define>
+    
+</ui:composition>

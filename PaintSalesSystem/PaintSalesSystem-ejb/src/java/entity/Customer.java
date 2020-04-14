@@ -8,6 +8,7 @@ package entity;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -58,6 +59,25 @@ public class Customer implements Serializable {
         this.username = username;
         this.password = password;
     }
+    
+    
+    public List<Transaction> getTransactions()
+    {
+        return transactions;
+    }
+    
+    public void addTransaction(Transaction transaction)
+    {
+        transactions.add(transaction);
+        transaction.setCustomer(this);
+    }
+    
+    public void removeTransaction(Transaction transaction)
+    {
+        transaction.setCustomer(null);
+        this.transactions.remove(transaction);
+    }
+    
     
     public Long getCustomerId() {
         return customerId;
@@ -176,18 +196,6 @@ public class Customer implements Serializable {
         this.password = password;
     }
 
-    /**
-     * @return the transactions
-     */
-    public List<Transaction> getTransactions() {
-        return transactions;
-    }
-
-    /**
-     * @param transactions the transactions to set
-     */
-    public void setTransactions(List<Transaction> transactions) {
-        this.transactions = transactions;
-    }
+    
     
 }

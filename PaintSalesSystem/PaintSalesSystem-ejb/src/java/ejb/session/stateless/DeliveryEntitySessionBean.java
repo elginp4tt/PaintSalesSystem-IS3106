@@ -9,6 +9,12 @@ package ejb.session.stateless;
 import entity.Delivery;
 import entity.DeliveryServiceTransaction;
 import entity.Employee;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.Set;
 import javax.ejb.EJB;
@@ -45,6 +51,9 @@ public class DeliveryEntitySessionBean implements DeliveryEntitySessionBeanLocal
     
     private final ValidatorFactory validatorFactory;
     private final Validator validator;
+    
+    private final static DateTimeFormatter ft = DateTimeFormatter.ofPattern("dd/MM/yy HH:mm:ss");
+    private final static DateFormat dateFormat = new SimpleDateFormat("dd/MM/yy HH:mm:ss");
 
     public DeliveryEntitySessionBean() {
         validatorFactory = Validation.buildDefaultValidatorFactory();
@@ -90,6 +99,83 @@ public class DeliveryEntitySessionBean implements DeliveryEntitySessionBeanLocal
     
     
     @Override
+    public List<Delivery> retrieveDeliveryByYear(String year)
+    {
+        
+        List<Delivery> result = new ArrayList<>();
+        List<Delivery> allDeliveries = retrieveAllDelivery();
+        
+        int yearInt = Integer.parseInt(year);
+        LocalDateTime curr;
+        
+        for(Delivery delivery: allDeliveries)
+        {
+            curr = LocalDateTime.parse(dateFormat.format(delivery.getDeliveryStartTime()),ft);
+            if(curr.getYear() == yearInt)
+            {
+                result.add(delivery);
+            }
+        }
+        
+        return result;
+        
+        
+    }
+    
+    
+    
+    @Override
+    public List<Delivery> retrieveDeliveryByDate(Date date)
+    {
+        List<Delivery> result = new ArrayList<>();
+        List<Delivery> allDeliveries = retrieveAllDelivery();
+        
+        LocalDateTime curr;
+        LocalDateTime dateCompare = LocalDateTime.parse(dateFormat.format(date),ft);
+        
+        for(Delivery delivery: allDeliveries)
+        {
+            curr = LocalDateTime.parse(dateFormat.format(delivery.getDeliveryStartTime()),ft);
+            if(curr.toLocalDate().isEqual(dateCompare.toLocalDate()))
+            {
+                result.add(delivery);
+            }
+        }
+        
+        return result;
+    }
+    
+    
+    
+    @Override
+    public List<Delivery> retrieveDeliveryByDates(Date startDate, Date endDate)
+    {
+        List<Delivery> result = new ArrayList<>();
+        List<Delivery> allDeDdeliveries = retrieveAllDelivery();
+        
+        LocalDateTime curr;
+        LocalDateTime startDateCompare = LocalDateTime.parse(dateFormat.format(startDate),ft);
+        LocalDateTime endDateCompare = LocalDateTime.parse(dateFormat.format(endDate),ft);
+        
+        for(Delivery delivery: allDeDdeliveries)
+        {
+            curr = LocalDateTime.parse(dateFormat.format(delivery.getDeliveryStartTime()),ft);
+            if(curr.toLocalDate().isEqual(startDateCompare.toLocalDate())
+                    || curr.toLocalDate().isEqual(endDateCompare.toLocalDate())
+                    || (curr.toLocalDate().isAfter(startDateCompare.toLocalDate()) && curr.toLocalDate().isBefore(endDateCompare.toLocalDate())))
+            {
+                result.add(delivery);
+            }
+        }
+        
+        return result;
+    }
+    
+        
+    
+    
+    
+    @Override
     public Delivery retrieveDeliveryByDeliveryId(Long deliveryId) throws DeliveryNotFoundException
     {
         Delivery delivery = em.find(Delivery.class,deliveryId);
@@ -107,7 +193,37 @@ public class DeliveryEntitySessionBean implements DeliveryEntitySessionBeanLocal
     
     
     @Override
-    public void updateDelivery(Delivery delivery, Long employeeId, Long deliveryServiceTransactionId) throws DeliveryNotFoundException, EmployeeNotFoundException, InputDataValidationException
+    public void checkAssignedEmployeeAvailability(Date newDeliveryStart, Date newDeliveryEnd, Long deliveryId, Long assignedEmployeeId) throws UpdateDeliveryException, DeliveryNotFoundException
+    {
+        if(deliveryId != null)
+        {
+            
+            Delivery deliveryToUpdate = retrieveDeliveryByDeliveryId(deliveryId);
+            
+            List<Employee> availableEmployees = employeeSessionBeanLocal.retrieveAvailableEmployee(newDeliveryEnd, newDeliveryEnd, deliveryToUpdate.getDeliveryId(), null);
+            
+            boolean isFound = false;
+            for(Employee employee : availableEmployees)
+            {
+                if(employee.getEmployeeId().equals(assignedEmployeeId))
+                {
+                    isFound = true;
+                    break;
+                }
+            }
+            
+            if(!isFound)
+            {
+                throw new UpdateDeliveryException("The assigned employee is not available for this interval.");
+            }
+            
+        }
+    }
+    
+    
+    
+    @Override
+    public void updateDelivery(Delivery delivery, Long employeeId) throws UpdateDeliveryException, DeliveryNotFoundException, EmployeeNotFoundException, InputDataValidationException
     {
         if(delivery != null && delivery.getDeliveryId()!= null)
         {
@@ -116,22 +232,15 @@ public class DeliveryEntitySessionBean implements DeliveryEntitySessionBeanLocal
             if(constraintViolations.isEmpty())
             {
                 Delivery deliveryToUpdate = retrieveDeliveryByDeliveryId(delivery.getDeliveryId());
+                Employee employeeToUpdate = employeeSessionBeanLocal.retrieveEmployeeById(employeeId);
+
                 
-                /*
-                
-                we need to check the availability of employee
-                */
-                if(employeeId != null && (!deliveryToUpdate.getEmployeeId().equals(employeeId)))
-                {
-                    Employee employeeToUpdate = employeeSessionBeanLocal.retrieveEmployeeById(employeeId);
-                    
-                    deliveryToUpdate.setEmployee(employeeToUpdate);
-                }
-                
-                
-                
+                deliveryToUpdate.setEmployee(employeeToUpdate);
                 deliveryToUpdate.setLocationAddress(delivery.getLocationAddress());
                 deliveryToUpdate.setPostalCode(delivery.getPostalCode());
+                deliveryToUpdate.setDeliveryStartTime(delivery.getDeliveryStartTime());
+                deliveryToUpdate.setDeliveryEndTime(delivery.getDeliveryEndTime());
+                
             }
             else
             {
@@ -142,6 +251,23 @@ public class DeliveryEntitySessionBean implements DeliveryEntitySessionBeanLocal
         {
             throw new DeliveryNotFoundException("Delivery ID not provided for delivery record to be updated.");
         }
+    }
+    
+    
+    @Override
+    public List<Employee> retrieveAvailableEmployeeByNewDeliveryDate(Delivery delivery, Date newDeliveryStartDate, Date newDeliveryEndDate) throws DeliveryNotFoundException
+    {
+        List<Employee> avaiEmployee = new ArrayList<>();
+        
+        if(delivery != null && delivery.getDeliveryId()!= null)
+        {
+            Delivery deliveryToUpdate = retrieveDeliveryByDeliveryId(delivery.getDeliveryId());
+            
+            avaiEmployee = employeeSessionBeanLocal.retrieveAvailableEmployee(newDeliveryStartDate, newDeliveryEndDate, deliveryToUpdate.getDeliveryId(), null);
+            
+        }
+        
+        return avaiEmployee;
     }
     
     

@@ -1,0 +1,355 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+                template="/template/defaultTemplate.xhtml"
+                xmlns:f="http://xmlns.jcp.org/jsf/core"
+                xmlns:h="http://xmlns.jcp.org/jsf/html"
+                xmlns:p="http://primefaces.org/ui"
+                xmlns:ez="http://xmlns.jcp.org/jsf/composite/ezcomp">
+    
+    
+    
+    
+    <ui:define name="content">
+        
+        <h3>Delivery Management</h3>
+        
+        <p:tabView id="deliveryManagementTabView" widgetVar="deliveryManagementTabView" dynamic="true">
+            
+            
+            <p:tab title="View All Delivery Services">
+                <h:form id="formAllDeliveries">
+                    
+                    <p:selectOneRadio id="radio" value="#{deliveryManagementManagedBean.radioSelection}">
+                        <f:selectItem itemLabel="Calendar View" itemValue="calendar" />
+                        <f:selectItem itemLabel="Table View" itemValue="table" />
+                        <f:ajax event="change" execute="@this" render="formAllDeliveries" />
+                    </p:selectOneRadio>
+                    
+                    <p:separator />
+                    
+                    
+                    <p:dataTable id="dataTableAllDeliveries" widgetVar="dataTableAllDeliveries" value="#{deliveryManagementManagedBean.allDeliveries}" var="delivery" 
+                                 rowKey="#{delivery.deliveryId}" rowIndexVar="row" rendered="#{deliveryManagementManagedBean.checkRadioTable()}"
+                                 filteredValue="#{deliveryManagementManagedBean.filteredDeliveries}"
+                                 rows="10" paginator="true" paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}" rowsPerPageTemplate="10,20,50">
+                        
+                        
+                        <f:facet name="header">
+                            <p:outputPanel style="text-align: right;">
+                                <h:outputText value="Search all fields:" />
+                                <p:inputText id="globalFilter" onkeyup="PF('dataTableAllDeliveries').filter()" style="width:300px" placeholder="Enter keyword"/>
+                            </p:outputPanel>
+                        </f:facet>
+                        
+                        
+                        <p:column headerText="Location Address" sortBy="#{delivery.locationAddress}" filterBy="#{delivery.locationAddress}" filterMatchMode="contains">
+                            <h:outputText value="#{delivery.locationAddress}" />
+                        </p:column>
+                        
+                        <p:column headerText="Postal Code" sortBy="#{delivery.postalCode}" filterBy="#{delivery.postalCode}" filterMatchMode="contains">
+                            <h:outputText value="#{delivery.postalCode}" />
+                        </p:column>
+                        
+                        <p:column headerText="Start Time" sortBy="#{delivery.deliveryStartTime}" filterBy="#{delivery.deliveryStartTime}" filterMatchMode="contains">
+                            <h:outputText value="#{delivery.deliveryStartTime}" converter="dateConverter" />
+                        </p:column>
+                        
+                        <p:column headerText="End Time" sortBy="#{delivery.deliveryEndTime}" filterBy="#{delivery.deliveryEndTime}" filterMatchMode="contains">
+                            <h:outputText value="#{delivery.deliveryEndTime}" converter="dateConverter" />
+                        </p:column>
+                        
+                        <p:column headerText="Employee ID" sortBy="#{delivery.employee.employeeId}" filterBy="#{delivery.employee.employeeId}" filterMatchMode="contains">
+                            <h:outputText value="#{delivery.employee.employeeId}" />
+                        </p:column>
+                        
+                        <p:column headerText="Action" style="text-align: center;">
+                            <p:commandButton update=":deliveryManagementTabView:ccViewDelivery:formViewDelivery" 
+                                             oncomplete="PF('dialogViewDelivery').show()" 
+                                             icon="ui-icon-document" title="View">
+                                <f:setPropertyActionListener value="#{delivery}" target="#{deliveryManagementManagedBean.viewDeliveryManagedBean.deliveryToView}" />
+                            </p:commandButton>
+                            
+                            <p:commandButton update=":deliveryManagementTabView:formUpdateDelivery" 
+                                             oncomplete="PF('deliveryManagementTabView').select(2)"
+                                             actionListener="#{deliveryManagementManagedBean.doUpdate}" 
+                                             icon="ui-icon-pencil" title="Update">
+                                <f:attribute name="deliveryToUpdate" value="#{delivery}" />
+                            </p:commandButton>
+                        </p:column>
+                        
+                    </p:dataTable>
+                        
+                        
+                    <p:schedule widgetVar="schedule" 
+                                value="#{deliveryManagementManagedBean.eventModel}" 
+                        rendered="#{deliveryManagementManagedBean.checkRadioCalendar()}">
+                                    
+                                    
+                    </p:schedule>
+                    
+                    
+                </h:form>
+                
+                <ez:viewDelivery id="ccViewDelivery" />
+                
+            </p:tab>
+            
+            <p:tab title="Filter Delivery Service">
+                <h:form>
+                    
+                    <p:growl showDetail="true"/>
+                    
+                    <p:menuButton value="Filter By:">
+                        <p:menuitem value="Year" update="@form" actionListener="#{filterDeliveryManagedBean.updateSelection}">
+                            <f:attribute name="selection" value="year" />
+                        </p:menuitem>
+                        <p:menuitem value="Specific Date" update="@form" actionListener="#{filterDeliveryManagedBean.updateSelection}">
+                            <f:attribute name="selection" value="date" />
+                        </p:menuitem>
+                        <p:menuitem value="Interval" update="@form" actionListener="#{filterDeliveryManagedBean.updateSelection}">
+                            <f:attribute name="selection" value="interval" />
+                        </p:menuitem>
+                    </p:menuButton>
+                    <p:separator />
+                    
+                    
+                    
+                    <p:dataTable id="dataTableFilterDelivery" widgetVar="dataTableFilterDelivery" value="#{filterDeliveryManagedBean.filteredDeliveries}"
+                                 var="delivery"
+                                 rowKey="#{delivery.deliveryId}" rowIndexVar="row"
+                                 paginatorAlwaysVisible="false" paginatorPosition="top"
+                                 rows="10" paginator="true" paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}" rowsPerPageTemplate="10,20,50">
+                        
+                        <f:facet name="header">
+                            <p:inputMask id="year" mask="9999" placeholder="2020"
+                                         value="#{filterDeliveryManagedBean.yearToFilter}" 
+                                         rendered="#{filterDeliveryManagedBean.isYearFilterSelected}" />
+                                     
+                            <p:datePicker value="#{filterDeliveryManagedBean.dateToFilter}"
+                                          rendered="#{filterDeliveryManagedBean.isDateFilterSelected}" 
+                                          converter="dateConverter"/>
+                            
+                            <p:outputLabel value="From: " rendered="#{filterDeliveryManagedBean.isIntervalFilterSelected}"  />
+                            <p:datePicker value="#{filterDeliveryManagedBean.startDateFilter}"
+                                          rendered="#{filterDeliveryManagedBean.isIntervalFilterSelected}" 
+                                          converter="dateConverter"/>
+                            <p:outputLabel value="To: " rendered="#{filterDeliveryManagedBean.isIntervalFilterSelected}" />
+                            <p:datePicker value="#{filterDeliveryManagedBean.endDateFilter}"
+                                          rendered="#{filterDeliveryManagedBean.isIntervalFilterSelected}" 
+                                          converter="dateConverter"/>
+                            
+                            <p:commandButton value="Start Filtering" 
+                                             actionListener="#{filterDeliveryManagedBean.filter}" 
+                                             process="@form"
+                                             update="@form"/>
+                            
+                        </f:facet>
+                        
+                        
+                        <p:column headerText="Location Address" sortBy="#{delivery.locationAddress}" filterBy="#{delivery.locationAddress}" filterMatchMode="contains">
+                            <h:outputText value="#{delivery.locationAddress}" />
+                        </p:column>
+                        
+                        <p:column headerText="Postal Code" sortBy="#{delivery.postalCode}" filterBy="#{delivery.postalCode}" filterMatchMode="contains">
+                            <h:outputText value="#{delivery.postalCode}" />
+                        </p:column>
+                        
+                        <p:column headerText="Start Time" sortBy="#{delivery.deliveryStartTime}" filterBy="#{delivery.deliveryStartTime}" filterMatchMode="contains">
+                            <h:outputText value="#{delivery.deliveryStartTime}" converter="dateConverter" />
+                        </p:column>
+                        
+                        <p:column headerText="End Time" sortBy="#{delivery.deliveryEndTime}" filterBy="#{delivery.deliveryEndTime}" filterMatchMode="contains">
+                            <h:outputText value="#{delivery.deliveryEndTime}" converter="dateConverter" />
+                        </p:column>
+                        
+                        <p:column headerText="Employee ID" sortBy="#{delivery.employee.employeeId}" filterBy="#{delivery.employee.employeeId}" filterMatchMode="contains">
+                            <h:outputText value="#{delivery.employee.employeeId}" />
+                        </p:column>
+                        
+                    </p:dataTable>
+                    
+                </h:form>
+            </p:tab>
+            
+            
+            <p:tab title="Update Delivery Service">
+                
+                <h:form id="formUpdateDelivery">
+                    
+                    <p:growl id="growl" showDetail="true" />
+                    
+                    <p:separator />
+                    
+                    <p:panelGrid style="width: 100%; size: auto;" >
+                        
+                        <p:row>
+                            <p:column>
+                                <p:outputLabel value="Delivery ID: " />
+                            </p:column>
+                            <p:column>
+                                <p:outputLabel id="deliveryId" value="#{deliveryManagementManagedBean.selectedDeliveryToUpdate.deliveryId}"/>
+                            </p:column>
+                            <p:column>
+                                <p:message for="deliveryId" />
+                            </p:column>
+                        </p:row>
+                        
+                        <p:row>
+                            <p:column>
+                                <p:outputLabel value="Location Address: " />
+                            </p:column>
+                            <p:column>
+                                <p:inputText id="addressUpdate" value="#{deliveryManagementManagedBean.addressUpdate}" required="true">
+                                    <f:validateLength minimum="1" />
+                                </p:inputText>
+                            </p:column>
+                            <p:column>
+                                <p:message for="addressUpdate" />
+                            </p:column>
+                        </p:row>
+                        
+                        <p:row>
+                            <p:column>
+                                <p:outputLabel value="Postal Code: " />
+                            </p:column>
+                            <p:column>
+                                <p:inputMask id="postalCodeUpdate" mask="999999" value="#{deliveryManagementManagedBean.postalCodeUpdate}" required="true">
+                                    <f:validateLength minimum="6" />
+                                </p:inputMask>
+                            </p:column>
+                            <p:column>
+                                <p:message for="postalCodeUpdate" />
+                            </p:column>
+                        </p:row>
+                        
+                        
+                        <p:row>
+                            <p:column>
+                                <p:outputLabel value="Delivery Start At " />
+                            </p:column>
+                            <p:column>
+                                <p:datePicker id="startTimeUpdate"
+                                              value="#{deliveryManagementManagedBean.startTimeUpdate}" 
+                                              showTime="true" showSeconds="true" 
+                                              hideOnDateTimeSelect ="true"
+                                              required="true" converter="dateConverter" />
+                            </p:column>
+                            <p:column>
+                                <p:message for="startTimeUpdate" />
+                            </p:column>
+                        </p:row>
+                        
+                        <p:row>
+                            <p:column>
+                                <p:outputLabel value="Delivery End At " />
+                            </p:column>
+                            <p:column>
+                                <p:datePicker id="endTimeUpdate" 
+                                              value="#{deliveryManagementManagedBean.endTimeUpdate}" 
+                                              showTime="true" showSeconds="true" 
+                                              hideOnDateTimeSelect ="true"
+                                              required="true" converter="dateConverter" />
+                            </p:column>
+                            <p:column>
+                                <p:message for="endTimeUpdate" />
+                            </p:column>
+                        </p:row>
+                        
+                        <p:row>
+                            <p:column>
+                                <p:outputLabel value="Assigned Employee ID " />
+                            </p:column>
+                            <p:column>
+                                <p:outputLabel id="employeeIdUpdate" value="#{deliveryManagementManagedBean.employeeIdUpdate}" />
+                            </p:column>
+                            <p:column>
+                                <p:message for="employeeIdUpdate" />
+                            </p:column>
+                        </p:row>
+                        
+                        
+                        <p:row>
+                            <p:column colspan="3">
+                                <p:commandButton process="@form" 
+                                                 update="@form deliveryManagementTabView:formReassignEmployee" 
+                                                 actionListener="#{deliveryManagementManagedBean.updateAvailableEmployeeSelection}"
+                                                 oncomplete="PF('dialogReassignEmployee').show()"
+                                                 value="Re-Assign Employee">
+                                    
+                                </p:commandButton>
+                                
+                                <p:commandButton process="@form"
+                                                 update="@form deliveryManagementTabView:formAllDeliveries"
+                                                 actionListener="#{deliveryManagementManagedBean.updateDelivery}" 
+                                                 value="Update">
+                                    <p:confirm header="Confirmation" message="Are you sure about the update?" icon="ui-icon-alert" />
+                                </p:commandButton>
+                            </p:column>
+                        </p:row>
+                        
+                    </p:panelGrid>
+                    
+                    <p:confirmDialog global="true" showEffect="fade" hideEffect="fade">
+                        <p:commandButton value="Yes" type="button" styleClass="ui-confirmdialog-yes" icon="ui-icon-check" />
+                        <p:commandButton value="No" type="button" styleClass="ui-confirmdialog-no" icon="ui-icon-close" />
+                    </p:confirmDialog>
+                    
+                </h:form>
+                
+                <h:form id="formReassignEmployee">
+                    <p:dialog id="dialogReassignEmployee" widgetVar="dialogReassignEmployee" header="Assign Employee" closable="true">
+                        
+                        <p:panelGrid>
+                            <p:row>
+                                <p:column>
+                                    <p:outputLabel value="From: " />
+                                </p:column>
+                                <p:column>
+                                    <p:outputLabel value="#{deliveryManagementManagedBean.startTimeUpdate}" converter="dateConverter" />
+                                </p:column>
+                            </p:row>
+                            
+                            <p:row>
+                                <p:column>
+                                    <p:outputLabel value="To: " />
+                                </p:column>
+                                <p:column>
+                                    <p:outputLabel value="#{deliveryManagementManagedBean.endTimeUpdate}" converter="dateConverter" />
+                                </p:column>
+                            </p:row>
+                            
+                            <p:row>
+                                <p:column>
+                                    <p:outputLabel value="Available Employees " />
+                                </p:column>
+                                <p:column>
+                                    <p:selectOneMenu value="#{deliveryManagementManagedBean.employeeIdUpdate}">
+                                        <f:selectItems value="#{deliveryManagementManagedBean.availableEmployee}" var="employee" itemLabel="#{employee.employeeId}" itemValue="#{employee.employeeId}" />
+                                    </p:selectOneMenu>
+                                </p:column>
+                            </p:row>
+                            
+                            <p:row>
+                                <p:column colspan="2">
+                                    <p:commandButton process="@form"
+                                                     update="deliveryManagementTabView:formUpdateDelivery"
+                                                     oncomplete="PF('dialogReassignEmployee').hide()"
+                                                     value="Confirm" />
+                                    <p:commandButton value="Cancel" oncomplete="PF('dialogReassignEmployee').hide()" />
+                                </p:column>
+                            </p:row>
+                            
+                        </p:panelGrid>
+                        
+                    </p:dialog>
+                </h:form>
+                
+            </p:tab>
+            
+            
+        </p:tabView>
+        
+    </ui:define>
+    
+</ui:composition>

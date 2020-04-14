@@ -5,7 +5,10 @@
  */
 package ejb.session.stateless;
 
+import entity.Transaction;
 import javax.ejb.Local;
+import util.exception.CreateNewTransactionException;
+import util.exception.CustomerNotFoundException;
 
 /**
  *
@@ -13,5 +16,7 @@ import javax.ejb.Local;
  */
 @Local
 public interface TransactionSessionBeanLocal {
+
+    public Transaction createNewTransaction(Transaction newTransaction, Long customerId) throws CustomerNotFoundException, CreateNewTransactionException;
     
 }
