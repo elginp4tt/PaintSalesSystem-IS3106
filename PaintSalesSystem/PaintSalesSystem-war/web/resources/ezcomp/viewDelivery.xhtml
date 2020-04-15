@@ -1,0 +1,86 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:cc="http://xmlns.jcp.org/jsf/composite"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:f="http://xmlns.jcp.org/jsf/core">
+
+    <!-- INTERFACE -->
+    <cc:interface>
+    </cc:interface>
+
+    <!-- IMPLEMENTATION -->
+    <cc:implementation>
+        
+        <h:form id="formViewDelivery" >
+            <p:dialog id="dialogViewDelivery" widgetVar="dialogViewDelivery" header="View delivery details" closable="true">
+                <p:panelGrid>
+                    <p:row>
+                        <p:column>
+                            <h:outputLabel value="Delivery ID: " />
+                        </p:column>
+                        <p:column>
+                            <h:outputLabel value="#{viewDeliveryManagedBean.deliveryToView.deliveryId}" />
+                        </p:column>
+                    </p:row>
+                    
+                    <p:row>
+                        <p:column>
+                            <h:outputLabel value="Delivery Location: " />
+                        </p:column>
+                        
+                        <p:column>
+                            <h:outputLabel value="#{viewDeliveryManagedBean.deliveryToView.locationAddress}" />
+                        </p:column>
+                    </p:row>
+                    
+                    <p:row>
+                        <p:column>
+                            <h:outputLabel value="Postal Code: " />
+                        </p:column>
+                        
+                        <p:column>
+                            <h:outputLabel value="#{viewDeliveryManagedBean.deliveryToView.postalCode}" />
+                        </p:column>
+                    </p:row>
+                    
+                    <p:row>
+                        <p:column>
+                            <h:outputLabel value="Delivery start time: " />
+                        </p:column>
+                        
+                        <p:column>
+                            <h:outputLabel value="#{viewDeliveryManagedBean.deliveryToView.deliveryStartTime}" converter="dateConverter" /> 
+                        </p:column>
+                    </p:row>
+                    
+                     <p:row>
+                        <p:column>
+                            <h:outputLabel value="Delivery end time: " />
+                        </p:column>
+                        
+                        <p:column>
+                            <h:outputLabel value="#{viewDeliveryManagedBean.deliveryToView.deliveryEndTime}" converter="dateConverter" />
+                        </p:column>
+                    </p:row>
+                    
+                    <p:row>
+                        <p:column>
+                            <h:outputLabel value="Assigned Employee ID: " />
+                        </p:column>
+                        
+                        <p:column>
+                            <h:outputLabel value="#{viewDeliveryManagedBean.deliveryToView.employee.employeeId}" />
+                        </p:column>
+                    </p:row>
+                    
+                </p:panelGrid>
+                
+            </p:dialog>
+            
+        </h:form>
+        
+        
+    </cc:implementation>
+</html>

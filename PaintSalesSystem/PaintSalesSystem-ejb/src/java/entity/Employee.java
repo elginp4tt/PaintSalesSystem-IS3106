@@ -8,6 +8,7 @@ package entity;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
@@ -57,15 +58,22 @@ public class Employee implements Serializable {
 
     @OneToMany(mappedBy = "employee")
     private List<PaintService> paintServices;
+    
     @OneToMany(mappedBy = "employee")
     private List<Delivery> deliveries;
+    
+    @OneToMany
+    private List<MessageOfTheDay> motds;
 
+    
+    
     public Employee() {
 
         this.salt = CryptographicHelper.getInstance().generateRandomString(32);
 
         paintServices = new ArrayList<>();
         deliveries = new ArrayList<>();
+        motds = new ArrayList<>();
     }
 
     public Employee(String username, String password, String firstName, String lastName, AccessRightEnum accessRightEnum) {
@@ -178,35 +186,35 @@ public class Employee implements Serializable {
     public void setSalt(String salt) {
         this.salt = salt;
     }
-
-    /**
-     * @return the paintServices
-     */
-    public List<PaintService> getPaintServices() {
-        return paintServices;
-    }
-
-    /**
-     * @param paintServices the paintServices to set
-     */
-    public void setPaintServices(List<PaintService> paintServices) {
-        this.paintServices = paintServices;
-    }
-
-    /**
-     * @return the deliveries
-     */
+    
     public List<Delivery> getDeliveries() {
         return deliveries;
     }
-
-    /**
-     * @param deliveries the deliveries to set
-     */
+    
     public void setDeliveries(List<Delivery> deliveries) {
         this.deliveries = deliveries;
     }
 
+    public void addDelivery(Delivery delivery)
+    {
+        deliveries.add(delivery);
+        delivery.setEmployee(this);
+    }
+    
+    public List<PaintService> getPaintServices() {
+        return paintServices;
+    }
+    
+    public void setPaintServices(List<PaintService> paintServices) {
+        this.paintServices = paintServices;
+    }
+    
+    public void addPaintService(PaintService paintService)
+    {
+        paintServices.add(paintService);
+        paintService.setEmployee(this);
+    }
+    
     public AccessRightEnum getAccessRightEnum() {
         return accessRightEnum;
     }
@@ -214,5 +222,18 @@ public class Employee implements Serializable {
     public void setAccessRightEnum(AccessRightEnum accessRightEnum) {
         this.accessRightEnum = accessRightEnum;
     }
+    
+    public List<MessageOfTheDay> getMotds() {
+        return motds;
+    }
+    
+    public void addMessageOfTheDay(MessageOfTheDay motd)
+    {
+        motds.add(motd);
+    }
 
+    public void setMotds(List<MessageOfTheDay> motds) {
+        this.motds = motds;
+    }
+    
 }

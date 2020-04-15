@@ -40,26 +40,22 @@ public class Delivery implements Serializable {
     @Temporal(TemporalType.TIMESTAMP)
     @Column(nullable = false)
     private Date deliveryEndTime;
-    
     //Edited to directly retrieve employee and deliveryServiceTransaction ids from entities
     //Removed setters for said fields
     @ManyToOne(optional = false)
-    @JoinColumn(nullable = true)
+    @JoinColumn(nullable = false)
     private Employee employee;
-    @OneToOne(mappedBy = "delivery")
+    @OneToOne(optional = false)
+    @JoinColumn(nullable = false)
     private DeliveryServiceTransaction deliveryServiceTransaction;
 
     public Delivery() {
     }
     
     
-    //Edited to only require employee upon initialization
-    public Delivery(Employee employee) {
-        this();
-        this.employee = employee;
+    public Employee getEmployee() {
+        return employee;
     }
-    
-    
     
     public void setEmployee(Employee employee) 
     {
@@ -117,30 +113,8 @@ public class Delivery implements Serializable {
         this.deliveryId = deliveryId;
     }
     
-    
-    
-    /**
-     * @return the deliveryServiceTransactionId
-     */
-    //Edited to get id from entity instead
-    public Long getDeliveryServiceTransactionId() {
-        return this.deliveryServiceTransaction.getTransactionLineItemId();
-    }
 
-    /**
-     * @return the employeeId
-     */
-    //Edited to get id from entity instead
-    public Long getEmployeeId() {
-        return this.employee.getEmployeeId();
-    }
-
-    /**
-     * @return the employee
-     */
-    public Employee getEmployee() {
-        return employee;
-    }
+    
 
     
 

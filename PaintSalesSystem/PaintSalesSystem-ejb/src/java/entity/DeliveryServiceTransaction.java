@@ -5,6 +5,7 @@
  */
 package entity;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.OneToOne;
 /**
@@ -14,35 +15,28 @@ import javax.persistence.OneToOne;
 @Entity
 public class DeliveryServiceTransaction extends TransactionLineItem {
     
-    @OneToOne
+    @OneToOne(mappedBy = "deliveryServiceTransaction")
     private Delivery delivery;
 
-    public DeliveryServiceTransaction() {
+    public DeliveryServiceTransaction() 
+    {
     }
 
-    //Edited to take in associated delivery entity only
-    public DeliveryServiceTransaction(Delivery delivery) {
-        this();
-        this.delivery = delivery;
-    }   
-
-//    @Override
-//    public String toString() {
-//        return "entity.DeliveryServiceTransaction[ id=" + deliveryServiceTransactionId + " ]";
-//    }
-
-    /**
-     * @return the delivery
-     */
     public Delivery getDelivery() {
         return delivery;
     }
-
-    /**
-     * @param delivery the delivery to set
-     */
-    public void setDelivery(Delivery delivery) {
+    
+    public void setDelivery(Delivery delivery)
+    {
         this.delivery = delivery;
+        delivery.setDeliveryServiceTransaction(this);
     }
+    
+    
+    
+    
+
+    
+    
     
 }

@@ -32,7 +32,7 @@
                 <p:messages id="messages" redisplay="false" closable="true" />
 
                 <p:dataTable id="dataTableAllPaints" widgetVar="dataTableAllPaints" value="#{paintManagedBean.paints}" var="paint" rowKey="#{paint.paintId}" rowIndexVar="row"
-                             filteredValue="#{paintManagedBean.filteredPaintEntities}"
+                             filteredValue="#{paintManagedBean.filteredPaints}"
                              rows="10" paginator="true" paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}" rowsPerPageTemplate="10,20,50">
 
                     <f:facet name="header">

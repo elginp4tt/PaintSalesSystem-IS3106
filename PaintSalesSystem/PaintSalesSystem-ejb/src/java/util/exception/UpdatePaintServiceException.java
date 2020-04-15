@@ -7,13 +7,17 @@ package util.exception;
 
 /**
  *
- * @author Ko Jia Le
+ * @author CHEN BINGSEN
  */
-public class CreateNewTransactionException extends Exception {
-    public CreateNewTransactionException() {
+public class UpdatePaintServiceException extends Exception
+{
+
+    public UpdatePaintServiceException() {
     }
 
-    public CreateNewTransactionException(String msg) {
-        super(msg);
+    public UpdatePaintServiceException(String message) {
+        super(message);
     }
+    
+    
 }

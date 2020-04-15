@@ -17,6 +17,8 @@ import javax.persistence.Query;
 import util.exception.CreateNewTransactionException;
 import util.exception.CustomerNotFoundException;
 import util.exception.CustomerTransactionNotFound;
+import javax.annotation.Resource;
+import javax.ejb.EJBContext;
 
 /**
  *
@@ -39,6 +41,9 @@ public class TransactionSessionBean implements TransactionSessionBeanLocal {
 
     @PersistenceContext(unitName = "PaintSalesSystem-ejbPU")
     private EntityManager em;
+
+    @Resource
+    private EJBContext eJBContext;
 
     public Transaction createTransaction(Customer customer, List<TransactionLineItem> transactionLineItems) throws CreateNewTransactionException {
         Customer customerToUpdate;
@@ -85,20 +90,45 @@ public class TransactionSessionBean implements TransactionSessionBeanLocal {
                 if (t.getTransactionId() == transactionId) {
                     t.getTransactionLineItems().size();
                     return t; //should i retrieve all the info by paint service/paint/delivery transactoin here? Then let client side to determine what data they want to show
-                    }
+                }
             }
             throw new CustomerTransactionNotFound("The customer's individual transaction is not found");
         } catch (CustomerTransactionNotFound customerTransactionNotFound) {
             throw customerTransactionNotFound;
         }
     }
-    
-    public List<Transaction> retrieveAllTransactionByAdmin (){
+
+    public List<Transaction> retrieveAllTransactionByAdmin() {
         Query query = em.createQuery("SELECT t FROM Transaction t");
-        List <Transaction> transactions = query.getResultList();
-         for (Transaction t : transactions) {
+        List<Transaction> transactions = query.getResultList();
+        for (Transaction t : transactions) {
             t.getTransactionLineItems().size(); //Not sure if this lazy loading works. Cause "2" relationship away
         }
         return transactions;
+    }
+
+    public Transaction newcreateNewTransaction(Transaction newTransaction, Long customerId) throws CustomerNotFoundException, CreateNewTransactionException {
+        if (newTransaction != null) {
+            try {
+                Customer customer = customerEntitySessionBeanLocal.retrieveCustomerByCustomerId(customerId);
+                newTransaction.setCustomer(customer);
+                customer.getTransactions().add(newTransaction);
+
+                em.persist(newTransaction);
+
+                for (TransactionLineItem transactionLineItem : newTransaction.getTransactionLineItems()) {
+                    //debit quantity
+                    em.persist(transactionLineItem);
+                }
+
+                em.flush();
+                return newTransaction;
+            } catch (Exception ex) {
+                eJBContext.setRollbackOnly();
+                throw new CreateNewTransactionException(ex.getMessage());
+            }
+        } else {
+            throw new CreateNewTransactionException("Transaction information not provided");
+        }
     }
 }

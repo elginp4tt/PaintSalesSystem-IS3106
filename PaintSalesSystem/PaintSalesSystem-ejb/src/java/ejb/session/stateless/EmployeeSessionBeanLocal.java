@@ -5,8 +5,13 @@
  */
 package ejb.session.stateless;
 
+import entity.Delivery;
 import entity.Employee;
+<<<<<<< HEAD
 
+=======
+import entity.PaintService;
+>>>>>>> cfa6c531635e14e8dad29e7256d29ddb482d819c
 import java.util.Date;
 import java.util.List;
 import javax.ejb.Local;
@@ -36,8 +41,15 @@ public interface EmployeeSessionBeanLocal {
     public void deleteEmployee(Long employeeId) throws EmployeeNotFoundException, DeleteEmployeeException;
 
     public Employee retrieveEmployeeById(Long employeeId) throws EmployeeNotFoundException;
+<<<<<<< HEAD
     
     public List<Employee> retrieveAvailableEmployeeByDate(Date startTime, Date endTime);
+=======
+
+    public boolean checkOverlap(Date startA, Date endA, Date startB, Date endB);
+
+    public List<Employee> retrieveAvailableEmployee(Date startTime, Date endTime, Long deliveryId, Long paintServicId);
+>>>>>>> cfa6c531635e14e8dad29e7256d29ddb482d819c
 
     public Employee employeeLogin(String username, String password) throws InvalidLoginCredentialException;
 

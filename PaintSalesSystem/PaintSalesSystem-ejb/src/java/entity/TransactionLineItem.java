@@ -12,6 +12,8 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.Inheritance;
+import javax.persistence.InheritanceType;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 
@@ -20,6 +22,7 @@ import javax.persistence.ManyToOne;
  * @author matto
  */
 @Entity
+@Inheritance(strategy = InheritanceType.JOINED)
 public class TransactionLineItem implements Serializable {
 
     private static final long serialVersionUID = 1L;
@@ -59,14 +62,21 @@ public class TransactionLineItem implements Serializable {
 
     @Override
     public boolean equals(Object object) {
-        // TODO: Warning - this method won't work in the case the transactionLineItemId fields are not set
-        if (!(object instanceof TransactionLineItem)) {
+        
+        
+        if (!(object instanceof TransactionLineItem)) 
+        {
             return false;
         }
+        
         TransactionLineItem other = (TransactionLineItem) object;
-        if ((this.transactionLineItemId == null && other.transactionLineItemId != null) || (this.transactionLineItemId != null && !this.transactionLineItemId.equals(other.transactionLineItemId))) {
+        
+        
+        //purposedly added the new condition(1st) to compare two transactionlineitems with null ID
+        if ((this.transactionLineItemId == null && other.transactionLineItemId == null) || (this.transactionLineItemId == null && other.transactionLineItemId != null) || (this.transactionLineItemId != null && !this.transactionLineItemId.equals(other.transactionLineItemId))) {
             return false;
         }
+        
         return true;
     }
 

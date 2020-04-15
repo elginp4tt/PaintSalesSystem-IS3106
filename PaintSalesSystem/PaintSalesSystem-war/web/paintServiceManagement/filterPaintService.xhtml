@@ -1,0 +1,100 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+                template="/template/defaultTemplate.xhtml"
+                xmlns:f="http://xmlns.jcp.org/jsf/core"
+                xmlns:ez="http://xmlns.jcp.org/jsf/composite/ezcomp"
+                xmlns:p="http://primefaces.org/ui"
+                xmlns:h="http://xmlns.jcp.org/jsf/html">
+    
+    <ui:define name="content">
+        
+        <ez:Breadcrumb pageName="filterPaintService" />
+        <h3>Paint Service Management</h3>
+        
+        <p:tabView>
+            <p:tab title="Filter Paint Service">
+                <h:form>
+                    
+                    <p:growl showDetail="true"/>
+                    
+                    <p:menubar>
+                        <p:submenu label="Filter By">
+                            <p:menuitem value="Year" update="@form" actionListener="#{filterPaintServiceManagedBean.updateSelection}">
+                                <f:attribute name="selection" value="year" />
+                            </p:menuitem>
+                            <p:menuitem value="Specific Date" update="@form" actionListener="#{filterPaintServiceManagedBean.updateSelection}">
+                                <f:attribute name="selection" value="date" />
+                            </p:menuitem>
+                            <p:menuitem value="Interval" update="@form" actionListener="#{filterPaintServiceManagedBean.updateSelection}">
+                                <f:attribute name="selection" value="interval" />
+                            </p:menuitem>
+                        </p:submenu>
+                            
+                        <f:facet name="options">
+                            <p:inputMask id="year" mask="9999" placeholder="2020"
+                                         value="#{filterPaintServiceManagedBean.yearToFilter}" 
+                            rendered="#{filterPaintServiceManagedBean.isYearFilterSelected}" />
+                            
+                            <p:spacer width="20" rendered="#{filterDeliveryManagedBean.isYearFilterSelected}" />
+                                             
+                            <p:datePicker value="#{filterPaintServiceManagedBean.dateToFilter}"
+                                          placeholder="Select date"
+                                          rendered="#{filterPaintServiceManagedBean.isDateFilterSelected}" 
+                            converter="dateConverter"/>
+                                              
+                            <p:outputLabel value="From: " rendered="#{filterPaintServiceManagedBean.isIntervalFilterSelected}"  />
+                            <p:datePicker value="#{filterPaintServiceManagedBean.startDateFilter}"
+                                          rendered="#{filterPaintServiceManagedBean.isIntervalFilterSelected}" 
+                                          converter="dateConverter"/>
+                            <p:outputLabel value="To: " rendered="#{filterPaintServiceManagedBean.isIntervalFilterSelected}" />
+                            <p:datePicker value="#{filterPaintServiceManagedBean.endDateFilter}"
+                                          rendered="#{filterPaintServiceManagedBean.isIntervalFilterSelected}" 
+                            converter="dateConverter"/>
+                                              
+                            <p:commandButton value="Start Filtering" 
+                                             actionListener="#{filterPaintServiceManagedBean.filter}" 
+                                             process="@form"
+                                             update="@form"/>
+                        </f:facet>
+                    </p:menubar>
+                    <p:separator />
+                        
+                    
+                    
+                    <p:dataTable id="dataTableFilterPaintService" widgetVar="dataTableFilterPaintService" value="#{filterPaintServiceManagedBean.filteredPaintServices}"
+                                 var="ps"
+                                 rowKey="#{ps.paintServiceId}" rowIndexVar="row"
+                                 paginatorAlwaysVisible="false" paginatorPosition="top"
+                                 rows="10" paginator="true" paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}" rowsPerPageTemplate="10,20,50">
+                        
+                        
+                        <p:column headerText="Location Address" sortBy="#{ps.locationAddress}" filterBy="#{ps.locationAddress}" filterMatchMode="contains">
+                            <h:outputText value="#{ps.locationAddress}" />
+                        </p:column>
+                        
+                        <p:column headerText="Postal Code" sortBy="#{ps.postalCode}" filterBy="#{ps.postalCode}" filterMatchMode="contains">
+                            <h:outputText value="#{ps.postalCode}" />
+                        </p:column>
+                        
+                        <p:column headerText="Start Time" sortBy="#{ps.paintServiceStartTime}" filterBy="#{ps.paintServiceStartTime}" filterMatchMode="contains">
+                            <h:outputText value="#{ps.paintServiceStartTime}" converter="dateConverter" />
+                        </p:column>
+                        
+                        <p:column headerText="End Time" sortBy="#{ps.paintServiceEndTime}" filterBy="#{ps.paintServiceEndTime}" filterMatchMode="contains">
+                            <h:outputText value="#{ps.paintServiceEndTime}" converter="dateConverter" />
+                        </p:column>
+                        
+                        <p:column headerText="Employee ID" sortBy="#{ps.employee.employeeId}" filterBy="#{ps.employee.employeeId}" filterMatchMode="contains">
+                            <h:outputText value="#{ps.employee.employeeId}" />
+                        </p:column>
+                        
+                    </p:dataTable>
+                    
+                </h:form>
+            </p:tab>
+        </p:tabView>
+        
+    </ui:define>
+    
+</ui:composition>
