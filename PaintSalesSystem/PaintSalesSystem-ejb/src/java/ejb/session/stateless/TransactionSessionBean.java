@@ -44,7 +44,9 @@ public class TransactionSessionBean implements TransactionSessionBeanLocal {
 
     @Resource
     private EJBContext eJBContext;
-
+    
+    
+    @Override
     public Transaction createTransaction(Customer customer, List<TransactionLineItem> transactionLineItems) throws CreateNewTransactionException {
         Customer customerToUpdate;
         try {
@@ -66,6 +68,7 @@ public class TransactionSessionBean implements TransactionSessionBeanLocal {
         return newTransaction;
     }
 
+    @Override
     public List<Transaction> retrieveAllTransactionByUser(Long custId) throws CustomerTransactionNotFound {
         Customer customer;
         try {
@@ -82,6 +85,7 @@ public class TransactionSessionBean implements TransactionSessionBeanLocal {
         return customerTransactions;
     }
 
+    @Override
     public Transaction retrieveIndividualTransactionByUser(Long custId, Long transactionId) throws CustomerTransactionNotFound {
         try {
             List<Transaction> transactions = retrieveAllTransactionByUser(custId);
@@ -98,6 +102,7 @@ public class TransactionSessionBean implements TransactionSessionBeanLocal {
         }
     }
 
+    @Override
     public List<Transaction> retrieveAllTransactionByAdmin() {
         Query query = em.createQuery("SELECT t FROM Transaction t");
         List<Transaction> transactions = query.getResultList();
@@ -107,6 +112,7 @@ public class TransactionSessionBean implements TransactionSessionBeanLocal {
         return transactions;
     }
 
+    @Override
     public Transaction newcreateNewTransaction(Transaction newTransaction, Long customerId) throws CustomerNotFoundException, CreateNewTransactionException {
         if (newTransaction != null) {
             try {

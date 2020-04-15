@@ -73,6 +73,8 @@ public class DataInitSessionBean {
             Employee newEmployee2 = new Employee("employee1", "password", "Default", "employee", AccessRightEnum.NORMAL);
             Employee newEmployee3 = new Employee("employee2", "password", "Default", "employee", AccessRightEnum.NORMAL);
             Customer newCustomer1 = new Customer("customer1", "customer1", "customer@gmail.com", "customer address", "customer1", "password");
+            Customer newCustomer2 = new Customer("customer2", "customer2", "customer2@gmail.com", "customer 2 address", "customer2", "password");
+            Customer newCustomer3 = new Customer("customer3", "customer3", "customer3@gmail.com", "customer 3 address", "customer3", "password");
             Transaction newTransaction1 = new Transaction();
 
             Delivery newDelivery1 = new Delivery();
@@ -139,6 +141,8 @@ public class DataInitSessionBean {
             newEmployee1.addMessageOfTheDay(messageOfTheDay2);
 
             em.persist(newCustomer1);
+            em.persist(newCustomer2);
+            em.persist(newCustomer3);
             em.persist(newTransaction1);
             em.persist(newDeliveryTransaction1);
             em.persist(newDeliveryTransaction2);
