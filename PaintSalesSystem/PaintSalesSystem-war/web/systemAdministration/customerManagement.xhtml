@@ -1,0 +1,174 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+                xmlns:h="http://xmlns.jcp.org/jsf/html"
+                xmlns:f="http://xmlns.jcp.org/jsf/core"
+                template="/template/defaultTemplate.xhtml"
+                xmlns:ez="http://xmlns.jcp.org/jsf/composite/ezcomp"
+                xmlns:p="http://primefaces.org/ui">
+
+    <ui:define name="content">
+        <div>
+            <h3>Customer Management</h3>
+
+            <h:form id="formAllCustomer">
+                <p:messages id="messages" redisplay="false" closable="true" />
+
+                <p:dataTable id="dataTableAllCustomers" widgetVar="dataTableAllCustomers" value="#{customerManagedBean.customers}" 
+                             var="customer" rowKey="#{customer.customerId}" rowIndexVar="row"
+                             filteredValue="#{customerManagedBean.filteredCustomer}"
+                             rows="10" paginator="true" paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}" rowsPerPageTemplate="10,20,50">
+
+                    <f:facet name="header">
+                        <p:outputPanel style="text-align: right;">
+                            <h:outputText value="Search all fields:" />
+                            <p:inputText id="globalFilter" onkeyup="PF('dataTableAllCustomers').filter()" style="width:300px" placeholder="Enter keyword"/>
+                        </p:outputPanel>
+                    </f:facet>
+
+
+                    <p:column headerText="First Name" sortBy="#{customer.firstName}" filterBy="#{customer.firstName}" filterMatchMode="contains">
+                        <h:outputText value="#{customer.firstName}" />
+                    </p:column>
+
+                    <p:column headerText="Last Name" sortBy="#{customer.lastName}" filterBy="#{customer.lastName}" filterMatchMode="contains">
+                        <h:outputText value="#{customer.lastName}" />
+                    </p:column>
+
+                    <p:column headerText="Email" sortBy="#{customer.email}" filterBy="#{customer.email}" filterMatchMode="contains">
+                        <h:outputText value="#{customer.email}" />
+                    </p:column>
+
+                    <p:column headerText="Home Address" sortBy="#{customer.homeAddress}" filterBy="#{customer.homeAddress}" filterMatchMode="contains">
+                        <h:outputText value="#{customer.homeAddress}" />
+                    </p:column>
+
+                    <p:column headerText="Userame" sortBy="#{customer.username}" filterBy="#{customer.username}" filterMatchMode="contains">
+                        <h:outputText value="#{customer.username}" />
+                    </p:column>
+
+                    <p:column headerText="Action" style="text-align: center;">
+                        <p:commandButton update="ccViewCustomer:formViewCustomer" oncomplete="PF('dialogViewCustomer').show()" icon="ui-icon-document" title="View">
+                            <f:setPropertyActionListener value="#{customer}" target="#{customerManagedBean.customerToView}" />
+                        </p:commandButton>
+                        <p:commandButton actionListener="#{customerManagedBean.doUpdateCustomer}" update="formUpdateCustomer" oncomplete="PF('dialogUpdateCustomer').show()" icon="ui-icon-pencil" title="Update" >
+                            <f:attribute name="customerToUpdate" value="#{customer}"/>
+                        </p:commandButton> 
+                        <p:commandButton actionListener="#{customerManagedBean.deleteCustomer}" update="formAllCustomer:dataTableAllCustomers formAllCustomer:messages" icon="ui-icon-trash">
+                            <f:attribute name="customerToDelete" value="#{customer}" />
+                            <p:confirm header="Confirmation" message="Are you sure you want to delete #{customer.firstName} #{customer.lastName}?" icon="ui-icon-alert" />
+                        </p:commandButton>
+                    </p:column>
+
+                </p:dataTable>
+
+                <p:confirmDialog global="true" showEffect="fade" hideEffect="fade">
+                    <div align="center" draggable ="false">
+                        <p:commandButton value="Yes" type="button" styleClass="ui-confirmdialog-yes" icon="ui-icon-check" />
+                        <p:commandButton value="No" type="button" styleClass="ui-confirmdialog-no" icon="ui-icon-close" />
+                    </div>
+                </p:confirmDialog>
+
+            </h:form>
+
+            <ez:viewCustomer id="ccViewCustomer"/>
+
+            <h:form id="formUpdateCustomer">
+
+                <p:dialog id="dialogUpdateCustomer" widgetVar="dialogUpdateCustomer" header="Update Customer" closable="true">
+
+                    <p:messages id="messagesUpdateCustomer" redisplay="false" />
+
+                    <p:panelGrid>
+
+                        <p:row>
+                            <p:column>
+                                <h:outputLabel value="Customer ID: " />
+                            </p:column>
+                            <p:column>
+                                <h:outputText value="#{customerManagedBean.selectedCustomerToUpdate.customerId}" />
+                            </p:column>
+                            <p:column>
+                                &nbsp;
+                            </p:column>
+                        </p:row>
+
+                        <p:row>
+                            <p:column>
+                                <p:outputLabel for="firstName" value="First Name: " />
+                            </p:column>
+                            <p:column>
+                                <p:inputText id="firstName" value="#{customerManagedBean.selectedCustomerToUpdate.firstName}" placeholder="Customer 1" required="true" requiredMessage="First name is required" />
+                            </p:column>
+                            <p:column>
+                                <p:message for="firstName" />
+                            </p:column>
+                        </p:row>
+
+                        <p:row>
+                            <p:column>
+                                <p:outputLabel for="lastName" value="Last Name: " />
+                            </p:column>
+                            <p:column>
+                                <p:inputText id="lastName" value="#{customerManagedBean.selectedCustomerToUpdate.lastName}" placeholder="Customer 1" required="true" requiredMessage="Last name is required" />
+                            </p:column>
+                            <p:column>
+                                <p:message for="lastName" />
+                            </p:column>
+                        </p:row>
+
+                        <p:row>
+                            <p:column>
+                                <p:outputLabel for="email" value="Email: " />
+                            </p:column>
+                            <p:column>
+                                <p:inputText id="email" value="#{customerManagedBean.selectedCustomerToUpdate.email}" placeholder="customer@domain.com" required="true" requiredMessage="Email is required" />
+                            </p:column>
+                            <p:column>
+                                <p:message for="email" />
+                            </p:column>
+                        </p:row>
+
+                        <p:row>
+                            <p:column>
+                                <p:outputLabel for="homeAddress" value="Home Addresss: " />
+                            </p:column>
+                            <p:column>
+                                <p:inputText id="homeAddress" value="#{customerManagedBean.selectedCustomerToUpdate.homeAddress}" placeholder="Your Home Addresss" required="true" requiredMessage="Home addresss is required" />
+                            </p:column>
+                            <p:column>
+                                <p:message for="homeAddress" />
+                            </p:column>
+                        </p:row>
+
+                        <p:row>
+                            <p:column>
+                                <p:outputLabel for="username" value="Username: " />
+                            </p:column>
+                            <p:column>
+                                <p:inputText id="username" value="#{customerManagedBean.selectedCustomerToUpdate.username}" placeholder="username" required="true" requiredMessage="Username is required" />
+                            </p:column>
+                            <p:column>
+                                <p:message for="username" />
+                            </p:column>
+                        </p:row>           
+
+                        <p:row>
+                            <p:column colspan="3">
+                                <p:commandButton value="Update Customer" update="@form formAllCustomer:dataTableAllCustomers" actionListener="#{customerManagedBean.updateCustomer}" oncomplete="PF('dialogUpdateCustomer').show();" />
+                            </p:column>
+                        </p:row>
+
+                    </p:panelGrid>
+
+                </p:dialog>
+
+            </h:form>
+
+        </div>
+
+    </ui:define>
+
+</ui:composition>
+
+

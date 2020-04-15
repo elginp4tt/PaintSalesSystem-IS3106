@@ -5,7 +5,9 @@
  */
 package ejb.session.singleton;
 
+import ejb.session.stateless.CustomerEntitySessionBeanLocal;
 import ejb.session.stateless.EmployeeSessionBeanLocal;
+import entity.Customer;
 import entity.Employee;
 import javax.annotation.PostConstruct;
 import javax.ejb.EJB;
@@ -26,45 +28,38 @@ import util.exception.EmployeeNotFoundException;
 @Startup
 public class DataInitSessionBean {
 
-
     @PersistenceContext(unitName = "PaintSalesSystem-ejbPU")
     private EntityManager em;
 
     @EJB(name = "EmployeeSessionBeanLocal")
     private EmployeeSessionBeanLocal employeeSessionBeanLocal;
 
-    
-    
-    
+    @EJB
+    private CustomerEntitySessionBeanLocal customerEntitySessionBeanLocal;
+
     public DataInitSessionBean() {
     }
-    
-    
-    
-    
+
     @PostConstruct
-    public void postConstruct(){
-        try
-        {
+    public void postConstruct() {
+        try {
             employeeSessionBeanLocal.retrieveEmployeeById(1l);
-        }
-        catch(EmployeeNotFoundException ex)
-        {
+        } catch (EmployeeNotFoundException ex) {
             initializeData();
         }
     }
-    
-    
-    public void initializeData()
-    {
-        try
-        {
-            employeeSessionBeanLocal.createNewEmployee(new Employee("manager","password","Default","manager",AccessRightEnum.MANAGER));
-            
-        }
-        catch(Exception ex)
-        {
+
+    public void initializeData() {
+        try {
+            employeeSessionBeanLocal.createNewEmployee(new Employee("manager", "password", "Default", "manager", AccessRightEnum.MANAGER));
+            customerEntitySessionBeanLocal.createNewCustomer(new Customer("Customer One", "One", "customerone@gmail.com", "Customer one home address", "customerone", "password"));
+            customerEntitySessionBeanLocal.createNewCustomer(new Customer("Customer Two", "Two", "customertwo@gmail.com", "Customer two home address", "customertwo", "password"));
+        } catch (Exception ex) {
             ex.printStackTrace();
         }
+    }
+
+    public void persist(Object object) {
+        em.persist(object);
     }
 }
