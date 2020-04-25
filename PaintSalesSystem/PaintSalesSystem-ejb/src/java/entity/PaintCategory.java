@@ -33,7 +33,7 @@ public class PaintCategory implements Serializable {
     @Column(nullable = false, unique = true)
     private String categoryName;
     
-    @Column(nullable = false, length = 128)
+    @Column(length = 128)
     @Size(max = 128)
     private String description;
     
