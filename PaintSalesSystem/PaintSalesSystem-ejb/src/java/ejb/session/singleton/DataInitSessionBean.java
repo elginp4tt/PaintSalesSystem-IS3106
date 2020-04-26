@@ -6,24 +6,22 @@
 package ejb.session.singleton;
 
 import ejb.session.stateless.CustomerEntitySessionBeanLocal;
-import ejb.session.stateless.DeliveryEntitySessionBeanLocal;
 import ejb.session.stateless.EmployeeSessionBeanLocal;
-import ejb.session.stateless.PaintServiceEntitySessionBeanLocal;
-import ejb.session.stateless.TransactionSessionBeanLocal;
 import entity.Customer;
 import entity.Delivery;
 import entity.DeliveryServiceTransaction;
 import entity.Employee;
 import entity.MessageOfTheDay;
+import entity.Paint;
+import entity.PaintCategory;
 import entity.PaintService;
 import entity.PaintServiceTransaction;
+import entity.PaintTag;
 import entity.Transaction;
-import entity.TransactionLineItem;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
-import java.util.Calendar;
 import javax.annotation.PostConstruct;
 import javax.ejb.EJB;
 import javax.ejb.Singleton;
@@ -139,6 +137,79 @@ public class DataInitSessionBean {
             newEmployee3.addPaintService(newPaintService2);
             newEmployee1.addMessageOfTheDay(messageOfTheDay1);
             newEmployee1.addMessageOfTheDay(messageOfTheDay2);
+            
+            //adding paint categories
+            PaintCategory pc1 = new PaintCategory("Category 1");
+            PaintCategory pc2 = new PaintCategory("Category 2");
+            PaintCategory pc3 = new PaintCategory("Category 3");
+            em.persist(pc1);
+            em.persist(pc2);
+            em.persist(pc3);
+            
+            //adding tags
+            PaintTag hotTag = new PaintTag("Hot");
+            PaintTag discountTag = new PaintTag("Discount");
+            PaintTag cheapTag = new PaintTag("Cheap");
+            em.persist(hotTag);
+            em.persist(discountTag);
+            em.persist(cheapTag);
+            
+            //adding paints
+            Paint paint1 = new Paint("Paint001", "P001", BigDecimal.valueOf(20.0), 100, 100, 3);
+            paint1.getPaintCategories().add(pc1);
+            pc1.getPaints().add(paint1);
+            paint1.getPaintCategories().add(pc2);
+            pc2.getPaints().add(paint1);
+            paint1.getTags().add(cheapTag);
+            cheapTag.getPaints().add(paint1);
+            em.persist(paint1);
+            em.flush();
+            
+            Paint paint2 = new Paint("Paint002", "P002", BigDecimal.valueOf(50.0), 100, 100, 5);
+            paint2.getPaintCategories().add(pc2);
+            pc2.getPaints().add(paint2);
+            paint2.getPaintCategories().add(pc3);
+            pc3.getPaints().add(paint2);
+            paint2.getTags().add(hotTag);
+            hotTag.getPaints().add(paint2);
+            paint2.getTags().add(discountTag);
+            discountTag.getPaints().add(paint2);
+            em.persist(paint2);
+            em.flush();
+            
+            Paint paint3 = new Paint("Paint003", "P003", BigDecimal.valueOf(10.0), 100, 100, 1);
+            paint3.getPaintCategories().add(pc1);
+            pc1.getPaints().add(paint3);
+            paint3.getPaintCategories().add(pc3);
+            pc3.getPaints().add(paint3);
+            paint3.getTags().add(discountTag);
+            discountTag.getPaints().add(paint3);
+            em.persist(paint3);
+            em.flush();
+            
+            Paint paint4 = new Paint("Paint004", "P004", BigDecimal.valueOf(30.0), 100, 100, 4);
+            paint4.getPaintCategories().add(pc3);
+            pc3.getPaints().add(paint4);
+            paint4.getTags().add(discountTag);
+            discountTag.getPaints().add(paint4);
+            em.persist(paint4);
+            em.flush();
+
+            Paint paint5 = new Paint("Paint005", "P005", BigDecimal.valueOf(20.0), 100, 100, 2);
+            paint5.getPaintCategories().add(pc1);
+            pc1.getPaints().add(paint5);
+            paint5.getPaintCategories().add(pc2);
+            pc2.getPaints().add(paint5);
+            paint5.getPaintCategories().add(pc3);
+            pc3.getPaints().add(paint5);
+            paint5.getTags().add(hotTag);
+            hotTag.getPaints().add(paint5);
+            paint5.getTags().add(discountTag);
+            discountTag.getPaints().add(paint5);
+            paint5.getTags().add(cheapTag);
+            cheapTag.getPaints().add(paint5);
+            em.persist(paint5);
+            em.flush();
 
             em.persist(newCustomer1);
             em.persist(newCustomer2);

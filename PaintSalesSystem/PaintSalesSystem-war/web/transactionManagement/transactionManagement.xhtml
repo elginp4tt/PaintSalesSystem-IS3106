@@ -1,0 +1,71 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+                xmlns:h="http://xmlns.jcp.org/jsf/html"
+                xmlns:f="http://xmlns.jcp.org/jsf/core"
+                template="/template/defaultTemplate.xhtml"
+                xmlns:ez="http://xmlns.jcp.org/jsf/composite/ezcomp"
+                xmlns:p="http://primefaces.org/ui">
+    <ui:define name ="content">
+        <div>
+            <h3>Transaction Management</h3>
+            <h:form id="formAllTransaction">
+                <p:messages id="messages" redisplay="false" closable="true"/>
+
+                <p:dataTable id="dataTableAllTransactions" widgetVar="dataTableAllTransactions" value="#{transactionManagementManagedBean.transactions}"
+                             var="transaction" rowKey="#{transaction.transactionId}" rowIndexVar="row"
+                             filteredValue="#{transactionManagementManagedBean.filteredTransaction}"
+                             rows="10" paginator="true" paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}" rowsPerPageTemplate="10,20,50">
+                    
+                    <f:facet name="header">
+                        <p:outputPanel style="text-align: right;">
+                            <h:outputText value="Search all fields:" />
+                            <p:inputText id="globalFilter" onkeyup="PF('dataTableAllTransactions').filter()" style="width:300px" placeholder="Enter keyword"/>
+                        </p:outputPanel>
+                    </f:facet>
+                    
+                    <p:column headerText="Transaction ID" sortBy="#{transaction.transactionId}" filterBy="#{transaction.transactionId}" filterMatchMode="contains">
+                        <h:outputText value="#{transaction.transactionId}" />
+                    </p:column>
+
+                    <p:column headerText="Customer Fist Name" sortBy="#{transaction.customer.firstName}" filterBy="#{transaction.customer.firstName}" filterMatchMode="contains">
+                        <h:outputText value="#{transaction.customer.firstName}" />
+                    </p:column>
+
+                    <p:column headerText="Customer Last Name" sortBy="#{transaction.customer.lastName}" filterBy="#{transaction.customer.lastName}" filterMatchMode="contains">
+                        <h:outputText value="#{transaction.customer.lastName}" />
+                    </p:column>
+
+                    <p:column headerText="Customer Email" sortBy="#{transaction.customer.email}" filterBy="#{transaction.customer.email}" filterMatchMode="contains">
+                        <h:outputText value="#{transaction.customer.email}" />
+                    </p:column>
+
+                    <p:column headerText="Customer Home Address" sortBy="#{transaction.customer.homeAddress}" filterBy="#{transaction.customer.homeAddress}" filterMatchMode="contains">
+                        <h:outputText value="#{transaction.customer.homeAddress}" />
+                    </p:column>
+
+                    <p:column headerText="Action" style="text-align: center;">
+                        <p:commandButton update="ccViewTransaction:formViewTransaction" oncomplete="PF('dialogViewTransaction').show()" icon="ui-icon-document" title="View">
+                            <f:setPropertyActionListener value="#{transaction}" target="#{transactionManagementManagedBean.transactionToView}" />
+                        </p:commandButton>
+                        <!--update transaction will be here-->
+                    </p:column>
+
+                </p:dataTable>
+                
+                <p:confirmDialog global="true" showEffect="fade" hideEffect="fade">
+                    <div align="center" draggable ="false">
+                        <p:commandButton value="Yes" type="button" styleClass="ui-confirmdialog-yes" icon="ui-icon-check" />
+                        <p:commandButton value="No" type="button" styleClass="ui-confirmdialog-no" icon="ui-icon-close" />
+                    </div>
+                </p:confirmDialog>
+
+            </h:form>
+
+            <ez:viewTransaction id="ccViewTransaction"/>
+            
+            
+        </div>
+
+    </ui:define>
+</ui:composition>

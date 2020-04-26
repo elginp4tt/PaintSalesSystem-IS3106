@@ -6,6 +6,8 @@ import java.util.List;
 import java.util.Set;
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
+import javax.persistence.NoResultException;
+import javax.persistence.NonUniqueResultException;
 import javax.persistence.PersistenceContext;
 import javax.persistence.PersistenceException;
 import javax.persistence.Query;
@@ -78,7 +80,32 @@ public class CustomerEntitySessionBean implements CustomerEntitySessionBeanLocal
             throw new CustomerNotFoundException("Customer ID " + customerId + " does not exists!");
         }
     }
+    
+    @Override
+    public Customer retrieveCustomerByUsername(String username) throws CustomerNotFoundException {
+        
+        Query query = em.createQuery("Select c FROM Customer c WHERE c.username = :inUsername");
+        query.setParameter("inUsername", username);
 
+        try {
+            return (Customer) query.getSingleResult();
+        } catch (NoResultException | NonUniqueResultException ex) {
+            throw new CustomerNotFoundException("Customer Username " + username + " does not exist!");
+        }
+    }
+
+    @Override
+    public Customer customerLogin(String username, String password) throws CustomerNotFoundException {
+        
+        Customer customer = retrieveCustomerByUsername(username);
+        
+        if (!customer.getPassword().equals(password)){
+            return customer;
+        }
+        
+        throw new CustomerNotFoundException("Customer Password does not match the account");
+    }
+    
     @Override
     public void updateCustomer(Customer customer) throws CustomerNotFoundException, UpdateCustomerException, InputDataValidationException {
         if (customer != null && customer.getCustomerId() != null) {

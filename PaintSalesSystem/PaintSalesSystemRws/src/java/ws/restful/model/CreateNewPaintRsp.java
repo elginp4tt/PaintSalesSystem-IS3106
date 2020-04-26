@@ -5,8 +5,6 @@
  */
 package ws.restful.model;
 
-import java.util.List;
-
 /**
  *
  * @author Elgin Patt
