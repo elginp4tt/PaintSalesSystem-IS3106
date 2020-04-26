@@ -65,6 +65,7 @@ public class Paint implements Serializable {
     }
 
     public Paint(String name, String colourCode, BigDecimal price, Integer quantityOnHand, Integer reorderQuantity, Integer paintRating) {
+        this();
         this.name = name;
         this.colourCode = colourCode;
         this.price = price;
