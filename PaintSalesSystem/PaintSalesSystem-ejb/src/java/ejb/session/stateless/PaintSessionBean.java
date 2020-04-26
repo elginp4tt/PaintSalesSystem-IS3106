@@ -79,12 +79,12 @@ public class PaintSessionBean implements PaintSessionBeanLocal {
                 
                 for(Long categoryId:categoryIds) {
                     PaintCategory paintCategory = paintCategorySessionBeanLocal.retrieveCategoryByCategoryId(categoryId);
-                
                     if(!paintCategory.getSubCategoryEntities().isEmpty())
                     {
                         throw new CreateNewPaintException("Selected category for the new paint is not a leaf category");
                     }
                     newPaint.getPaintCategories().add(paintCategory);
+                    paintCategory.getPaints().add(newPaint);
                 }
                 
                 if(tagIds != null && (!tagIds.isEmpty()))
@@ -93,6 +93,7 @@ public class PaintSessionBean implements PaintSessionBeanLocal {
                     {
                         PaintTag paintTag = paintTagSessionBeanLocal.retrieveTagByTagId(tagId);
                         newPaint.getTags().add(paintTag);
+                        paintTag.getPaints().add(newPaint);
                     }
                 }
                 

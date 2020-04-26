@@ -7,6 +7,9 @@ package ejb.session.singleton;
 
 import ejb.session.stateless.CustomerEntitySessionBeanLocal;
 import ejb.session.stateless.EmployeeSessionBeanLocal;
+import ejb.session.stateless.PaintCategorySessionBeanLocal;
+import ejb.session.stateless.PaintSessionBeanLocal;
+import ejb.session.stateless.PaintTagSessionBeanLocal;
 import entity.Customer;
 import entity.Delivery;
 import entity.DeliveryServiceTransaction;
@@ -22,6 +25,8 @@ import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.List;
 import javax.annotation.PostConstruct;
 import javax.ejb.EJB;
 import javax.ejb.Singleton;
@@ -39,16 +44,23 @@ import util.exception.EmployeeNotFoundException;
 @Singleton
 @LocalBean
 @Startup
+
 public class DataInitSessionBean {
 
-    @EJB(name = "EmployeeSessionBeanLocal")
-    private EmployeeSessionBeanLocal employeeSessionBeanLocal;
-
-    @EJB
-    private CustomerEntitySessionBeanLocal customerEntitySessionBeanLocal;
-    
     @PersistenceContext(unitName = "PaintSalesSystem-ejbPU")
     private EntityManager em;
+
+    @EJB
+    private PaintSessionBeanLocal paintSessionBeanLocal;
+
+    @EJB
+    private PaintTagSessionBeanLocal paintTagSessionBeanLocal;
+
+    @EJB
+    private PaintCategorySessionBeanLocal paintCategorySessionBeanLocal;
+
+    @EJB
+    private EmployeeSessionBeanLocal employeeSessionBeanLocal;
 
     private static final DateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy HH:mm");
 
@@ -64,9 +76,8 @@ public class DataInitSessionBean {
         }
     }
 
-    public void initializeData() {
+    private void initializeData() {
         try {
-
             Employee newEmployee1 = new Employee("manager1", "password", "Default", "manager", AccessRightEnum.MANAGER);
             Employee newEmployee2 = new Employee("employee1", "password", "Default", "employee", AccessRightEnum.NORMAL);
             Employee newEmployee3 = new Employee("employee2", "password", "Default", "employee", AccessRightEnum.NORMAL);
@@ -137,79 +148,6 @@ public class DataInitSessionBean {
             newEmployee3.addPaintService(newPaintService2);
             newEmployee1.addMessageOfTheDay(messageOfTheDay1);
             newEmployee1.addMessageOfTheDay(messageOfTheDay2);
-            
-            //adding paint categories
-            PaintCategory pc1 = new PaintCategory("Category 1");
-            PaintCategory pc2 = new PaintCategory("Category 2");
-            PaintCategory pc3 = new PaintCategory("Category 3");
-            em.persist(pc1);
-            em.persist(pc2);
-            em.persist(pc3);
-            
-            //adding tags
-            PaintTag hotTag = new PaintTag("Hot");
-            PaintTag discountTag = new PaintTag("Discount");
-            PaintTag cheapTag = new PaintTag("Cheap");
-            em.persist(hotTag);
-            em.persist(discountTag);
-            em.persist(cheapTag);
-            
-            //adding paints
-            Paint paint1 = new Paint("Paint001", "P001", BigDecimal.valueOf(20.0), 100, 100, 3);
-            paint1.getPaintCategories().add(pc1);
-            pc1.getPaints().add(paint1);
-            paint1.getPaintCategories().add(pc2);
-            pc2.getPaints().add(paint1);
-            paint1.getTags().add(cheapTag);
-            cheapTag.getPaints().add(paint1);
-            em.persist(paint1);
-            em.flush();
-            
-            Paint paint2 = new Paint("Paint002", "P002", BigDecimal.valueOf(50.0), 100, 100, 5);
-            paint2.getPaintCategories().add(pc2);
-            pc2.getPaints().add(paint2);
-            paint2.getPaintCategories().add(pc3);
-            pc3.getPaints().add(paint2);
-            paint2.getTags().add(hotTag);
-            hotTag.getPaints().add(paint2);
-            paint2.getTags().add(discountTag);
-            discountTag.getPaints().add(paint2);
-            em.persist(paint2);
-            em.flush();
-            
-            Paint paint3 = new Paint("Paint003", "P003", BigDecimal.valueOf(10.0), 100, 100, 1);
-            paint3.getPaintCategories().add(pc1);
-            pc1.getPaints().add(paint3);
-            paint3.getPaintCategories().add(pc3);
-            pc3.getPaints().add(paint3);
-            paint3.getTags().add(discountTag);
-            discountTag.getPaints().add(paint3);
-            em.persist(paint3);
-            em.flush();
-            
-            Paint paint4 = new Paint("Paint004", "P004", BigDecimal.valueOf(30.0), 100, 100, 4);
-            paint4.getPaintCategories().add(pc3);
-            pc3.getPaints().add(paint4);
-            paint4.getTags().add(discountTag);
-            discountTag.getPaints().add(paint4);
-            em.persist(paint4);
-            em.flush();
-
-            Paint paint5 = new Paint("Paint005", "P005", BigDecimal.valueOf(20.0), 100, 100, 2);
-            paint5.getPaintCategories().add(pc1);
-            pc1.getPaints().add(paint5);
-            paint5.getPaintCategories().add(pc2);
-            pc2.getPaints().add(paint5);
-            paint5.getPaintCategories().add(pc3);
-            pc3.getPaints().add(paint5);
-            paint5.getTags().add(hotTag);
-            hotTag.getPaints().add(paint5);
-            paint5.getTags().add(discountTag);
-            discountTag.getPaints().add(paint5);
-            paint5.getTags().add(cheapTag);
-            cheapTag.getPaints().add(paint5);
-            em.persist(paint5);
-            em.flush();
 
             em.persist(newCustomer1);
             em.persist(newCustomer2);
@@ -228,6 +166,61 @@ public class DataInitSessionBean {
             em.persist(newEmployee3);
             em.persist(messageOfTheDay1);
             em.persist(messageOfTheDay2);
+            
+              //adding paint categories
+            PaintCategory pc0 = paintCategorySessionBeanLocal.createNewPaintCategory(new PaintCategory("Category 0"), null);
+            PaintCategory pc1 = paintCategorySessionBeanLocal.createNewPaintCategory(new PaintCategory("Category 1"), pc0.getPaintCategoryId());
+            PaintCategory pc2 = paintCategorySessionBeanLocal.createNewPaintCategory(new PaintCategory("Category 2"), pc0.getPaintCategoryId());
+            PaintCategory pc3 = paintCategorySessionBeanLocal.createNewPaintCategory(new PaintCategory("Category 3"), pc0.getPaintCategoryId());
+
+            //adding tags
+            PaintTag hotTag = paintTagSessionBeanLocal.createNewPaintTag(new PaintTag("Hot"));
+            PaintTag discountTag = paintTagSessionBeanLocal.createNewPaintTag(new PaintTag("Discount"));
+            PaintTag cheapTag = paintTagSessionBeanLocal.createNewPaintTag(new PaintTag("Cheap"));
+
+            //adding paints
+            Paint paint1 = new Paint("Paint001", "P001", BigDecimal.valueOf(20.0), 100, 100, 3);
+            List<Long> paintCategories = new ArrayList<>();
+            List<Long> paintTags = new ArrayList<>();
+            paintCategories.add(pc1.getPaintCategoryId());
+            paintCategories.add(pc2.getPaintCategoryId());
+            paintTags.add(cheapTag.getTagId());
+            Paint paintToPersist = paintSessionBeanLocal.createNewPaint(paint1, paintCategories, paintTags);
+
+            Paint paint2 = new Paint("Paint002", "P002", BigDecimal.valueOf(50.0), 100, 100, 5);
+            paintCategories = new ArrayList<>();
+            paintTags = new ArrayList<>();
+            paintCategories.add(pc2.getPaintCategoryId());
+            paintCategories.add(pc3.getPaintCategoryId());
+            paintTags.add(hotTag.getTagId());
+            paintTags.add(discountTag.getTagId());
+            paintToPersist = paintSessionBeanLocal.createNewPaint(paint2, paintCategories, paintTags);
+
+            Paint paint3 = new Paint("Paint003", "P003", BigDecimal.valueOf(10.0), 100, 100, 1);
+            paintCategories = new ArrayList<>();
+            paintTags = new ArrayList<>();
+            paintCategories.add(pc1.getPaintCategoryId());
+            paintCategories.add(pc3.getPaintCategoryId());
+            paintTags.add(cheapTag.getTagId());
+            paintToPersist = paintSessionBeanLocal.createNewPaint(paint3, paintCategories, paintTags);
+
+            Paint paint4 = new Paint("Paint004", "P004", BigDecimal.valueOf(30.0), 100, 100, 4);
+            paintCategories = new ArrayList<>();
+            paintTags = new ArrayList<>();
+            paintCategories.add(pc3.getPaintCategoryId());
+            paintTags.add(discountTag.getTagId());
+            paintToPersist = paintSessionBeanLocal.createNewPaint(paint4, paintCategories, paintTags);
+
+            Paint paint5 = new Paint("Paint005", "P005", BigDecimal.valueOf(20.0), 100, 100, 2);
+            paintCategories = new ArrayList<>();
+            paintTags = new ArrayList<>();
+            paintCategories.add(pc1.getPaintCategoryId());
+            paintCategories.add(pc2.getPaintCategoryId());
+            paintCategories.add(pc3.getPaintCategoryId());
+            paintTags.add(hotTag.getTagId());
+            paintTags.add(discountTag.getTagId());
+            paintTags.add(cheapTag.getTagId());
+            paintToPersist = paintSessionBeanLocal.createNewPaint(paint5, paintCategories, paintTags);
 
         } catch (Exception ex) {
             ex.printStackTrace();
