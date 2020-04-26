@@ -46,27 +46,27 @@ public class TransactionSessionBean implements TransactionSessionBeanLocal {
     private EJBContext eJBContext;
     
     
-    @Override
-    public Transaction createTransaction(Customer customer, List<TransactionLineItem> transactionLineItems) throws CreateNewTransactionException {
-        Customer customerToUpdate;
-        try {
-            customerToUpdate = customerEntitySessionBeanLocal.retrieveCustomerByCustomerId(customer.getCustomerId());
-        } catch (CustomerNotFoundException ex) {
-            throw new CreateNewTransactionException("Account no valid to make a purchase. Please ensure you are logged in");
-        }
-
-        Transaction newTransaction = new Transaction();
-        for (TransactionLineItem lineItem : transactionLineItems) {
-            newTransaction.getTransactionLineItems().add(lineItem);
-        }
-
-        newTransaction.setCustomer(customerToUpdate);
-        em.persist(newTransaction);
-        em.flush();
-        customerToUpdate.getTransactions().add(newTransaction);
-
-        return newTransaction;
-    }
+//    @Override
+//    public Transaction createTransaction(Customer customer, List<TransactionLineItem> transactionLineItems) throws CreateNewTransactionException {
+//        Customer customerToUpdate;
+//        try {
+//            customerToUpdate = customerEntitySessionBeanLocal.retrieveCustomerByCustomerId(customer.getCustomerId());
+//        } catch (CustomerNotFoundException ex) {
+//            throw new CreateNewTransactionException("Account no valid to make a purchase. Please ensure you are logged in");
+//        }
+//
+//        Transaction newTransaction = new Transaction();
+//        for (TransactionLineItem lineItem : transactionLineItems) {
+//            newTransaction.getTransactionLineItems().add(lineItem);
+//        }
+//
+//        newTransaction.setCustomer(customerToUpdate);
+//        em.persist(newTransaction);
+//        em.flush();
+//        customerToUpdate.getTransactions().add(newTransaction);
+//
+//        return newTransaction;
+//    }
 
     @Override
     public List<Transaction> retrieveAllTransactionByUser(Long custId) throws CustomerTransactionNotFound {
@@ -113,7 +113,7 @@ public class TransactionSessionBean implements TransactionSessionBeanLocal {
     }
 
     @Override
-    public Transaction newcreateNewTransaction(Transaction newTransaction, Long customerId) throws CustomerNotFoundException, CreateNewTransactionException {
+    public Transaction createNewTransaction(Transaction newTransaction, Long customerId) throws CustomerNotFoundException, CreateNewTransactionException {
         if (newTransaction != null) {
             try {
                 Customer customer = customerEntitySessionBeanLocal.retrieveCustomerByCustomerId(customerId);

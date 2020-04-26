@@ -21,15 +21,13 @@ import util.exception.CustomerTransactionNotFound;
 @Local
 public interface TransactionSessionBeanLocal {
 
-    public Transaction createTransaction(Customer customer, List<TransactionLineItem> transactionLineItems) throws CreateNewTransactionException;
-
     public List<Transaction> retrieveAllTransactionByUser(Long custId) throws CustomerTransactionNotFound;
 
     public Transaction retrieveIndividualTransactionByUser(Long custId, Long transactionId) throws CustomerTransactionNotFound;
 
     public List<Transaction> retrieveAllTransactionByAdmin();
 
-    public Transaction newcreateNewTransaction(Transaction newTransaction, Long customerId) throws CustomerNotFoundException, CreateNewTransactionException;
+    public Transaction createNewTransaction(Transaction newTransaction, Long customerId) throws CustomerNotFoundException, CreateNewTransactionException;
 
     
     
