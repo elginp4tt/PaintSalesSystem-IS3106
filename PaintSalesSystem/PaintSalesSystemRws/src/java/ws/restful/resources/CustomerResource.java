@@ -6,6 +6,7 @@
 package ws.restful.resources;
 
 import ejb.session.stateless.CustomerEntitySessionBeanLocal;
+import entity.Customer;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.naming.InitialContext;
@@ -17,14 +18,17 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.PUT;
+import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
+import util.exception.CustomerNotFoundException;
 import util.exception.InputDataValidationException;
 import ws.restful.model.ErrorRsp;
 import util.exception.UnknownPersistenceException;
 import ws.restful.model.CreateNewCustomerReq;
 import ws.restful.model.CreateNewCustomerRsp;
+import ws.restful.model.LoginRsp;
 
 /**
  * REST Web Service
@@ -55,7 +59,7 @@ public class CustomerResource {
     @Path("/customer")
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    public Response createNewPaint(CreateNewCustomerReq createNewCustomerReq) {
+    public Response createNewCustomer(CreateNewCustomerReq createNewCustomerReq) {
         if (createNewCustomerReq != null) {
             try {
                 Long newCustomerId = customerEntitySessionBean.createNewCustomer(createNewCustomerReq.getNewCustomer());
@@ -73,6 +77,35 @@ public class CustomerResource {
             ErrorRsp errorRsp = new ErrorRsp("Invalid request");
 
             return Response.status(Status.BAD_REQUEST).entity(errorRsp).build();
+        }
+    }
+    
+    @Path("customerLogin")
+    @GET
+    @Consumes(MediaType.TEXT_PLAIN)
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response staffLogin(@QueryParam("username") String username, 
+                                @QueryParam("password") String password)
+    {
+        try
+        {
+            Customer customer = customerEntitySessionBean.customerLogin(username, password);
+
+            customer.setPassword(null);         
+            
+            return Response.status(Status.OK).entity(new LoginRsp(customer)).build();
+        }
+        catch(CustomerNotFoundException ex)
+        {
+            ErrorRsp errorRsp = new ErrorRsp(ex.getMessage());
+            
+            return Response.status(Status.UNAUTHORIZED).entity(errorRsp).build();
+        }
+        catch(Exception ex)
+        {
+            ErrorRsp errorRsp = new ErrorRsp(ex.getMessage());
+            
+            return Response.status(Status.INTERNAL_SERVER_ERROR).entity(errorRsp).build();
         }
     }
 

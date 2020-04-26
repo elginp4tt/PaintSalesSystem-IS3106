@@ -30,5 +30,9 @@ public interface CustomerEntitySessionBeanLocal {
     public Customer retrieveCustomerByCustomerId(Long customerId) throws CustomerNotFoundException;
 
     public List<Customer> retrieveAllCustomers();
+
+    public Customer retrieveCustomerByUsername(String username) throws CustomerNotFoundException;
+
+    public Customer customerLogin(String username, String password) throws CustomerNotFoundException;
     
 }
