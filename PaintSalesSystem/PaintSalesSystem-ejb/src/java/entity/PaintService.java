@@ -43,8 +43,8 @@ public class PaintService implements Serializable {
     private Date paintServiceEndTime;
     //Edited to directly retrieve employee and deliveryServiceTransaction ids from entities
     //Removed setters for said fields
-    @ManyToOne(optional = false)
-    @JoinColumn(nullable = false)
+    @ManyToOne(optional = true)
+    @JoinColumn(nullable = true)
     private Employee employee;
     @OneToOne(optional = false)
     @JoinColumn(nullable = false)
