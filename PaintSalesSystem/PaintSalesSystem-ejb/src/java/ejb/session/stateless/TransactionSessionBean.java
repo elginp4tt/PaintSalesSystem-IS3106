@@ -30,15 +30,6 @@ public class TransactionSessionBean implements TransactionSessionBeanLocal {
     @EJB
     private CustomerEntitySessionBeanLocal customerEntitySessionBeanLocal;
 
-    @EJB
-    private DeliveryEntitySessionBeanLocal deliveryEntitySessionBeanLocal;
-
-    @EJB
-    private PaintServiceEntitySessionBeanLocal paintServiceEntitySessionBeanLocal;
-
-    @EJB
-    private PaintSessionBeanLocal paintSessionBeanLocal;
-
     @PersistenceContext(unitName = "PaintSalesSystem-ejbPU")
     private EntityManager em;
 
@@ -91,7 +82,7 @@ public class TransactionSessionBean implements TransactionSessionBeanLocal {
             List<Transaction> transactions = retrieveAllTransactionByUser(custId);
 
             for (Transaction t : transactions) {
-                if (t.getTransactionId() == transactionId) {
+                if (t.getTransactionId().equals(transactionId)) {
                     t.getTransactionLineItems().size();
                     return t; //should i retrieve all the info by paint service/paint/delivery transactoin here? Then let client side to determine what data they want to show
                 }

@@ -84,7 +84,7 @@ public class CustomerResource {
     @GET
     @Consumes(MediaType.TEXT_PLAIN)
     @Produces(MediaType.APPLICATION_JSON)
-    public Response staffLogin(@QueryParam("username") String username, 
+    public Response customerLogin(@QueryParam("username") String username, 
                                 @QueryParam("password") String password)
     {
         try

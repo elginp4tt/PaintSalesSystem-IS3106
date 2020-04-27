@@ -27,8 +27,6 @@ public interface TransactionSessionBeanLocal {
 
     public List<Transaction> retrieveAllTransactionByAdmin();
 
-    public Transaction createNewTransaction(Transaction newTransaction, Long customerId) throws CustomerNotFoundException, CreateNewTransactionException;
-
-    
+    public Transaction createNewTransaction(Transaction newTransaction, Long customerId) throws CustomerNotFoundException, CreateNewTransactionException;    
     
 }
