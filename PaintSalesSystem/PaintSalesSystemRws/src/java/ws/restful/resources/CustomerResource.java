@@ -50,11 +50,7 @@ public class CustomerResource {
     public CustomerResource() {
     }
 
-    /**
-     * PUT method for updating or creating an instance of CustomerResource
-     *
-     * @param content representation for the resource
-     */
+
     @PUT
     @Path("/customer")
     @Consumes(MediaType.APPLICATION_JSON)
