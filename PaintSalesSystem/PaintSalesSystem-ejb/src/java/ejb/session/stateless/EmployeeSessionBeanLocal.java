@@ -16,6 +16,7 @@ import util.exception.DeliveryNotFoundException;
 import util.exception.EmployeeNotFoundException;
 import util.exception.EmployeeUsernameExistException;
 import util.exception.InputDataValidationException;
+import util.exception.InvalidLoginCredentialException;
 import util.exception.PaintServiceNotFoundException;
 import util.exception.UnknownPersistenceException;
 import util.exception.UpdateEmployeeException;
@@ -41,6 +42,10 @@ public interface EmployeeSessionBeanLocal {
 
     public List<Employee> retrieveAvailableEmployee(Date startTime, Date endTime, Long deliveryId, Long paintServicId);
 
+    public Employee employeeLogin(String username, String password) throws InvalidLoginCredentialException;
 
-    
+    public Employee retrieveEmployeeByUsername(String username) throws EmployeeNotFoundException;
+
+    public Employee updateEmployeePassword(String username, String oldPassword, String newPassword) throws EmployeeNotFoundException, UpdateEmployeeException, InputDataValidationException;
+
 }

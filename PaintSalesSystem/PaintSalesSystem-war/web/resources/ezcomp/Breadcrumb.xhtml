@@ -19,7 +19,11 @@
                 <p:menuitem icon="fa fa-home" url="#{application.contextPath}/index.xhtml" />
                     
                 <p:menuitem value="Employee Management" url="#{application.contextPath}/systemAdministration/employeeManagement.xhtml" rendered="#{cc.attrs.pageName == 'employeeManagement'}" />
+                <p:menuitem value="Customer Management" url="#{application.contextPath}/systemAdministration/customerManagement.xhtml" rendered="#{cc.attrs.pageName == 'customerManagement'}" />
                 
+                
+                <p:menuitem value="Transaction Management" url="#{application.contextPath}/transactionManagement/transactionManagement.xhtml" rendered="#{cc.attrs.pageName == 'transactionManagement'}" />
+                                               
                 <p:menuitem value="Paint Management" url="#{application.contextPath}/paintManagement/paintManagement.xhtml" rendered="#{cc.attrs.pageName == 'paintManagement'}" />
                 <p:menuitem value="Paint Management" url="#{application.contextPath}/paintManagement/paintManagement.xhtml" rendered="#{cc.attrs.pageName == 'searchPaintsByName' ||
                                                                         cc.attrs.pageName == 'filterPaintsByCategories' ||

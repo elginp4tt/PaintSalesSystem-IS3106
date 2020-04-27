@@ -13,30 +13,27 @@ import javax.servlet.http.HttpSessionListener;
 /**
  * Web application lifecycle listener.
  *
- * @author Elgin Patt
+ * @author Ko Jia Le
  */
 public class WebApplicationListener implements ServletContextListener, HttpSessionListener {
 
     @Override
     public void contextInitialized(ServletContextEvent sce) {
-        sce.getServletContext().setAttribute("visitorCounter", 0);
-        
-        System.out.println(sce.getServletContext().getAttribute("visitorCounter"));
+
     }
 
     @Override
     public void contextDestroyed(ServletContextEvent sce) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+
     }
 
     @Override
     public void sessionCreated(HttpSessionEvent se) {
-        se.getSession().getServletContext().setAttribute("visitorCounter", (int) se.getSession().getServletContext().getAttribute("visitorCounter"));
-        System.out.println(se.getSession().getServletContext().getAttribute("visitorCounter"));
+        System.out.println("**********Session Created");
+        se.getSession().setAttribute("isLogin", false);
     }
 
     @Override
     public void sessionDestroyed(HttpSessionEvent se) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 }

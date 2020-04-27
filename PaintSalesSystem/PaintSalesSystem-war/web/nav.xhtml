@@ -4,40 +4,45 @@
                 xmlns:h="http://xmlns.jcp.org/jsf/html"
                 xmlns:f="http://xmlns.jcp.org/jsf/core"
                 xmlns:p="http://primefaces.org/ui">
-    
+
     <nav class="nav">
         <!--<h3> Navigation </h3>-->
         <f:facet name="header">
             <p:outputLabel value="Navigation" />
         </f:facet>
-        
-        
+
+
         <h:form>
             <p:menu style="width: auto" widgetVar="menu" toggleable="true">
-                
+
                 <p:submenu label="System Administration">
-                    <p:menuitem value="Employee Management" outcome="/systemAdministration/employeeManagement.xhtml" />
+                    <p:menuitem value="Employee Management" outcome="/systemAdministration/employeeManagement.xhtml" icon="fa fa-user-secret"/>
+                    <p:menuitem value="Customer management" outcome="/systemAdministration/customerManagement.xhtml" icon="fa fa-user" />
                 </p:submenu>
-                
+
+                <p:submenu label="Transaction Management">
+                    <p:menuitem value="Transaction Management" outcome="/transactionManagement/transactionManagement.xhtml" icon="fa fa-list-alt"/>
+                </p:submenu>
+
                 <p:submenu label="Paint Management">
-                    <p:menuitem value="Paint Management" outcome="/paintManagement/paintManagement.xhtml" />
-                    <p:menuitem value="Search Paints by Colour Code" outcome="/paintManagement/searchPaintsByColourCode.xhtml" />
-                    <p:menuitem value="Filter Paints by Category" outcome="/paintManagement/filterPaintsByCategories.xhtml" />
-                    <p:menuitem value="Filter Paints by Tags" outcome="/paintManagement/filterPaintsByTags.xhtml" />                
+                    <p:menuitem value="Paint Management" outcome="/paintManagement/paintManagement.xhtml" icon="fa fa-paint-brush"/>
+                    <p:menuitem value="Search Paints by Colour Code" outcome="/paintManagement/searchPaintsByColourCode.xhtml" icon="fa fa-adjust"/>
+                    <p:menuitem value="Filter Paints by Category" outcome="/paintManagement/filterPaintsByCategories.xhtml" icon="fa fa-bars"/>
+                    <p:menuitem value="Filter Paints by Tags" outcome="/paintManagement/filterPaintsByTags.xhtml" icon="fa fa-tags"/>                
                 </p:submenu>
-                
+
                 <p:submenu label="Delivery Management">
-                    <p:menuitem value="View All Deliveries" outcome="/deliveryManagement/deliveryManagement.xhtml" />
-                    <p:menuitem value="Filter Deliveries" url="#{application.contextPath}/deliveryManagement/filterDelivery.xhtml" />
+                    <p:menuitem value="View All Deliveries" outcome="/deliveryManagement/deliveryManagement.xhtml" icon="fa fa-car"/>
+                    <p:menuitem value="Filter Deliveries" url="#{application.contextPath}/deliveryManagement/filterDelivery.xhtml" icon="fa fa-bars"/>
                 </p:submenu>
-                
+
                 <p:submenu label="Paint Service Management">
-                    <p:menuitem value="View All Paint Services" outcome="/paintServiceManagement/paintServiceManagement.xhtml" />
-                    <p:menuitem value="Filter Paint Service" outcome="/paintServiceManagement/filterPaintService.xhtml" />
+                    <p:menuitem value="View All Paint Services" outcome="/paintServiceManagement/paintServiceManagement.xhtml" icon="fa fa-paint-brush"/>
+                    <p:menuitem value="Filter Paint Service" outcome="/paintServiceManagement/filterPaintService.xhtml" icon="fa fa-bars"/>
                 </p:submenu>
             </p:menu>
         </h:form>
     </nav>
-    
+
 </ui:composition>
 

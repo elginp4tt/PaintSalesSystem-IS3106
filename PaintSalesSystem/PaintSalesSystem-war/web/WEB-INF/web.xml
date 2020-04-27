@@ -8,6 +8,10 @@
         <param-name>primefaces.FONT_AWESOME</param-name>
         <param-value>true</param-value>
     </context-param>
+    <listener>
+        <description>ServletContextListener, HttpSessionListener</description>
+        <listener-class>web.listener.WebApplicationListener</listener-class>
+    </listener>
     <servlet>
         <servlet-name>Faces Servlet</servlet-name>
         <servlet-class>javax.faces.webapp.FacesServlet</servlet-class>
@@ -22,7 +26,7 @@
             30
         </session-timeout>
     </session-config>
-<!--    <context-param>
+    <!--    <context-param>
         <param-name>primefaces.THEME</param-name>
         <param-value>yourtheme</param-value>
     </context-param>-->
