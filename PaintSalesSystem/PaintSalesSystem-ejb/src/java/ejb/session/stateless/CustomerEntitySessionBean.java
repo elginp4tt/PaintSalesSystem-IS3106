@@ -39,59 +39,44 @@ public class CustomerEntitySessionBean implements CustomerEntitySessionBeanLocal
         validator = validatorFactory.getValidator();
     }
 
-    
-    
     @Override
-    public Long createNewCustomer(Customer newCustomer) throws UnknownPersistenceException,InputDataValidationException
-    {
-        try
-        {
+    public Long createNewCustomer(Customer newCustomer) throws UnknownPersistenceException, InputDataValidationException {
+        try {
             Set<ConstraintViolation<Customer>> constraintViolations = validator.validate(newCustomer);
-            if(constraintViolations.isEmpty())
-            {
+            if (constraintViolations.isEmpty()) {
                 em.persist(newCustomer);
                 em.flush();
-                
+
                 return newCustomer.getCustomerId();
-            }
-            else
-            {
+            } else {
                 throw new InputDataValidationException(prepareInputDataValidationErrorsMessage(constraintViolations));
             }
-        }
-        catch(PersistenceException ex)
-        {
+        } catch (PersistenceException ex) {
             throw new UnknownPersistenceException(ex.getMessage());
-            
+
         }
     }
-    
+
     public Long createNewMember() {
         Customer newMember = new Member();
 
         return newMember.getCustomerId();
     }
-    
 
     @Override
-    public List<Customer> retrieveAllCustomers()
-    {
+    public List<Customer> retrieveAllCustomers() {
         Query query = em.createQuery("SELECT c FROM Customer c");
+
         return query.getResultList();
     }
-    
-    
+
     @Override
-    public Customer retrieveCustomerByCustomerId(Long customerId) throws CustomerNotFoundException
-    {
-        Customer customer = em.find(Customer.class,customerId);
-        
-        if(customer != null)
-        {
+    public Customer retrieveCustomerByCustomerId(Long customerId) throws CustomerNotFoundException {
+        Customer customer = em.find(Customer.class, customerId);
+
+        if (customer != null) {
             return customer;
-        }
-        else
-        {
+        } else {
             throw new CustomerNotFoundException("Customer ID " + customerId + " does not exists!");
         }
     }
@@ -121,70 +106,49 @@ public class CustomerEntitySessionBean implements CustomerEntitySessionBeanLocal
         throw new CustomerNotFoundException("Customer Password does not match the account");
     }
     
-    
-    
     @Override
-    public void updateCustomer(Customer customer) throws CustomerNotFoundException, UpdateCustomerException, InputDataValidationException
-    {
-        if(customer != null && customer.getCustomerId() != null)
-        {
+    public void updateCustomer(Customer customer) throws CustomerNotFoundException, UpdateCustomerException, InputDataValidationException {
+        if (customer != null && customer.getCustomerId() != null) {
             Set<ConstraintViolation<Customer>> constraintViolations = validator.validate(customer);
-            
-            if(constraintViolations.isEmpty())
-            {
+
+            if (constraintViolations.isEmpty()) {
                 Customer customerToUpdate = retrieveCustomerByCustomerId(customer.getCustomerId());
-                
-                if(customerToUpdate.getUsername().equals(customer.getUsername()))
-                {
+
+                if (customerToUpdate.getUsername().equals(customer.getUsername())) {
                     customerToUpdate.setFirstName(customer.getFirstName());
                     customerToUpdate.setLastName(customer.getLastName());
                     customerToUpdate.setEmail(customer.getEmail());
                     customerToUpdate.setHomeAddress(customer.getHomeAddress());
-                }
-                else
-                {
+                } else {
                     throw new UpdateCustomerException("Username of customer record to be updated does not match the existing record");
                 }
-            }
-            else
-            {
+            } else {
                 throw new InputDataValidationException(prepareInputDataValidationErrorsMessage(constraintViolations));
             }
-        }
-        else
-        {
+        } else {
             throw new CustomerNotFoundException("Customer ID not provided for customer record to be updated.");
         }
     }
-    
-    
+
     @Override
-    public void deleteCustomer(Long customerId) throws CustomerNotFoundException, DeleteCustomerException
-    {
+    public void deleteCustomer(Long customerId) throws CustomerNotFoundException, DeleteCustomerException {
         Customer customerToRemove = retrieveCustomerByCustomerId(customerId);
-        
-        if(customerToRemove.getTransactions().isEmpty())
-        {
+
+        if (customerToRemove.getTransactions().isEmpty()) {
             em.remove(customerToRemove);
-        }
-        else
-        {
+        } else {
             throw new DeleteCustomerException("Customer Id " + customerId + " is associated with some transactions and cannot be deleted.");
         }
     }
-    
-    
-    
-    private String prepareInputDataValidationErrorsMessage(Set<ConstraintViolation<Customer>>constraintViolations)
-    {
+
+    private String prepareInputDataValidationErrorsMessage(Set<ConstraintViolation<Customer>> constraintViolations) {
         String msg = "Input data validation error!:";
-            
-        for(ConstraintViolation constraintViolation:constraintViolations)
-        {
+
+        for (ConstraintViolation constraintViolation : constraintViolations) {
             msg += "\n\t" + constraintViolation.getPropertyPath() + " - " + constraintViolation.getInvalidValue() + "; " + constraintViolation.getMessage();
         }
-        
+
         return msg;
-    } 
-    
+    }
+
 }

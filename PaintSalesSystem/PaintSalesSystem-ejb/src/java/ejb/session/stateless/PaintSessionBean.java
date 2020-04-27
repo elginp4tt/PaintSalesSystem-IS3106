@@ -8,7 +8,6 @@ package ejb.session.stateless;
 import entity.Paint;
 import entity.PaintCategory;
 import entity.PaintTag;
-import entity.TransactionLineItem;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;

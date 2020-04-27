@@ -5,7 +5,6 @@
  */
 package ejb.session.stateless;
 
-import entity.Delivery;
 import entity.Employee;
 import entity.PaintService;
 import java.text.DateFormat;
@@ -27,12 +26,10 @@ import javax.validation.Validation;
 import javax.validation.Validator;
 import javax.validation.ValidatorFactory;
 import util.exception.DeletePaintServiceException;
-import util.exception.DeliveryNotFoundException;
 import util.exception.EmployeeNotFoundException;
 import util.exception.InputDataValidationException;
 import util.exception.PaintServiceNotFoundException;
 import util.exception.UnknownPersistenceException;
-import util.exception.UpdateDeliveryException;
 import util.exception.UpdatePaintServiceException;
 
 /**

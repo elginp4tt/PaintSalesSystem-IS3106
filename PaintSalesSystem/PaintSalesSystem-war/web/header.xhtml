@@ -4,15 +4,33 @@
                 xmlns:h="http://xmlns.jcp.org/jsf/html"
                 xmlns:f="http://xmlns.jcp.org/jsf/core"
                 xmlns:p="http://primefaces.org/ui">
-
+                
     <header style="text-align: right;">
-        <h:panelGroup rendered="#{sessionScope.isLogin == false}">
-            <h:form id="loginForm">
-            </h:form>
-        </h:panelGroup>
+        <h:panelGroup>
+            <h:form id="loginForm" rendered="#{sessionScope.isLogin==false}">
+                <p:outputLabel for="username" value="Username" />&nbsp;
+                <p:inputText id="username" value="#{loginManagedBean.username}" size="16" required="true" requiredMessage="Username is required" maxlength="32">
+                    <f:validateLength minimum="4" />
+                </p:inputText>
+                &nbsp;
+                <p:outputLabel for="password" value="Password" />&nbsp;
+                <p:password id="password" value="#{loginManagedBean.password}" size="16" required="true" requiredMessage="Password is required" maxlength="32">
+                    <f:validateLength minimum="4" />
+                </p:password>
+                &nbsp;
+                <p:commandButton type="reset" value="Clear" icon="fa fa-undo" />&nbsp;
+                <p:commandButton type="submit" value="Login" actionListener="#{loginManagedBean.login}" icon="fa fa-sign-in" /> &nbsp;    
 
+                <p:growl>
+                    <p:autoUpdate />
+                </p:growl>
+            </h:form> 
+        </h:panelGroup>
+        
         <h:panelGroup rendered="#{sessionScope.isLogin == true}">
             <h:form id="logoutForm">
+                <h:outputText value ="You are login as #{sessionScope.currentEmployeeEntity.firstName} #{sessionScope.currentEmployeeEntity.lastName}"/> &nbsp;
+                <p:commandButton value ="Logout" actionListener="#{loginManagedBean.logout}" icon="fa fa-sign-out"/>
             </h:form>
         </h:panelGroup>
         

@@ -7,16 +7,13 @@ package util.exception;
 
 /**
  *
- * @author CHEN BINGSEN
+ * @author Ko Jia Le
  */
-public class CreateNewTransactionException extends Exception
-{
-
+public class CreateNewTransactionException extends Exception {
     public CreateNewTransactionException() {
     }
 
-    public CreateNewTransactionException(String message) {
-        super(message);
+    public CreateNewTransactionException(String msg) {
+        super(msg);
     }
-    
 }

@@ -31,9 +31,13 @@ public class ApplicationConfig extends Application {
     private void addRestResourceClasses(Set<Class<?>> resources) {
         resources.add(ws.restful.resources.CorsFilter.class);
         resources.add(ws.restful.resources.CustomerResource.class);
+        resources.add(ws.restful.resources.DeliveryResource.class);
+        resources.add(ws.restful.resources.MemberResource.class);
         resources.add(ws.restful.resources.PaintCategoryResource.class);
         resources.add(ws.restful.resources.PaintResource.class);
+        resources.add(ws.restful.resources.PaintServiceResource.class);
         resources.add(ws.restful.resources.PaintTagResource.class);
+        resources.add(ws.restful.resources.TransactionResource.class);
     }
     
 }
