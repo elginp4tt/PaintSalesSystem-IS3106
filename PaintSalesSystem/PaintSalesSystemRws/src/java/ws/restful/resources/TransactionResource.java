@@ -21,6 +21,7 @@ import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.PUT;
+import javax.ws.rs.PathParam;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
@@ -28,10 +29,13 @@ import javax.ws.rs.core.Response.Status;
 import util.exception.CreateNewTransactionException;
 import util.exception.CustomerNotFoundException;
 import util.exception.CustomerTransactionNotFound;
+import util.exception.InvalidLoginCredentialException;
+import util.exception.TransactionNotFoundException;
 import ws.restful.model.CreateNewTransactionReq;
 import ws.restful.model.CreateNewTransactionRsp;
 import ws.restful.model.ErrorRsp;
 import ws.restful.model.RetrieveAllTransactionsRsp;
+import ws.restful.model.RetrieveTransactionRsp;
 
 /**
  * REST Web Service
@@ -54,7 +58,7 @@ public class TransactionResource {
     public TransactionResource() {
     }
 
-
+    @Path("retrieveAllTransactions")
     @GET
     @Consumes(MediaType.TEXT_PLAIN)
     @Produces(MediaType.APPLICATION_JSON)
@@ -79,6 +83,32 @@ public class TransactionResource {
             ErrorRsp errorRsp = new ErrorRsp(ex.getMessage());
             
             return Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity(errorRsp).build();
+        }
+    }
+    
+    @Path("retrieveTransaction/{transactionId}")
+    @GET
+    @Consumes(MediaType.TEXT_PLAIN)
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response retrieveTransaction(@PathParam("transactionId") Long transactionId)
+    {
+        try
+        {
+            Transaction transaction = transactionSessionBean.retrieveTransactionByTransactionId(transactionId);
+
+            return Response.status(Status.OK).entity(new RetrieveTransactionRsp(transaction)).build();
+        }
+        catch(TransactionNotFoundException ex)
+        {
+            ErrorRsp errorRsp = new ErrorRsp(ex.getMessage());
+            
+            return Response.status(Status.BAD_REQUEST).entity(errorRsp).build();
+        }
+        catch(Exception ex)
+        {
+            ErrorRsp errorRsp = new ErrorRsp(ex.getMessage());
+            
+            return Response.status(Status.INTERNAL_SERVER_ERROR).entity(errorRsp).build();
         }
     }
 

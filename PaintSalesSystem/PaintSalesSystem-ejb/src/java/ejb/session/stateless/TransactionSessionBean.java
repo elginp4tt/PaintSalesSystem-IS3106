@@ -19,6 +19,7 @@ import util.exception.CustomerNotFoundException;
 import util.exception.CustomerTransactionNotFound;
 import javax.annotation.Resource;
 import javax.ejb.EJBContext;
+import util.exception.TransactionNotFoundException;
 
 /**
  *
@@ -101,6 +102,17 @@ public class TransactionSessionBean implements TransactionSessionBeanLocal {
             t.getTransactionLineItems().size(); //Not sure if this lazy loading works. Cause "2" relationship away
         }
         return transactions;
+    }
+    
+    @Override
+    public Transaction retrieveTransactionByTransactionId(Long transactionId) throws TransactionNotFoundException {
+        Transaction transaction = em.find(Transaction.class, transactionId);
+
+        if (transaction != null) {
+            return transaction;
+        } else {
+            throw new TransactionNotFoundException("Transaction ID " + transactionId + " does not exist!");
+        }
     }
 
     @Override

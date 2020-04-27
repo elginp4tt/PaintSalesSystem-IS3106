@@ -2,15 +2,15 @@ package util.exception;
 
 
 
-public class CategoryNotFoundException extends Exception
+public class TransactionNotFoundException extends Exception
 {
-    public CategoryNotFoundException()
+    public TransactionNotFoundException()
     {
     }
     
     
     
-    public CategoryNotFoundException(String msg)
+    public TransactionNotFoundException(String msg)
     {
         super(msg);
     }
