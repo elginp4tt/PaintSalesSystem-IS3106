@@ -39,8 +39,8 @@ public interface PaintSessionBeanLocal {
 
     public Paint createNewPaint(Paint newPaint, List<Long> categoryIds, List<Long> tagIds) throws PaintExistException, UnknownPersistenceException, InputDataValidationException, CreateNewPaintException;
 
-    public List<Paint> filterPaintsByCategories(List<Long> categoryIds, String condition);
-
     public void deletePaint(Long paintId) throws PaintNotFoundException, DeletePaintException;
+
+    public List<Paint> filterPaintsByCategories(List<Long> categoryIds);
     
 }

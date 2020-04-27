@@ -11,12 +11,12 @@ import entity.Paint;
 import entity.PaintCategory;
 import java.io.IOException;
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.List;
 import javax.annotation.PostConstruct;
 import javax.ejb.EJB;
 import javax.faces.context.FacesContext;
 import javax.faces.event.ActionEvent;
-import javax.faces.model.SelectItem;
 import javax.inject.Named;
 import javax.faces.view.ViewScoped;
 import javax.inject.Inject;
@@ -40,14 +40,11 @@ public class FilterPaintsByCategoriesManagedBean implements Serializable
     private ViewPaintManagedBean viewPaintManagedBean;
     
     private TreeNode treeNode;
-    private TreeNode selectedTreeNode;
-    private String condition;
+    private TreeNode[] selectedTreeNodes;
     private List<Long> selectedCategoryIds;
-    private List<SelectItem> selectItems;
     private List<Paint> paints;
     
     public FilterPaintsByCategoriesManagedBean() {
-        condition = "OR";
     }
     
     @PostConstruct
@@ -58,29 +55,24 @@ public class FilterPaintsByCategoriesManagedBean implements Serializable
         
         for(PaintCategory categoryEntity:categoryEntities)
         {
-            createTreeNode(categoryEntity, treeNode);
+            createTreeNode(categoryEntity, getTreeNode());
         }
         
-        Long selectedCategoryId = (Long)FacesContext.getCurrentInstance().getExternalContext().getSessionMap().get("paintFilterCategory");
-        
-        if(selectedCategoryId != null)
-        {
-            for(TreeNode tn:treeNode.getChildren())
-            {
-                PaintCategory ce = (PaintCategory)tn.getData();
+        selectedCategoryIds = (List<Long>)FacesContext.getCurrentInstance().getExternalContext().getSessionMap().get("paintFilterCategories");
+//        if(selectedCategoryIds != null && selectedCategoryIds.size() > 0)
+//        {
+//            for(TreeNode tn:getTreeNode().getChildren())
+//            {
+//
+//                PaintCategory pc = (PaintCategory)tn.getData();
+//                for (Long pcId:selectedCategoryIds) {
+//                    if (pc.getPaintCategoryId().equals(pcId)) {
+//                        selectedTreeNodes.add(tn);
+//                    }
+//                }
+//            }
+//        }
 
-                if(ce.getPaintCategoryId().equals(selectedCategoryId))
-                {
-                    selectedTreeNode = tn;
-                    break;
-                }
-                else
-                {
-                    selectedTreeNode = searchTreeNode(selectedCategoryId, tn);
-                }            
-            }
-        }
-        
         filterPaint();
     }
     
@@ -88,16 +80,14 @@ public class FilterPaintsByCategoriesManagedBean implements Serializable
     
     public void filterPaint()
     {
-        if(selectedTreeNode != null)
+        if(getSelectedTreeNodes() != null && getSelectedTreeNodes().length > 0)
         {               
-            if(selectedCategoryIds != null &&  selectedCategoryIds.size() > 0)
-            {
-                paints = paintSessionBeanLocal.filterPaintsByCategories(getSelectedCategoryIds(), getCondition());
-            }
-            else
-            {
-                paints = paintSessionBeanLocal.retrieveAllPaints();
-            }
+//            for (TreeNode tn: getSelectedTreeNodes()) 
+//            {
+//                PaintCategory pc = (PaintCategory)tn.getData();
+//                getSelectedCategoryIds().add(pc.getPaintCategoryId());
+//            }
+            setPaints(paintSessionBeanLocal.filterPaintsByCategories(getSelectedCategoryIds())); 
         }
         else
         {
@@ -161,6 +151,59 @@ public class FilterPaintsByCategoriesManagedBean implements Serializable
     public void setPaints(List<Paint> paints) {
         this.paints = paints;
     }
+    
+     /**
+     * @return the viewPaintManagedBean
+     */
+    public ViewPaintManagedBean getViewPaintManagedBean() {
+        return viewPaintManagedBean;
+    }
+
+    /**
+     * @param viewPaintManagedBean the viewPaintManagedBean to set
+     */
+    public void setViewPaintManagedBean(ViewPaintManagedBean viewPaintManagedBean) {
+        this.viewPaintManagedBean = viewPaintManagedBean;
+    }
+
+    /**
+     * @return the selectedTreeNodes
+     */
+    public TreeNode[] getSelectedTreeNodes() {
+        return selectedTreeNodes;
+    }
+
+    /**
+     * @param selectedTreeNodes the selectedTreeNodes to set
+     */
+    public void setSelectedTreeNodes(TreeNode[] selectedTreeNodes) {
+        this.selectedTreeNodes = selectedTreeNodes;
+        
+        List<Long> mySelectedCategoryIds = new ArrayList<>();
+        if(selectedTreeNodes != null && selectedTreeNodes.length > 0) {
+            for (TreeNode tn: selectedTreeNodes) {
+                PaintCategory pc = (PaintCategory)tn.getData();
+                mySelectedCategoryIds.add(pc.getPaintCategoryId());
+                System.out.println("Categories selected::::: " + pc.getCategoryName());
+            }
+            selectedCategoryIds = mySelectedCategoryIds;
+            FacesContext.getCurrentInstance().getExternalContext().getSessionMap().put("paintFilterCategories", mySelectedCategoryIds);
+        }
+    }
+
+    /**
+     * @return the treeNode
+     */
+    public TreeNode getTreeNode() {
+        return treeNode;
+    }
+
+    /**
+     * @param treeNode the treeNode to set
+     */
+    public void setTreeNode(TreeNode treeNode) {
+        this.treeNode = treeNode;
+    }
 
     /**
      * @return the selectedCategoryIds
@@ -176,45 +219,4 @@ public class FilterPaintsByCategoriesManagedBean implements Serializable
         this.selectedCategoryIds = selectedCategoryIds;
     }
 
-    /**
-     * @return the selectItems
-     */
-    public List<SelectItem> getSelectItems() {
-        return selectItems;
-    }
-
-    /**
-     * @param selectItems the selectItems to set
-     */
-    public void setSelectItems(List<SelectItem> selectItems) {
-        this.selectItems = selectItems;
-    }
-
-    /**
-     * @return the condition
-     */
-    public String getCondition() {
-        return condition;
-    }
-
-    /**
-     * @param condition the condition to set
-     */
-    public void setCondition(String condition) {
-        this.condition = condition;
-    }
-    
-     /**
-     * @return the viewPaintManagedBean
-     */
-    public ViewPaintManagedBean getViewPaintManagedBean() {
-        return viewPaintManagedBean;
-    }
-
-    /**
-     * @param viewPaintManagedBean the viewPaintManagedBean to set
-     */
-    public void setViewPaintManagedBean(ViewPaintManagedBean viewPaintManagedBean) {
-        this.viewPaintManagedBean = viewPaintManagedBean;
-    }
 }

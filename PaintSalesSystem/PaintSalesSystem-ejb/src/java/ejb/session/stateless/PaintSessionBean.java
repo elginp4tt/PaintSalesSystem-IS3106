@@ -168,24 +168,25 @@ public class PaintSessionBean implements PaintSessionBeanLocal {
     }
         
     @Override
-    public List<Paint> filterPaintsByCategories(List<Long> categoryIds, String condition)
+    public List<Paint> filterPaintsByCategories(List<Long> categoryIds)
     {
+        System.out.println("sessionBean received IDS: " + categoryIds);
         List<Paint> paints = new ArrayList<>();
         
-        if(categoryIds == null || categoryIds.isEmpty() || (!condition.equals("AND") && !condition.equals("OR")))
+        if(categoryIds == null || categoryIds.isEmpty() /* || (!condition.equals("AND") && !condition.equals("OR"))*/)
         {
             return paints;
         }
         else
         {
-            if(condition.equals("OR"))
-            {
-                Query query = em.createQuery("SELECT DISTINCT p FROM Paint p, IN (p.paintCategories) pc WHERE pc.paintCategoryId IN :inCategoryIds ORDER BY p.colourCode ASC");
-                query.setParameter("inCategoryIds", categoryIds);
-                paints = query.getResultList();                                                          
-            }
-            else // AND
-            {
+//            if(condition.equals("OR"))
+//            {
+//                Query query = em.createQuery("SELECT DISTINCT p FROM Paint p, IN (p.paintCategories) pc WHERE pc.paintCategoryId IN :inCategoryIds ORDER BY p.colourCode ASC");
+//                query.setParameter("inCategoryIds", categoryIds);
+//                paints = query.getResultList();                                                          
+//            }
+//            else // AND
+//            {
                 String selectClause = "SELECT p FROM Paint p";
                 String whereClause = "";
                 Boolean firstCategory = true;
@@ -202,7 +203,7 @@ public class PaintSessionBean implements PaintSessionBeanLocal {
                     }
                     else
                     {
-                        whereClause += " AND te" + categoryCount + ".tagId = " + categoryId; 
+                        whereClause += " AND pc" + categoryCount + ".paintCategoryId = " + categoryId; 
                     }
                     
                     categoryCount++;
@@ -211,7 +212,7 @@ public class PaintSessionBean implements PaintSessionBeanLocal {
                 String jpql = selectClause + " " + whereClause + " ORDER BY p.colourCode ASC";
                 Query query = em.createQuery(jpql);
                 paints = query.getResultList();                                
-            }
+//            }
             
             for(Paint paint:paints)
             {
@@ -245,7 +246,7 @@ public class PaintSessionBean implements PaintSessionBeanLocal {
         {
             if(condition.equals("OR"))
             {
-                Query query = em.createQuery("SELECT DISTINCT pe FROM Paint pe, IN (pe.tagEntities) te WHERE te.tagId IN :inTagIds ORDER BY pe.colourCode ASC");
+                Query query = em.createQuery("SELECT DISTINCT pe FROM Paint pe, IN (pe.tags) te WHERE te.tagId IN :inTagIds ORDER BY pe.colourCode ASC");
                 query.setParameter("inTagIds", tagIds);
                 paints = query.getResultList();                                                          
             }
@@ -258,7 +259,7 @@ public class PaintSessionBean implements PaintSessionBeanLocal {
 
                 for(Long tagId:tagIds)
                 {
-                    selectClause += ", IN (pe.tagEntities) te" + tagCount;
+                    selectClause += ", IN (pe.tags) te" + tagCount;
 
                     if(firstTag)
                     {

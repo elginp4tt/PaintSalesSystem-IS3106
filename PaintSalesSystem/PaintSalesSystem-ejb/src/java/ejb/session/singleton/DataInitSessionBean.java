@@ -221,7 +221,6 @@ public class DataInitSessionBean
             paintCategories = new ArrayList<>();
             paintTags = new ArrayList<>();
             paintCategories.add(pc1.getPaintCategoryId());
-            paintCategories.add(pc2.getPaintCategoryId());
             paintCategories.add(pc3.getPaintCategoryId());            
             paintTags.add(hotTag.getTagId());
             paintTags.add(discountTag.getTagId());

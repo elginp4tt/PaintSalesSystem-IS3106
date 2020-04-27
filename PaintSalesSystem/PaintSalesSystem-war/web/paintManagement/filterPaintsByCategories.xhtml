@@ -17,31 +17,20 @@
             <h:form id="formMain">
                 
                 <p:layout>
-                
                     <p:layoutUnit position="west" resizable="true">
                         
-                        <p:outputLabel for="selCondition" value="Condition: " style="font-weight: bold;" />
-                        <p:selectOneMenu id="selCondition" value="#{filterPaintsByCategoriesManagedBean.condition}">
-
-                            <f:selectItem itemValue="OR" itemLabel="OR" itemDescription="OR" />
-                            <f:selectItem itemValue="AND" itemLabel="AND" itemDescription="AND" />
-
-                            <p:ajax process="@form" update="formMain:dataTableMain" listener="#{filterPaintsByCategoriesManagedBean.filterPaint}" />
-
-                        </p:selectOneMenu>
-
-                        <br /><br />
-
-                        <p:outputLabel for="selCategories" value="Categories: " style="font-weight: bold;" />
-                        <p:selectManyMenu id="selCategories" value="#{filterPaintsByCategoriesManagedBean.selectedCategoryIds}" showCheckbox="true">
-                            <f:selectItems value="#{filterPaintsByCategoriesManagedBean.selectItems}" />
-
-                            <p:ajax process="@form" update="formMain:dataTableMain" listener="#{filterPaintsByCategoriesManagedBean.filterPaint}" />
-
-                        </p:selectManyMenu>                                
+                        <p:tree value="#{filterPaintsByCategoriesManagedBean.treeNode}" var="node" selectionMode="checkbox" selection="#{filterPaintsByCategoriesManagedBean.selectedTreeNodes}">
+                            <p:treeNode>
+                                <h:outputText value="#{node.categoryName}" />
+                            </p:treeNode>
+                            <p:ajax event= "select" process="@form" update="formMain:dataTableMain" listener="#{filterPaintsByCategoriesManagedBean.filterPaint}" />
+                            <p:ajax event= "unselect" process="@form" update="formMain:dataTableMain" listener="#{filterPaintsByCategoriesManagedBean.filterPaint}" />
+                            <p:ajax event= "expand" process="@form" update="formMain:dataTableMain" listener="#{filterPaintsByCategoriesManagedBean.filterPaint}" />
+                            <p:ajax event= "collapse" process="@form" update="formMain:dataTableMain" listener="#{filterPaintsByCategoriesManagedBean.filterPaint}" />
+                        </p:tree>                                                   
 
                     </p:layoutUnit>
-
+                    
                     <p:layoutUnit position="center">
                         
                         <p:dataTable id="dataTableMain" widgetVar="dataTableMain" value="#{filterPaintsByCategoriesManagedBean.paints}" var="paint" rowKey="#{paint.paintId}" rowIndexVar="row"                             

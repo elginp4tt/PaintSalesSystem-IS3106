@@ -64,7 +64,7 @@ public class FilterPaintsByTagsManagedBean implements Serializable
         
         condition = (String)FacesContext.getCurrentInstance().getExternalContext().getSessionMap().get("paintFilterCondition");        
         selectedTagIds = (List<Long>)FacesContext.getCurrentInstance().getExternalContext().getSessionMap().get("paintFilterTags");
-        
+
         filterPaint();
     }
     
