@@ -48,4 +48,6 @@ public interface EmployeeSessionBeanLocal {
 
     public Employee updateEmployeePassword(String username, String oldPassword, String newPassword) throws EmployeeNotFoundException, UpdateEmployeeException, InputDataValidationException;
 
+    public void updateEmployeeMotd(Employee employee) throws EmployeeNotFoundException;
+
 }

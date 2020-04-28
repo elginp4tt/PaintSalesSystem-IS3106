@@ -8,6 +8,7 @@ package ejb.session.stateless;
 import entity.Customer;
 import entity.Delivery;
 import entity.Employee;
+import entity.MessageOfTheDay;
 import entity.PaintService;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
@@ -95,6 +96,20 @@ public class EmployeeSessionBean implements EmployeeSessionBeanLocal {
 
         return query.getResultList();
     }
+    
+    
+    
+    @Override
+    public void updateEmployeeMotd(Employee employee) throws EmployeeNotFoundException
+    {
+        if (employee != null & employee.getEmployeeId() != null) {
+            Employee employeeToUpdate = retrieveEmployeeById(employee.getEmployeeId());
+            employeeToUpdate.getMotds().clear();
+            employeeToUpdate.setMotds(employee.getMotds());
+            
+        }
+    }
+    
 
     @Override
     public void updateEmployee(Employee employee, List<Long> deliveryIds, List<Long> paintServiceIds) throws EmployeeNotFoundException, DeliveryNotFoundException, PaintServiceNotFoundException, UpdateEmployeeException, InputDataValidationException {
@@ -303,6 +318,7 @@ public class EmployeeSessionBean implements EmployeeSessionBeanLocal {
             if (employeeEntity.getPassword().equals(password)) {
                 employeeEntity.getPaintServices().size();
                 employeeEntity.getDeliveries().size();
+                employeeEntity.getMotds();
                 return employeeEntity;
             } else {
                 throw new InvalidLoginCredentialException("Username does not exist or invalid password!");

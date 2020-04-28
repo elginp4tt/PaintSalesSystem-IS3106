@@ -1,5 +1,6 @@
 package ejb.session.stateless;
 
+import entity.Employee;
 import entity.MessageOfTheDay;
 import java.util.List;
 import java.util.Set;
@@ -66,6 +67,19 @@ public class MessageOfTheDayEntitySessionBean implements MessageOfTheDayEntitySe
         Query query = entityManager.createQuery("SELECT motd FROM MessageOfTheDay motd ORDER BY motd.motdId ASC");
         
         return query.getResultList();
+    }
+    
+    
+    
+    @Override
+    public MessageOfTheDay removeMotd(Long motdId, Long employeeId)
+    {
+        MessageOfTheDay motd = entityManager.find(MessageOfTheDay.class, motdId);
+        Employee employee = entityManager.find(Employee.class, employeeId);
+        employee.removeMessageOfTheDay(motd);
+        entityManager.merge(employee);
+        entityManager.remove(motd);
+        return motd;
     }
     
     

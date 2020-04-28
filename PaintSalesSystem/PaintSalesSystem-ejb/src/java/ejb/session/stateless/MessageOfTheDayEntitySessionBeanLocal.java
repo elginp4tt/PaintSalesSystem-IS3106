@@ -20,5 +20,7 @@ public interface MessageOfTheDayEntitySessionBeanLocal {
     public MessageOfTheDay createNewMessageOfTheDay(MessageOfTheDay newMessageOfTheDay) throws InputDataValidationException;
 
     public List<MessageOfTheDay> retrieveAllMessagesOfTheDay();
+
+    public MessageOfTheDay removeMotd(Long motdId, Long employeeId);
     
 }

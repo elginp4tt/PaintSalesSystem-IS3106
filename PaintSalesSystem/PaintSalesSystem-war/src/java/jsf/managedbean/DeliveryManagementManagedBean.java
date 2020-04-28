@@ -2,8 +2,11 @@ package jsf.managedbean;
 
 import ejb.session.stateless.DeliveryEntitySessionBeanLocal;
 import ejb.session.stateless.EmployeeSessionBeanLocal;
+import ejb.session.stateless.MessageOfTheDayEntitySessionBeanLocal;
 import entity.Delivery;
 import entity.Employee;
+import entity.MessageOfTheDay;
+import entity.PaintService;
 import java.io.IOException;
 import java.io.Serializable;
 import java.text.DateFormat;
@@ -28,6 +31,7 @@ import org.primefaces.event.SelectEvent;
 import org.primefaces.model.DefaultScheduleEvent;
 import org.primefaces.model.DefaultScheduleModel;
 import org.primefaces.model.ScheduleModel;
+import util.enumeration.AccessRightEnum;
 import util.exception.DeliveryNotFoundException;
 import util.exception.EmployeeNotFoundException;
 import util.exception.InputDataValidationException;
@@ -41,6 +45,10 @@ import util.exception.UpdateDeliveryException;
 @ViewScoped
 
 public class DeliveryManagementManagedBean implements Serializable{
+
+    @EJB(name = "MessageOfTheDayEntitySessionBeanLocal")
+    private MessageOfTheDayEntitySessionBeanLocal messageOfTheDayEntitySessionBeanLocal;
+
     
     @EJB
     private EmployeeSessionBeanLocal employeeSessionBeanLocal;
@@ -51,18 +59,18 @@ public class DeliveryManagementManagedBean implements Serializable{
     @Inject
     private ViewDeliveryManagedBean viewDeliveryManagedBean;
     
-    private static final DateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd HH:mm");
-    
-    private List<Delivery> allDeliveries;
-    private List<Delivery> filteredDeliveries;
-    private String radioSelection;
-    private ScheduleModel eventModel;
     private List<Employee> employees;
+    private Employee currentEmployee;
+    
+    private List<Delivery> deliveriesToView;
+    private List<Delivery> filteredDeliveries;
+    
     
     
     //for update
     private List<Employee> availableEmployee;
     private Delivery selectedDeliveryToUpdate;
+    private Long oldEmployeeId;
     private Long employeeIdUpdate;
     private Date startTimeUpdate;
     private Date endTimeUpdate;
@@ -72,58 +80,30 @@ public class DeliveryManagementManagedBean implements Serializable{
     
     public DeliveryManagementManagedBean()
     {
-        radioSelection = "table";
-        eventModel = eventModel = new DefaultScheduleModel();
+        deliveriesToView = new ArrayList<>();
     }
     
     @PostConstruct
     public void postConstruct()
     {
-        allDeliveries = deliveryEntitySessionBeanLocal.retrieveAllDelivery();
+        currentEmployee = (Employee)FacesContext.getCurrentInstance().getExternalContext().getSessionMap().get("currentEmployeeEntity");
+        List<Delivery> allDeliveries = deliveryEntitySessionBeanLocal.retrieveAllDelivery();
+        if(currentEmployee.getAccessRightEnum().equals(AccessRightEnum.MANAGER))
+        {
+            deliveriesToView = allDeliveries;
+        }
+        else
+        {
+            for(Delivery d : allDeliveries)
+            {
+                if(d.getEmployee().getEmployeeId().equals(currentEmployee.getEmployeeId()))
+                {
+                    deliveriesToView.add(d);
+                }
+            }
+        }
         employees = employeeSessionBeanLocal.retrieveAllEmployee();
-
-
-//        eventModel.addEvent(new DefaultScheduleEvent("event 1", previousDay8Pm(),previousDay11Pm()));
     }
-    
-    
-//    private Calendar today()
-//    {
-//        Calendar calendar = Calendar.getInstance();
-//        calendar.set(calendar.get(Calendar.YEAR),
-//                        calendar.get(Calendar.MONTH),
-//                        calendar.get(Calendar.DATE),0,0,0);
-//        
-//        return calendar;
-//    }
-//    
-//    private Date previousDay8Pm()
-//    {
-//        Calendar t = (Calendar) today().clone();
-//        t.set(Calendar.AM_PM, Calendar.PM);
-//        t.set(Calendar.DATE,t.get(Calendar.DATE) -1);
-//        t.set(Calendar.HOUR, 8);
-//        
-//        return t.getTime();
-//    }
-//    
-//    
-//    private Date previousDay11Pm()
-//    {
-//        Calendar t = (Calendar) today().clone();
-//        t.set(Calendar.AM_PM, Calendar.PM);
-//        t.set(Calendar.DATE,t.get(Calendar.DATE) -1);
-//        t.set(Calendar.HOUR, 11);
-//        
-//        return t.getTime();
-//    }
-    
-    
-    
-    
-    
-    
-    
     
     
     
@@ -132,26 +112,11 @@ public class DeliveryManagementManagedBean implements Serializable{
         selectedDeliveryToUpdate = (Delivery)event.getComponent().getAttributes().get("deliveryToUpdate");
         
         employeeIdUpdate = selectedDeliveryToUpdate.getEmployee().getEmployeeId();
+        oldEmployeeId = employeeIdUpdate;
         startTimeUpdate = selectedDeliveryToUpdate.getDeliveryStartTime();
         endTimeUpdate = selectedDeliveryToUpdate.getDeliveryEndTime();
         addressUpdate = selectedDeliveryToUpdate.getLocationAddress();
         postalCodeUpdate = selectedDeliveryToUpdate.getPostalCode();
-    }
-    
-    
-    
-    
-    public void updateAvailableEmployeeSelection(ActionEvent event) throws DeliveryNotFoundException
-    {
-        if(startTimeUpdate.equals(endTimeUpdate) || startTimeUpdate.after(endTimeUpdate))
-        {
-            availableEmployee = null;
-            FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Delivery service start time should be before end time.", null));
-        }
-        else
-        {
-            availableEmployee = deliveryEntitySessionBeanLocal.retrieveAvailableEmployeeByNewDeliveryDate(selectedDeliveryToUpdate, startTimeUpdate, endTimeUpdate);
-        }
     }
     
     public void updateDelivery(ActionEvent event) throws IOException
@@ -183,6 +148,20 @@ public class DeliveryManagementManagedBean implements Serializable{
                     }
                 }
                 
+                if(!oldEmployeeId.equals(employeeIdUpdate))
+                {
+                    MessageOfTheDay motd =  new MessageOfTheDay("Delivery Update", "An existing delivery has been assigned to other employee.", new Date());
+                    messageOfTheDayEntitySessionBeanLocal.createNewMessageOfTheDay(motd);
+                    Employee oldEmployee = employeeSessionBeanLocal.retrieveEmployeeById(oldEmployeeId);
+                    oldEmployee.addMessageOfTheDay(motd);
+                    employeeSessionBeanLocal.updateEmployeeMotd(oldEmployee);
+                    motd =  new MessageOfTheDay("Delivery Update", "A new delivery has been assigned to you", new Date());
+                    messageOfTheDayEntitySessionBeanLocal.createNewMessageOfTheDay(motd);
+                    Employee newEmployee = employeeSessionBeanLocal.retrieveEmployeeById(employeeIdUpdate);
+                    newEmployee.addMessageOfTheDay(motd);
+                    employeeSessionBeanLocal.updateEmployeeMotd(newEmployee);
+                }
+                
                 FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "Delivery updated successfully.", null));                
             }
         }
@@ -194,24 +173,32 @@ public class DeliveryManagementManagedBean implements Serializable{
     }
     
     
-    public boolean checkRadioTable()
+    public void updateAvailableEmployeeSelection(ActionEvent event) throws DeliveryNotFoundException
     {
-        return this.radioSelection.equals("table");
+        if(startTimeUpdate.equals(endTimeUpdate) || startTimeUpdate.after(endTimeUpdate))
+        {
+            availableEmployee = null;
+            FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Delivery service start time should be before end time.", null));
+        }
+        else
+        {
+            availableEmployee = deliveryEntitySessionBeanLocal.retrieveAvailableEmployeeByNewDeliveryDate(selectedDeliveryToUpdate, startTimeUpdate, endTimeUpdate);
+        }
     }
     
-    
-    public boolean checkRadioCalendar()
+    public Boolean displayUpdateButton()
     {
-        return this.radioSelection.equals("calendar");
+        if(currentEmployee.getAccessRightEnum().equals(AccessRightEnum.MANAGER))
+        {
+            return true;
+        }
+        else
+        {
+            return false;
+        }
     }
     
-    public List<Delivery> getAllDeliveries() {
-        return allDeliveries;
-    }
     
-    public void setAllDeliveries(List<Delivery> allDeliveries) {
-        this.allDeliveries = allDeliveries;
-    }
     
     public List<Delivery> getFilteredDeliveries() {
         return filteredDeliveries;
@@ -237,14 +224,6 @@ public class DeliveryManagementManagedBean implements Serializable{
         this.viewDeliveryManagedBean = viewDeliveryManagedBean;
     }
     
-    public String getRadioSelection() {
-        return radioSelection;
-    }
-    
-    public void setRadioSelection(String radioSelection) {
-        this.radioSelection = radioSelection;
-    }
-    
     
     
     public Long getEmployeeIdUpdate() {
@@ -253,14 +232,6 @@ public class DeliveryManagementManagedBean implements Serializable{
     
     public void setEmployeeIdUpdate(Long employeeIdUpdate) {
         this.employeeIdUpdate = employeeIdUpdate;
-    }
-    
-    public ScheduleModel getEventModel() {
-        return eventModel;
-    }
-    
-    public void setEventModel(ScheduleModel eventModel) {
-        this.eventModel = eventModel;
     }
 
     public List<Employee> getAvailableEmployee() {
@@ -303,6 +274,12 @@ public class DeliveryManagementManagedBean implements Serializable{
         this.postalCodeUpdate = postalCodeUpdate;
     }
     
-    
+    public List<Delivery> getDeliveriesToView() {
+        return deliveriesToView;
+    }
+
+    public void setDeliveriesToView(List<Delivery> deliveriesToView) {
+        this.deliveriesToView = deliveriesToView;
+    }
     
 }

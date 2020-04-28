@@ -49,7 +49,7 @@
             <h:form>
                 <p:growl id="messages" showDetail="true" />
                 
-                <p:idleMonitor timeout="5000">
+                <p:idleMonitor timeout="10000">
                     <p:ajax event="idle" listener="#{idleMonitorViewManagedBean.onIdle()}" update="messages" oncomplete="PF('sidebar').show()" />
                     <p:ajax event="active" listener="#{idleMonitorViewManagedBean.onActive()}" update="messages" oncomplete="PF('sidebar').hide()" />
                 </p:idleMonitor>

@@ -6,11 +6,15 @@
 package jsf.managedbean;
 
 import ejb.session.stateless.EmployeeSessionBeanLocal;
+import ejb.session.stateless.MessageOfTheDayEntitySessionBeanLocal;
 import ejb.session.stateless.PaintServiceEntitySessionBeanLocal;
 import entity.Employee;
+import entity.MessageOfTheDay;
 import entity.PaintService;
 import java.io.IOException;
 import java.io.Serializable;
+import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import javax.annotation.PostConstruct;
@@ -21,8 +25,9 @@ import javax.faces.event.ActionEvent;
 import javax.inject.Named;
 import javax.faces.view.ViewScoped;
 import javax.inject.Inject;
+import org.primefaces.model.DefaultScheduleEvent;
 import org.primefaces.model.DefaultScheduleModel;
-import org.primefaces.model.ScheduleModel;
+import util.enumeration.AccessRightEnum;
 import util.exception.DeliveryNotFoundException;
 import util.exception.EmployeeNotFoundException;
 import util.exception.InputDataValidationException;
@@ -40,8 +45,9 @@ import util.exception.UpdatePaintServiceException;
 public class PaintServiceManagementManagedBean implements Serializable
 {
 
+    @EJB(name = "MessageOfTheDayEntitySessionBeanLocal")
+    private MessageOfTheDayEntitySessionBeanLocal messageOfTheDayEntitySessionBeanLocal;
     
-
     @EJB(name = "EmployeeSessionBeanLocal")
     private EmployeeSessionBeanLocal employeeSessionBeanLocal;
 
@@ -53,16 +59,16 @@ public class PaintServiceManagementManagedBean implements Serializable
     
     
     //general
-    private String radioSelection;
     private List<Employee> employees;
-    private ScheduleModel eventModel;
+    private Employee currentEmployee;
     
-    private List<PaintService> allPaintServices;
+    private List<PaintService> paintServicesToView;
     private List<PaintService> filteredPaintServices;
     
     //update
     private List<Employee> availableEmployee;
     private PaintService selectedPaintServiceToUpdate;
+    private Long oldEmployeeId;
     private Long employeeIdUpdate;
     private Date startTimeUpdate;
     private Date endTimeUpdate;
@@ -72,14 +78,30 @@ public class PaintServiceManagementManagedBean implements Serializable
     
     public PaintServiceManagementManagedBean() 
     {
-        radioSelection = "table";
-        eventModel = new DefaultScheduleModel();
+        paintServicesToView = new ArrayList<>();
     }
+    
     
     @PostConstruct
     public void postConstruct()
     {
-        allPaintServices = paintServiceEntitySessionBeanLocal.retrieveAllPaintService();
+        currentEmployee = (Employee)FacesContext.getCurrentInstance().getExternalContext().getSessionMap().get("currentEmployeeEntity");
+        List<PaintService> allPaintServices = paintServiceEntitySessionBeanLocal.retrieveAllPaintService();
+        if(getCurrentEmployee().getAccessRightEnum().equals(AccessRightEnum.MANAGER))
+        {
+            paintServicesToView = allPaintServices;
+        }
+        else
+        {
+            for(PaintService ps : allPaintServices)
+            {
+                if(ps.getEmployee().getEmployeeId().equals(getCurrentEmployee().getEmployeeId()))
+                {
+                    paintServicesToView.add(ps);
+                }
+            }
+        }
+        
         employees = employeeSessionBeanLocal.retrieveAllEmployee();
     }
     
@@ -89,11 +111,13 @@ public class PaintServiceManagementManagedBean implements Serializable
         selectedPaintServiceToUpdate = (PaintService)event.getComponent().getAttributes().get("paintServiceToUpdate");
         
         employeeIdUpdate = selectedPaintServiceToUpdate.getEmployee().getEmployeeId();
+        oldEmployeeId = employeeIdUpdate;
         startTimeUpdate = selectedPaintServiceToUpdate.getPaintServiceStartTime();
         endTimeUpdate = selectedPaintServiceToUpdate.getPaintServiceEndTime();
         addressUpdate = selectedPaintServiceToUpdate.getLocationAddress();
         postalCodeUpdate = selectedPaintServiceToUpdate.getPostalCode();
     }
+    
     
     public void updatePaintService(ActionEvent event) throws IOException
     {
@@ -124,6 +148,21 @@ public class PaintServiceManagementManagedBean implements Serializable
                     }
                 }
                 
+                if(!oldEmployeeId.equals(employeeIdUpdate))
+                {
+                    MessageOfTheDay motd =  new MessageOfTheDay("Paint Service Update", "An existing paint service has been assigned to other employee.", new Date());
+                    messageOfTheDayEntitySessionBeanLocal.createNewMessageOfTheDay(motd);
+                    Employee oldEmployee = employeeSessionBeanLocal.retrieveEmployeeById(oldEmployeeId);
+                    oldEmployee.addMessageOfTheDay(motd);
+                    employeeSessionBeanLocal.updateEmployeeMotd(oldEmployee);
+                    motd =  new MessageOfTheDay("Delivery Update", "A new paint service has been assigned to you.", new Date());
+                    messageOfTheDayEntitySessionBeanLocal.createNewMessageOfTheDay(motd);
+                    Employee newEmployee = employeeSessionBeanLocal.retrieveEmployeeById(employeeIdUpdate);
+                    newEmployee.addMessageOfTheDay(motd);
+                    employeeSessionBeanLocal.updateEmployeeMotd(newEmployee);
+                }
+                
+                
                 addMessage(new FacesMessage(FacesMessage.SEVERITY_INFO, "Paint service updated successfully.", null));                
             }
         }
@@ -149,18 +188,24 @@ public class PaintServiceManagementManagedBean implements Serializable
     }
     
     
+    public Boolean displayUpdateButton()
+    {
+        if(getCurrentEmployee().getAccessRightEnum().equals(AccessRightEnum.MANAGER))
+        {
+            return true;
+        }
+        else
+        {
+            return false;
+        }
+    }
+    
     public void addMessage(FacesMessage message)
     {
         FacesContext.getCurrentInstance().addMessage(null, message);
     }
     
-    public List<PaintService> getAllPaintServices() {
-        return allPaintServices;
-    }
-
-    public void setAllPaintServices(List<PaintService> allPaintServices) {
-        this.allPaintServices = allPaintServices;
-    }
+    
 
     public List<PaintService> getFilteredPaintServices() {
         return filteredPaintServices;
@@ -168,25 +213,6 @@ public class PaintServiceManagementManagedBean implements Serializable
 
     public void setFilteredPaintServices(List<PaintService> filteredPaintServices) {
         this.filteredPaintServices = filteredPaintServices;
-    }
-
-    public String getRadioSelection() {
-        return radioSelection;
-    }
-
-    public void setRadioSelection(String radioSelection) {
-        this.radioSelection = radioSelection;
-    }
-    
-    public boolean checkRadioTable()
-    {
-        return this.radioSelection.equals("table");
-    }
-    
-    
-    public boolean checkRadioCalendar()
-    {
-        return this.radioSelection.equals("calendar");
     }
 
     public PaintService getSelectedPaintServiceToUpdate() {
@@ -253,12 +279,20 @@ public class PaintServiceManagementManagedBean implements Serializable
         this.availableEmployee = availableEmployee;
     }
     
-    public ScheduleModel getEventModel() {
-        return eventModel;
-    }
     
-    public void setEventModel(ScheduleModel eventModel) {
-        this.eventModel = eventModel;
+    public List<PaintService> getPaintServicesToView() {
+        return paintServicesToView;
     }
-    
+
+    public void setPaintServicesToView(List<PaintService> paintServicesToView) {
+        this.paintServicesToView = paintServicesToView;
+    }
+
+    public Employee getCurrentEmployee() {
+        return currentEmployee;
+    }
+
+    public void setCurrentEmployee(Employee currentEmployee) {
+        this.currentEmployee = currentEmployee;
+    }
 }

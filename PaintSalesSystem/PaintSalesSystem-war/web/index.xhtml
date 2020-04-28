@@ -12,19 +12,29 @@
         
         <ez:Breadcrumb pageName="Home" />
         
-        <article>
-            <h3>Message Of The Day</h3>                    
-            <p>
-                <ui:repeat value="#{showMessageOfTheDayManagedBean.allMotds}" var="motd">
-                    
-                    <p:panel header="#{utilManagedBean.formatMotdHeader(motd.messageDate)} - #{motd.title}" toggleable="true">
-                        <h:outputText value="#{motd.message}" />
-                    </p:panel>
-                    <br/>                
-                    
-                </ui:repeat>
-            </p>
-        </article>
+        
+        <h:panelGroup rendered="#{sessionScope.isLogin == true}">
+            
+            <article>
+                <h3>Message Of The Day</h3>                    
+                <h:form id="formAllMotd">
+                    <p>
+                        <ui:repeat value="#{showMessageOfTheDayManagedBean.allMotds}" var="motd">
+                            
+                            <p:panel header="#{utilManagedBean.formatMotdHeader(motd.messageDate)} - #{motd.title}" toggleable="true" closable="true">
+                                <p:ajax event="close" listener="#{showMessageOfTheDayManagedBean.removeMotd}" />
+                                <f:attribute name="motdId" value="#{motd.motdId}" />
+                                <h:outputText value="#{motd.message}" />
+                            </p:panel>
+                            <br/>                
+                            
+                        </ui:repeat>
+                    </p>
+                </h:form>
+                
+            </article>
+        </h:panelGroup>
+        
         
         
     </ui:define>

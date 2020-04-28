@@ -231,6 +231,11 @@ public class Employee implements Serializable {
     {
         motds.add(motd);
     }
+    
+    public void removeMessageOfTheDay(MessageOfTheDay motd)
+    {
+        motds.remove(motd);
+    }
 
     public void setMotds(List<MessageOfTheDay> motds) {
         this.motds = motds;
