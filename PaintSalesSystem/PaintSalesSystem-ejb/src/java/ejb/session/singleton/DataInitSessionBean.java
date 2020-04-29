@@ -112,6 +112,17 @@ public class DataInitSessionBean {
             newPaintServiceTransaction1.setItemName("Paint Service");
             newPaintServiceTransaction1.setPrice(BigDecimal.valueOf(200.0));
             newPaintServiceTransaction1.setQuantity(BigInteger.valueOf(1l));
+            
+            Delivery newDelivery3 = new Delivery();
+            newDelivery3.setDeliveryStartTime(dateFormat.parse("21/04/2020 05:00"));
+            newDelivery3.setDeliveryEndTime(dateFormat.parse("21/04/2020 05:20"));
+            newDelivery3.setLocationAddress("address3");
+            newDelivery3.setPostalCode("123486");
+            
+            DeliveryServiceTransaction newDeliveryTransaction3 = new DeliveryServiceTransaction();
+            newDeliveryTransaction3.setItemName("Delivery Service");
+            newDeliveryTransaction3.setPrice(BigDecimal.valueOf(50.0));
+            newDeliveryTransaction3.setQuantity(BigInteger.valueOf(1l));
 
             PaintService newPaintService1 = new PaintService();
             newPaintService1.setPaintServiceStartTime(dateFormat.parse("15/04/2020 05:00"));
@@ -136,10 +147,12 @@ public class DataInitSessionBean {
             newCustomer1.addTransaction(newTransaction1);
             newTransaction1.addSaleTransactionLineItemEntity(newDeliveryTransaction1);
             newTransaction1.addSaleTransactionLineItemEntity(newDeliveryTransaction2);
+            newTransaction1.addSaleTransactionLineItemEntity(newDeliveryTransaction3);
             newTransaction1.addSaleTransactionLineItemEntity(newPaintServiceTransaction1);
             newTransaction1.addSaleTransactionLineItemEntity(newPaintServiceTransaction2);
             newDeliveryTransaction1.setDelivery(newDelivery1);
             newDeliveryTransaction2.setDelivery(newDelivery2);
+            newDeliveryTransaction3.setDelivery(newDelivery3);
             newPaintServiceTransaction1.setPaintService(newPaintService1);
             newPaintServiceTransaction2.setPaintService(newPaintService2);
             newEmployee2.addDelivery(newDelivery1);
@@ -155,10 +168,12 @@ public class DataInitSessionBean {
             em.persist(newTransaction1);
             em.persist(newDeliveryTransaction1);
             em.persist(newDeliveryTransaction2);
+            em.persist(newDeliveryTransaction3);
             em.persist(newPaintServiceTransaction1);
             em.persist(newPaintServiceTransaction2);
             em.persist(newDelivery1);
             em.persist(newDelivery2);
+            em.persist(newDelivery3);
             em.persist(newPaintService1);
             em.persist(newPaintService2);
             em.persist(newEmployee1);

@@ -71,7 +71,8 @@
                         </p:column>
                         
                         <p:column>
-                            <h:outputLabel value="#{viewDeliveryManagedBean.deliveryToView.employee.employeeId}" />
+                            <h:outputLabel value="#{viewDeliveryManagedBean.deliveryToView.employee.employeeId}" rendered="#{viewDeliveryManagedBean.deliveryToView.employee != null}"/>
+                            <h:outputLabel value="NOT ASSIGNED" rendered="#{viewDeliveryManagedBean.deliveryToView.employee == null}"/>
                         </p:column>
                     </p:row>
                     
