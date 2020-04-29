@@ -7,6 +7,8 @@ package ws.restful.resources;
 
 import ejb.session.stateless.PaintSessionBeanLocal;
 import entity.Paint;
+import entity.PaintCategory;
+import entity.PaintTag;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -55,12 +57,24 @@ public class PaintResource {
 
 
     @GET
-    @Path("/retrieveAllPaints")
+    @Path("retrieveAllPaints")
     @Produces(MediaType.APPLICATION_JSON)
     public Response retrieveAllPaints() {
         try {
         List<Paint> paints = paintSessionBean.retrieveAllPaints();
-        
+        for (Paint p: paints) {
+            List<PaintCategory> pcl = p.getPaintCategories();
+            for (PaintCategory pc: pcl) {
+                pc.setPaints(null);
+                pc.setSubCategoryEntities(null);
+                pc.setParentCategoryEntity(null);
+            }
+            List<PaintTag> ptl = p.getTags();;
+            for (PaintTag pt: ptl) {
+                pt.setPaints(null);
+            }
+            
+        }
         RetrieveAllPaintsRsp retrieveAllPaintsRsp = new RetrieveAllPaintsRsp(paints);
         
         return Response.status(Status.OK).entity(retrieveAllPaintsRsp).build();
@@ -81,7 +95,16 @@ public class PaintResource {
         try
         {
             Paint paint = paintSessionBean.retrievePaintByPaintId(paintId);
-
+            List<PaintCategory> pcl = paint.getPaintCategories();
+            for (PaintCategory pc: pcl) {
+                pc.setPaints(null);
+                pc.setSubCategoryEntities(null);
+                pc.setParentCategoryEntity(null);
+            }
+            List<PaintTag> ptl = paint.getTags();;
+            for (PaintTag pt: ptl) {
+                pt.setPaints(null);
+            }
             return Response.status(Status.OK).entity(new RetrievePaintRsp(paint)).build();
         }
         catch(PaintNotFoundException ex)
