@@ -64,7 +64,9 @@
                         <p:commandButton update="ccViewEmployee:formViewEmployee" oncomplete="PF('dialogViewEmployee').show()" icon="ui-icon-document" title="View">
                             <f:setPropertyActionListener value="#{employee}" target="#{employeeManagementManagedBean.employeeToView}" />
                         </p:commandButton>
-                        <p:commandButton icon="ui-icon-pencil" title="Update" />
+                        <p:commandButton actionListener="#{employeeManagementManagedBean.doUpdateEmployee}" update="formUpdateEmployee" oncomplete="PF('dialogUpdateEmployee').show()" icon="ui-icon-pencil" title="Update">
+                            <f:setPropertyActionListener value="#{employee}" target="#{employeeManagementManagedBean.selectedEmployeeToUpdate}" />
+                        </p:commandButton>
                         <p:commandButton actionListener="#{employeeManagementManagedBean.deleteEmployee}" update="formAllEmployee:dataTableAllEmployees formAllEmployee:messages" icon="ui-icon-trash">
                             <f:attribute name="employeeToDelete" value="#{employee}" />
                             <p:confirm header="Confirmation" message="Are you sure you want to delete #{employee.firstName} #{employee.lastName}?" icon="ui-icon-alert" />
@@ -82,12 +84,56 @@
             
             <ez:viewEmployee id="ccViewEmployee" />
             
+            <h:form id="formUpdateEmployee">
+                <p:dialog id="dialogUpdateEmployee" widgetVar="dialogUpdateEmployee" header="Update Employee" closable="true">
+                    <p:messages redisplay="false" />
+                    
+                    <p:panelGrid>
+                        <p:row>
+                            <p:column>
+                                <p:outputLabel value="First Name" style="font-weight: bold;" />
+                            </p:column>
+                            <p:column>
+                                <p:inputText value="#{employeeManagementManagedBean.selectedEmployeeToUpdate.firstName}" required="true" requiredMessage="First name is required." />
+                            </p:column>
+                        </p:row>
+                        <p:row>
+                            <p:column>
+                                <p:outputLabel value="Last Name" style="font-weight: bold;" />
+                            </p:column>
+                            <p:column>
+                                <p:inputText value="#{employeeManagementManagedBean.selectedEmployeeToUpdate.lastName}" required="true" requiredMessage="Last name is required." />
+                            </p:column>
+                        </p:row>
+                        <p:row>
+                            <p:column>
+                                <p:outputLabel for="selAccessRight" value="Access Right" style="font-weight: bold;" />
+                            </p:column>
+                            <p:column>
+                                <p:selectOneMenu id="selAccessRight" value="#{employeeManagementManagedBean.selectedEmployeeToUpdate.accessRightEnum}">
+                                    <f:selectItem itemValue="NORMAL" itemLabel="Normal Staff" noSelectionOption="true"/>
+                                    <f:selectItem itemValue="MANAGER" itemLabel="Manager" />
+                                </p:selectOneMenu>
+                            </p:column>
+                        </p:row>
+                        <p:row style="text-align: center;">
+                            <p:column colspan="2">
+                                <p:commandButton value="Update Employee" 
+                                                 actionListener="#{employeeManagementManagedBean.updateEmployee}" 
+                                                 update="@form formAllEmployee:dataTableAllEmployees"   
+                                                 oncomplete="PF('dialogUpdateEmployee').show();" />
+                            </p:column>
+                        </p:row>
+                    </p:panelGrid>
+                </p:dialog>
+            </h:form>
+            
             
             <h:form id="formCreateNewEmployee">
                 <p:dialog id="dialogCreateNewEmployee" widgetVar="dialogCreateNewEmployee" header="Create New Employee" closable="true">
                     
-                    <p:messages id="dialogCreateNewEmployeeMessages" redisplay="false" closable="true" />
-                    <p:panelGrid>
+                    <p:messages redisplay="false" />
+                    <p:panelGrid style="width: 100%;">
                         <p:row>
                             <p:column>
                                 <p:outputLabel for="firstName" value="First Name" style="font-weight: bold;" />
@@ -142,7 +188,7 @@
                         <p:row>
                             <p:column colspan="3" style="text-align: center;">
                                 <p:commandButton type="reset" value="Clear" />&nbsp;
-                                <p:commandButton value="Create New Employee" update="@form:dialogCreateNewEmployeeMessages formAllEmployee:dataTableAllEmployees" actionListener="#{employeeManagementManagedBean.createNewEmployee}" oncomplete="PF('dialogCreateNewEmployee').show();" />
+                                <p:commandButton value="Create New Employee" update="@form formAllEmployee:dataTableAllEmployees" actionListener="#{employeeManagementManagedBean.createNewEmployee}" oncomplete="PF('dialogCreateNewEmployee').show();" />
                             </p:column>
                         </p:row>
                         

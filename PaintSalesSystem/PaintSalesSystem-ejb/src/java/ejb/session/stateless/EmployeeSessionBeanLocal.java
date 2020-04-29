@@ -50,4 +50,6 @@ public interface EmployeeSessionBeanLocal {
 
     public void updateEmployeeMotd(Employee employee) throws EmployeeNotFoundException;
 
+    public void updateEmployee(Employee employee) throws EmployeeNotFoundException, UpdateEmployeeException, InputDataValidationException;
+
 }

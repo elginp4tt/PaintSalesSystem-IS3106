@@ -63,35 +63,50 @@ public class EmployeeSessionBean implements EmployeeSessionBeanLocal {
         validatorFactory = Validation.buildDefaultValidatorFactory();
         validator = validatorFactory.getValidator();
     }
-
+    
     @Override
-    public Employee createNewEmployee(Employee newEmployee) throws InputDataValidationException, UnknownPersistenceException, EmployeeUsernameExistException {
-        Set<ConstraintViolation<Employee>> constraintViolations = validator.validate(newEmployee);
-
-        if (constraintViolations.isEmpty()) {
-            try {
+    public Employee createNewEmployee(Employee newEmployee) throws InputDataValidationException, UnknownPersistenceException, EmployeeUsernameExistException 
+    {
+        try
+        {
+            Set<ConstraintViolation<Employee>> constraintViolations = validator.validate(newEmployee);
+            
+            if (constraintViolations.isEmpty()) 
+            {
                 em.persist(newEmployee);
                 em.flush();
                 return newEmployee;
-            } catch (PersistenceException ex) {
-                if (ex.getCause() != null && ex.getCause().getClass().getName().equals("org.eclipse.persistence.exceptions.DatabaseException")) {
-                    if (ex.getCause().getCause() != null && ex.getCause().getCause().getClass().getName().equals("java.sql.SQLIntegrityConstraintViolationException")) {
-                        throw new EmployeeUsernameExistException();
-                    } else {
-                        throw new UnknownPersistenceException(ex.getMessage());
-                    }
-                } else {
+            }
+            else
+            {
+                throw new InputDataValidationException(prepareInputDataValidationErrorsMessage(constraintViolations));
+            }
+        }
+        catch(PersistenceException ex)
+        {
+            if(ex.getCause() != null && ex.getCause().getClass().getName().equals("org.eclipse.persistence.exceptions.DatabaseException"))
+            {
+                if(ex.getCause().getCause() != null && ex.getCause().getCause().getClass().getName().equals("java.sql.SQLIntegrityConstraintViolationException"))
+                {
+                    throw new EmployeeUsernameExistException("Duplicate username has already existed.");
+                }
+                else
+                {
                     throw new UnknownPersistenceException(ex.getMessage());
                 }
             }
-        } else {
-            throw new InputDataValidationException(prepareInputDataValidationErrorsMessage(constraintViolations));
+            else
+            {
+                throw new UnknownPersistenceException(ex.getMessage());
+            }
         }
-
     }
-
+    
+    
+    
     @Override
-    public List<Employee> retrieveAllEmployee() {
+    public List<Employee> retrieveAllEmployee() 
+    {
         Query query = em.createQuery("SELECT e FROM Employee e");
 
         return query.getResultList();
@@ -110,6 +125,37 @@ public class EmployeeSessionBean implements EmployeeSessionBeanLocal {
         }
     }
     
+    
+    @Override
+    public void updateEmployee(Employee employee) throws EmployeeNotFoundException, UpdateEmployeeException, InputDataValidationException
+    {
+        if (employee != null & employee.getEmployeeId() != null) {
+            Set<ConstraintViolation<Employee>> constraintViolations = validator.validate(employee);
+            
+            if (constraintViolations.isEmpty()) {
+                Employee employeeToUpdate = retrieveEmployeeById(employee.getEmployeeId());
+                
+                if (employeeToUpdate.getUsername().equals(employee.getUsername()))
+                {
+                    employeeToUpdate.setFirstName(employee.getFirstName());
+                    employeeToUpdate.setLastName(employee.getLastName());
+                    employeeToUpdate.setAccessRightEnum(employee.getAccessRightEnum());
+                }
+                else
+                {
+                    throw new UpdateEmployeeException("Username of employee record to be updated does not match the existing record");
+                }
+            }
+            else
+            {
+                throw new InputDataValidationException(prepareInputDataValidationErrorsMessage(constraintViolations));
+            }
+        }
+        else
+        {
+            throw new EmployeeNotFoundException("Employee ID not provided for employee to be updated");
+        }
+    }
 
     @Override
     public void updateEmployee(Employee employee, List<Long> deliveryIds, List<Long> paintServiceIds) throws EmployeeNotFoundException, DeliveryNotFoundException, PaintServiceNotFoundException, UpdateEmployeeException, InputDataValidationException {

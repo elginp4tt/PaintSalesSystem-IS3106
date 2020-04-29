@@ -39,6 +39,7 @@ import util.exception.UnknownPersistenceException;
 public class EmployeeManagementManagedBean implements Serializable
 {
 
+
     @EJB
     private PaintServiceEntitySessionBeanLocal paintServiceEntitySessionBeanLocal;
     @EJB
@@ -54,9 +55,7 @@ public class EmployeeManagementManagedBean implements Serializable
     private List<Employee> filteredEmployees;
     
     //for update
-    private List<Long> deliveryIdsUpdate;
     private Employee selectedEmployeeToUpdate;
-    private List<Long> paintServiceIdsUpdate;
     private List<Delivery> deliveries;
     private List<PaintService> paintServices;
     
@@ -82,14 +81,6 @@ public class EmployeeManagementManagedBean implements Serializable
     }
     
     
-//    public void viewEmployeeDetail(ActionEvent event) throws IOException
-//    {
-//        Long employeeIdToView = (Long)event.getComponent().getAttributes().get("employeeId");
-//        FacesContext.getCurrentInstance().getExternalContext().getFlash().put("employeeIdToView", employeeIdToView);
-//        FacesContext.getCurrentInstance().getExternalContext().redirect("viewEmployeeDetails.xhtml");
-//    }
-    
-    
     public void createNewEmployee(ActionEvent event) throws IOException
     {
         try
@@ -99,7 +90,7 @@ public class EmployeeManagementManagedBean implements Serializable
         }
         catch(InputDataValidationException | UnknownPersistenceException | EmployeeUsernameExistException ex)
         {
-            FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, ex.getMessage(), null));
+            FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "An error has occurred while creating the new employee: " + ex.getMessage(), null));
         }
     }
     
@@ -107,19 +98,6 @@ public class EmployeeManagementManagedBean implements Serializable
     public void doUpdateEmployee(ActionEvent event)
     {
         selectedEmployeeToUpdate = (Employee)event.getComponent().getAttributes().get("employeeToUpdate");
-        
-        deliveryIdsUpdate = new ArrayList<>();
-        paintServiceIdsUpdate = new ArrayList<>();
-        
-        for(Delivery delivery: selectedEmployeeToUpdate.getDeliveries())
-        {
-            deliveryIdsUpdate.add(delivery.getDeliveryId());
-        }
-        
-        for(PaintService paintService:selectedEmployeeToUpdate.getPaintServices())
-        {
-            paintServiceIdsUpdate.add(paintService.getPaintServiceId());
-        }
     }
     
     
@@ -128,25 +106,7 @@ public class EmployeeManagementManagedBean implements Serializable
     {
         try
         {
-            employeeSessionBeanLocal.updateEmployee(selectedEmployeeToUpdate, deliveryIdsUpdate, paintServiceIdsUpdate);
-            
-            selectedEmployeeToUpdate.getDeliveries().clear();
-            for(Delivery de : deliveries)
-            {
-                if(deliveryIdsUpdate.contains(de.getDeliveryId()))
-                {
-                    selectedEmployeeToUpdate.getDeliveries().add(de);
-                }
-            }
-            
-            selectedEmployeeToUpdate.getPaintServices().clear();
-            for(PaintService ps : paintServices)
-            {
-                if(paintServiceIdsUpdate.contains(ps.getPaintServiceId()))
-                {
-                    selectedEmployeeToUpdate.getPaintServices().add(ps);
-                }
-            }
+            employeeSessionBeanLocal.updateEmployee(selectedEmployeeToUpdate);
             
             FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "Employee updated successfully!", null));
         }
@@ -223,7 +183,5 @@ public class EmployeeManagementManagedBean implements Serializable
     public void setSelectedEmployeeToUpdate(Employee selectedEmployeeToUpdate) {
         this.selectedEmployeeToUpdate = selectedEmployeeToUpdate;
     }
-    
-
     
 }

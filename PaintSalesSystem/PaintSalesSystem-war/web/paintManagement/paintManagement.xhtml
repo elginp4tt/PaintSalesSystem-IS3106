@@ -64,7 +64,7 @@
                         </h:outputText>
                     </p:column>
 
-                    <p:column headerText="Action" >
+                    <p:column headerText="Action" style="text-align: center;">
                         <p:commandButton update="ccViewPaint:formViewPaint" oncomplete="PF('dialogViewPaint').show()" icon="ui-icon-document" title="View">
                             <f:setPropertyActionListener value="#{paint}" target="#{paintManagedBean.viewPaintManagedBean.paintToView}" />
                         </p:commandButton>
