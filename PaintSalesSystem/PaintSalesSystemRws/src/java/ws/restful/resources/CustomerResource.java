@@ -7,6 +7,9 @@ package ws.restful.resources;
 
 import ejb.session.stateless.CustomerEntitySessionBeanLocal;
 import entity.Customer;
+import entity.Transaction;
+import entity.TransactionLineItem;
+import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.naming.InitialContext;
@@ -87,7 +90,14 @@ public class CustomerResource {
         {
             Customer customer = customerEntitySessionBean.customerLogin(username, password);
 
-            customer.setPassword(null);         
+            customer.setPassword(null); 
+            
+            List <Transaction> custTransactions = customer.getTransactions();
+            for (Transaction cts : custTransactions){
+                cts.setCustomer(null);
+            }
+            System.out.println("**********CutsomerResource.java cutsomer name: " + customer.getUsername());
+            
             
             return Response.status(Status.OK).entity(new LoginRsp(customer)).build();
         }
