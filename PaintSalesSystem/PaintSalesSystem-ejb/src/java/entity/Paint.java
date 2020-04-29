@@ -19,7 +19,7 @@ import javax.validation.constraints.DecimalMin;
 import javax.validation.constraints.Digits;
 import javax.validation.constraints.Max;
 import javax.validation.constraints.Min;
-import javax.validation.constraints.Positive;
+//import javax.validation.constraints.Positive;
 
 /**
  *
@@ -48,7 +48,7 @@ public class Paint implements Serializable {
     @Min(0)
     private Integer reorderQuantity;
     @Column(nullable = false)
-    @Positive
+//    @Positive
     @Min(1)
     @Max(5)
     private Integer paintRating;
