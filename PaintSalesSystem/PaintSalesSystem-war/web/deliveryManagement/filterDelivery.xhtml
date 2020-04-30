@@ -77,7 +77,8 @@
                 </p:column>
                 
                 <p:column headerText="Employee ID" sortBy="#{delivery.employee.employeeId}" filterBy="#{delivery.employee.employeeId}" filterMatchMode="contains">
-                    <h:outputText value="#{delivery.employee.employeeId}" />
+                    <h:outputText value="#{delivery.employee.employeeId}" rendered="#{delivery.employee != null}" />
+                    <h:outputText value="NOT ASSIGNED" rendered="#{delivery.employee == null}" />
                 </p:column>
                 
             </p:dataTable>

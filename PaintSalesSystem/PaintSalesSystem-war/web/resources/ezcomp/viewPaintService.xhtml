@@ -70,7 +70,8 @@
                         </p:column>
                         
                         <p:column>
-                            <h:outputLabel value="#{viewPaintServiceManagedBean.paintServiceToView.employee.employeeId}" />
+                            <h:outputLabel value="#{viewPaintServiceManagedBean.paintServiceToView.employee.employeeId}" rendered="#{viewPaintServiceManagedBean.paintServiceToView.employee != null}"/>
+                            <h:outputLabel value="NOT ASSIGNED" rendered="#{viewPaintServiceManagedBean.paintServiceToView.employee == null}"/>
                         </p:column>
                     </p:row>
                     

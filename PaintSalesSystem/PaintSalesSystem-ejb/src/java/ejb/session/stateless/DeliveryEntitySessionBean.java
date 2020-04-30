@@ -195,7 +195,7 @@ public class DeliveryEntitySessionBean implements DeliveryEntitySessionBeanLocal
     @Override
     public void checkAssignedEmployeeAvailability(Date newDeliveryStart, Date newDeliveryEnd, Long deliveryId, Long assignedEmployeeId) throws UpdateDeliveryException, DeliveryNotFoundException
     {
-        if(deliveryId != null)
+        if(assignedEmployeeId != null && deliveryId != null)
         {
             
             Delivery deliveryToUpdate = retrieveDeliveryByDeliveryId(deliveryId);
@@ -232,7 +232,17 @@ public class DeliveryEntitySessionBean implements DeliveryEntitySessionBeanLocal
             if(constraintViolations.isEmpty())
             {
                 Delivery deliveryToUpdate = retrieveDeliveryByDeliveryId(delivery.getDeliveryId());
-                Employee employeeToUpdate = employeeSessionBeanLocal.retrieveEmployeeById(employeeId);
+                
+                Employee employeeToUpdate;
+                if(employeeId == null)
+                {
+                    employeeToUpdate = null;
+                }
+                else
+                {
+                    employeeToUpdate = employeeSessionBeanLocal.retrieveEmployeeById(employeeId);
+                }
+                
 
                 
                 deliveryToUpdate.setEmployee(employeeToUpdate);
