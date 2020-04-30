@@ -53,16 +53,14 @@ public class CustomerResource {
     public CustomerResource() {
     }
 
-
+    @Path("customer")
     @PUT
-    @Path("/customer")
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
     public Response createNewCustomer(CreateNewCustomerReq createNewCustomerReq) {
         if (createNewCustomerReq != null) {
             try {
                 Long newCustomerId = customerEntitySessionBean.createNewCustomer(createNewCustomerReq.getNewCustomer());
-
                 CreateNewCustomerRsp createNewCustomerRsp = new CreateNewCustomerRsp(newCustomerId);
                 
                 return Response.status(Status.CREATED).entity(createNewCustomerRsp).build();
@@ -95,9 +93,8 @@ public class CustomerResource {
             List <Transaction> custTransactions = customer.getTransactions();
             for (Transaction cts : custTransactions){
                 cts.setCustomer(null);
-            }
-            System.out.println("**********CutsomerResource.java cutsomer name: " + customer.getUsername());
-            
+                cts.setTransactionLineItems(null);
+            } 
             
             return Response.status(Status.OK).entity(new LoginRsp(customer)).build();
         }
