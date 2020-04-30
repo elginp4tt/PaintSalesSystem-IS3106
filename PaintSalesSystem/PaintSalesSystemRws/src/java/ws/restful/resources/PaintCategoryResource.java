@@ -30,7 +30,7 @@ import ws.restful.model.RetrieveAllPaintCategoriesRsp;
  *
  * @author Elgin Patt
  */
-@Path("Paint")
+@Path("PaintCategory")
 public class PaintCategoryResource {
 
     PaintCategorySessionBeanLocal paintCategorySessionBean = lookupPaintCategorySessionBeanLocal();
@@ -53,12 +53,22 @@ public class PaintCategoryResource {
      * @return an instance of java.lang.String
      */
     @GET
-    @Path("/paintCategory")
+    @Path("/retrieveAllPaintCategories")
     @Produces(MediaType.APPLICATION_JSON)
     public Response retrieveAllPaintCategories() {
         try {
         List<PaintCategory> paintCategories = paintCategorySessionBean.retrieveAllCategories();
         
+        for(PaintCategory pc :paintCategories)
+            {
+                if(pc.getParentCategoryEntity() != null)
+                {
+                    pc.getParentCategoryEntity().getSubCategoryEntities().clear();
+                }
+                
+                pc.getSubCategoryEntities().clear();
+                pc.getPaints().clear();
+            }
         RetrieveAllPaintCategoriesRsp retrieveAllPaintCategoriesRsp = new RetrieveAllPaintCategoriesRsp(paintCategories);
         
         return Response.status(Status.OK).entity(retrieveAllPaintCategoriesRsp).build();
