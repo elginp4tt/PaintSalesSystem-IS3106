@@ -186,7 +186,7 @@ public class PaintServiceEntitySessionBean implements PaintServiceEntitySessionB
     @Override
     public void checkAssignedEmployeeAvailability(Date newStartTime, Date newEndTime, Long paintServiceId, Long assignedEmployeeId) throws UpdatePaintServiceException, PaintServiceNotFoundException
     {
-        if(paintServiceId != null)
+        if(assignedEmployeeId != null && paintServiceId != null)
         {
             
             PaintService paintServiceToUpdate = retrievePaintServiceByPaintServiceId(paintServiceId);
@@ -239,8 +239,18 @@ public class PaintServiceEntitySessionBean implements PaintServiceEntitySessionB
             if(constraintViolations.isEmpty())
             {
                 PaintService paintServiceToUpdate = retrievePaintServiceByPaintServiceId(paintService.getPaintServiceId());
-                Employee employeeToUpdate = employeeSessionBeanLocal.retrieveEmployeeById(employeeId);
                 
+                Employee employeeToUpdate;
+                if(employeeId == null)
+                {
+                    employeeToUpdate = null;
+                }
+                else
+                {
+                    employeeToUpdate = employeeSessionBeanLocal.retrieveEmployeeById(employeeId);
+                }
+                
+                               
                 
                 paintServiceToUpdate.setEmployee(employeeToUpdate);
                 paintServiceToUpdate.setLocationAddress(paintService.getLocationAddress());

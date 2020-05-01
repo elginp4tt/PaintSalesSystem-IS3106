@@ -70,6 +70,11 @@ public class TransactionResource {
             
             List<Transaction> transactions = transactionSessionBean.retrieveAllTransactionByUser(customer.getCustomerId());
             
+            for (Transaction t : transactions){
+                t.setCustomer(null);
+                t.setTransactionLineItems(null);
+            }
+            
             return Response.status(Response.Status.OK).entity(new RetrieveAllTransactionsRsp(transactions)).build();
         }
         catch(CustomerTransactionNotFound ex)

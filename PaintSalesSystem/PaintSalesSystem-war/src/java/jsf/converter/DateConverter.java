@@ -24,8 +24,7 @@ public class DateConverter implements Converter
     @Override
     public Object getAsObject(FacesContext context, UIComponent component, String value)
     {
-        
-        System.out.println(value);
+
         if (value == null || value.length() == 0 || value.equals("null")) 
         {
             return null;

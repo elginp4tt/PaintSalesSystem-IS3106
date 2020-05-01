@@ -110,8 +110,16 @@ public class PaintServiceManagementManagedBean implements Serializable
     {
         selectedPaintServiceToUpdate = (PaintService)event.getComponent().getAttributes().get("paintServiceToUpdate");
         
-        employeeIdUpdate = selectedPaintServiceToUpdate.getEmployee().getEmployeeId();
-        oldEmployeeId = employeeIdUpdate;
+        if(selectedPaintServiceToUpdate.getEmployee()!=null)
+        {
+            employeeIdUpdate = selectedPaintServiceToUpdate.getEmployee().getEmployeeId();
+            oldEmployeeId = employeeIdUpdate;
+        }
+        else
+        {
+            employeeIdUpdate = null;
+            oldEmployeeId = null;
+        }
         startTimeUpdate = selectedPaintServiceToUpdate.getPaintServiceStartTime();
         endTimeUpdate = selectedPaintServiceToUpdate.getPaintServiceEndTime();
         addressUpdate = selectedPaintServiceToUpdate.getLocationAddress();
@@ -139,16 +147,25 @@ public class PaintServiceManagementManagedBean implements Serializable
                 
                 paintServiceEntitySessionBeanLocal.updatePaintService(selectedPaintServiceToUpdate, employeeIdUpdate);
                 
-                for(Employee employee: employees)
+                
+                if(employeeIdUpdate == null)
                 {
-                    if(employee.getEmployeeId().equals(employeeIdUpdate))
+                    selectedPaintServiceToUpdate.setEmployee(null);
+                }
+                else
+                {
+                    for(Employee employee: employees)
                     {
-                        selectedPaintServiceToUpdate.setEmployee(employee);
-                        break;
+                        if(employee.getEmployeeId().equals(employeeIdUpdate))
+                        {
+                            selectedPaintServiceToUpdate.setEmployee(employee);
+                            break;
+                        }
                     }
                 }
                 
-                if(!oldEmployeeId.equals(employeeIdUpdate))
+                
+                if(oldEmployeeId!=null && employeeIdUpdate !=null && !oldEmployeeId.equals(employeeIdUpdate))
                 {
                     MessageOfTheDay motd =  new MessageOfTheDay("Paint Service Update", "An existing paint service has been assigned to other employee.", new Date());
                     messageOfTheDayEntitySessionBeanLocal.createNewMessageOfTheDay(motd);
@@ -156,6 +173,23 @@ public class PaintServiceManagementManagedBean implements Serializable
                     oldEmployee.addMessageOfTheDay(motd);
                     employeeSessionBeanLocal.updateEmployeeMotd(oldEmployee);
                     motd =  new MessageOfTheDay("Delivery Update", "A new paint service has been assigned to you.", new Date());
+                    messageOfTheDayEntitySessionBeanLocal.createNewMessageOfTheDay(motd);
+                    Employee newEmployee = employeeSessionBeanLocal.retrieveEmployeeById(employeeIdUpdate);
+                    newEmployee.addMessageOfTheDay(motd);
+                    employeeSessionBeanLocal.updateEmployeeMotd(newEmployee);
+                    
+                }
+                else if(oldEmployeeId!=null && employeeIdUpdate==null)
+                {
+                    MessageOfTheDay motd =  new MessageOfTheDay("Paint Service Update", "An existing paint service has been cancelled.", new Date());
+                    messageOfTheDayEntitySessionBeanLocal.createNewMessageOfTheDay(motd);
+                    Employee oldEmployee = employeeSessionBeanLocal.retrieveEmployeeById(oldEmployeeId);
+                    oldEmployee.addMessageOfTheDay(motd);
+                    employeeSessionBeanLocal.updateEmployeeMotd(oldEmployee);
+                }
+                else if(oldEmployeeId==null && employeeIdUpdate!=null)
+                {
+                    MessageOfTheDay motd =  new MessageOfTheDay("Delivery Update", "A new paint service has been assigned to you.", new Date());
                     messageOfTheDayEntitySessionBeanLocal.createNewMessageOfTheDay(motd);
                     Employee newEmployee = employeeSessionBeanLocal.retrieveEmployeeById(employeeIdUpdate);
                     newEmployee.addMessageOfTheDay(motd);

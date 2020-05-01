@@ -78,7 +78,8 @@
                             <p:outputLabel value="Assigned Employee ID " />
                         </p:column>
                         <p:column colspan="2">
-                            <p:outputLabel id="employeeIdUpdate" value="#{paintServiceManagementManagedBean.employeeIdUpdate}" />
+                            <p:outputLabel id="employeeIdUpdate" value="#{paintServiceManagementManagedBean.employeeIdUpdate}" rendered="#{paintServiceManagementManagedBean.employeeIdUpdate != null}" />
+                            <p:outputLabel value="NOT ASSIGNED" rendered="#{paintServiceManagementManagedBean.employeeIdUpdate == null}" />
                         </p:column>
                     </p:row>
                         
@@ -89,7 +90,7 @@
                                              update="ccUpdatePaintService:formReassignEmployee"
                                              actionListener="#{paintServiceManagementManagedBean.updateAvailableEmployeeSelection}"
                                              oncomplete="PF('dialogReassignEmployee').show()"
-                                             value="Re-Assign Employee">
+                                             value="Assign Employee">
                                                  
                             </p:commandButton>
                                 
@@ -142,6 +143,7 @@
                         </p:column>
                         <p:column>
                             <p:selectOneMenu value="#{paintServiceManagementManagedBean.employeeIdUpdate}">
+                                <f:selectItem itemValue="#{null}" itemLabel="[Select One]" noSelectionOption="true" />
                                 <f:selectItems value="#{paintServiceManagementManagedBean.availableEmployee}" var="employee" itemLabel="#{employee.employeeId}" itemValue="#{employee.employeeId}" />
                             </p:selectOneMenu>
                         </p:column>
