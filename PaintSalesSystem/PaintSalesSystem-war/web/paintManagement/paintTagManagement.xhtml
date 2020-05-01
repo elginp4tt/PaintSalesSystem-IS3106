@@ -42,14 +42,14 @@
                         <h:outputText value="#{paintTag.tagName}" />
                     </p:column>
                     
-                    <p:column headerText="Action">
+                    <p:column headerText="Action" style="text-align: center;">
                         <p:commandButton update="ccViewPaintTag:formViewPaintTag" oncomplete="PF('dialogViewPaintTag').show()" icon="ui-icon-document" title="View">
-                            <f:setPropertyActionListener value="#{paintTag}" target="#{paintTagManagementManagedBean.viewPaintTagManagedBean.paintTagToView}"
+                            <f:setPropertyActionListener value="#{paintTag}" target="#{paintTagManagementManagedBean.viewPaintTagManagedBean.paintTagToView}"/>
                         </p:commandButton>
                         <p:commandButton update="formUpdatePaintTag" actionListener="#{paintTagManagementManagedBean.doUpdatePaintTag}" oncomplete="PF('dialogUpdatePaintTag').show()" icon="ui-icon-pencil" title="Update">
                             <f:attribute name="paintTagToUpdate" value="#{paintTag}"/>
                         </p:commandButton>
-                        <p:commandButton icon="ui-icon-trash" update="formAllPaintTags:dataTableAllPaintTags formAllPaintTags:messages" actionListener="#{paintTagManagementManagedBean.updatePaintTag}">
+                        <p:commandButton icon="ui-icon-trash" update="formAllPaintTags:dataTableAllPaintTags formAllPaintTags:messages" actionListener="#{paintTagManagementManagedBean.deletePaintTag}">
                             <f:attribute name="paintTagToDelete" value="#{paintTag}"/>
                             <p:confirm header="Confirmation" message="Are you sure you want to delete #{paintTag.tagName}?" icon="ui-icon-alert"/>
                         </p:commandButton>
@@ -74,7 +74,7 @@
                                 <h:outputLabel>Paint Tag ID</h:outputLabel>
                             </p:column>
                             <p:column>
-                                <h:inputText value="#{paintTagManagementManagedBean.selectedPaintTagToUpdate.tagId}"
+                                <h:inputText value="#{paintTagManagementManagedBean.selectedPaintTagToUpdate.tagId}"/>
                             </p:column>
                         </p:row>
                         
@@ -83,7 +83,7 @@
                                 <h:outputLabel> Tag Name</h:outputLabel>
                             </p:column>
                             <p:column>
-                                <h:inputText value="#{paintTagManagementManagedBean.selectedPaintTagToUpdate.tagName}"
+                                <h:inputText value="#{paintTagManagementManagedBean.selectedPaintTagToUpdate.tagName}"/>
                             </p:column>
                         </p:row>
                         
@@ -106,7 +106,7 @@
                                 <h:outputLabel value="Tag Name: "/>
                             </p:column>
                             <p:column>
-                                <h:inputText value="#{paintTagManagementManagedBean.newPaintTag.tagName}"
+                                <h:inputText value="#{paintTagManagementManagedBean.newPaintTag.tagName}"/>
                             </p:column>
                         </p:row>
                         

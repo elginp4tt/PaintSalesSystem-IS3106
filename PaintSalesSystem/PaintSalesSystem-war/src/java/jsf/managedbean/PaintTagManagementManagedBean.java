@@ -16,6 +16,7 @@ import javax.faces.context.FacesContext;
 import javax.faces.event.ActionEvent;
 import javax.inject.Named;
 import javax.faces.view.ViewScoped;
+import javax.inject.Inject;
 import util.exception.CreateNewTagException;
 import util.exception.DeleteTagException;
 import util.exception.InputDataValidationException;
@@ -33,6 +34,8 @@ public class PaintTagManagementManagedBean implements Serializable{
     @EJB
     private PaintTagSessionBeanLocal paintTagSessionBeanLocal;
 
+    @Inject
+    private ViewPaintTagManagedBean viewPaintTagManagedBean;
     
     private List<PaintTag> paintTags;
     private PaintTag selectedPaintTagToUpdate;
@@ -148,6 +151,20 @@ public class PaintTagManagementManagedBean implements Serializable{
      */
     public void setNewPaintTag(PaintTag newPaintTag) {
         this.newPaintTag = newPaintTag;
+    }
+
+    /**
+     * @return the viewPaintTagManagedBean
+     */
+    public ViewPaintTagManagedBean getViewPaintTagManagedBean() {
+        return viewPaintTagManagedBean;
+    }
+
+    /**
+     * @param viewPaintTagManagedBean the viewPaintTagManagedBean to set
+     */
+    public void setViewPaintTagManagedBean(ViewPaintTagManagedBean viewPaintTagManagedBean) {
+        this.viewPaintTagManagedBean = viewPaintTagManagedBean;
     }
     
 }
