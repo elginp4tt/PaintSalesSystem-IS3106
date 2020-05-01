@@ -1,0 +1,125 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+                xmlns:h="http://xmlns.jcp.org/jsf/html"
+                xmlns:f="http://xmlns.jcp.org/jsf/core"
+                template="/template/defaultTemplate.xhtml"
+                xmlns:ez="http://xmlns.jcp.org/jsf/composite/ezcomp"
+                xmlns:p="http://primefaces.org/ui">
+                   
+    <ui:define name="content">
+        <ez:Breadcrumb pageName="paintTagManagement" />
+        
+        <div>
+            <h3>Paint Tag Management</h3>
+            
+            <h:form>
+                <p:menubar>
+                    <p:submenu label="File" icon="ui-icon-document">
+                        <p:menuitem value="Create New Paint Tag" onclick="PF('dialogCreateNewPaintTag').show()" icon="fa fa-plus" />
+                    </p:submenu>
+                </p:menubar>
+                <br/>
+            </h:form>
+            
+            <h:form id="formAllPaintTags">
+                <p:messages id="messages" redisplay="false" closable="true" />
+                
+                <p:dataTable id="dataTableAllPaintTags" widgetVar="dataTableAllPaintTags" value="#{paintTagManagementManagedBean.paintTags}" var="paintTag" rowKey="#{paintTag.tagId}" rowIndexVar="row"
+                             rows="10" paginator="true" paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}" rowsPerPageTemplate="10,20,50">
+                    <f:facet name="header">
+                        <p:outputPanel style="text-align: right;">
+                            <h:outputText value="Search all fields: " />
+                            <p:inputText id="globalFilter" onkeyup="PF('dataTableAllPaintTags').filter()" style="width:300px" placeholder="Enter keyword"/>
+                        </p:outputPanel>
+                    </f:facet>
+                    
+                    <p:column headerText="Paint Tag ID" sortBy="#{paintTag.tagId}" filterBy="#{paintTag.tagId}" filterMatchMode="contains">
+                        <h:outputText value="#{paintTag.tagId}" />
+                    </p:column>
+                    
+                    <p:column headerText="Tag Name" sortBy="#{paintTag.tagName}" filterBy="#{paintTag.tagName}" filterMatchMode="contains">
+                        <h:outputText value="#{paintTag.tagName}" />
+                    </p:column>
+                    
+                    <p:column headerText="Action">
+                        <p:commandButton update="ccViewPaintTag:formViewPaintTag" oncomplete="PF('dialogViewPaintTag').show()" icon="ui-icon-document" title="View">
+                            <f:setPropertyActionListener value="#{paintTag}" target="#{paintTagManagementManagedBean.viewPaintTagManagedBean.paintTagToView}"
+                        </p:commandButton>
+                        <p:commandButton update="formUpdatePaintTag" actionListener="#{paintTagManagementManagedBean.doUpdatePaintTag}" oncomplete="PF('dialogUpdatePaintTag').show()" icon="ui-icon-pencil" title="Update">
+                            <f:attribute name="paintTagToUpdate" value="#{paintTag}"/>
+                        </p:commandButton>
+                        <p:commandButton icon="ui-icon-trash" update="formAllPaintTags:dataTableAllPaintTags formAllPaintTags:messages" actionListener="#{paintTagManagementManagedBean.updatePaintTag}">
+                            <f:attribute name="paintTagToDelete" value="#{paintTag}"/>
+                            <p:confirm header="Confirmation" message="Are you sure you want to delete #{paintTag.tagName}?" icon="ui-icon-alert"/>
+                        </p:commandButton>
+                    </p:column>
+                </p:dataTable>   
+                
+                <p:confirmDialog global="true" showEffect="fade" hideEffect="fade">
+                    <p:commandButton value="Yes" type="button" styleClass="ui-confirmdialog-yes" icon="ui-icon-check" />
+                    <p:commandButton value="No" type="button" styleClass="ui-confirmdialog-no" icon="ui-icon-close" />
+                </p:confirmDialog>
+            </h:form>
+            
+            <ez:ViewPaintTag id="ccViewPaintTag" />
+            
+            <h:form id="formUpdatePaintTag">
+                <p:dialog id="dialogUpdatePaintTag" widgetVar="dialogUpdatePaintTag" header="Update Paint Tag" closable="true">
+                    <p:messages id="messagesUpdatePaintTag" redisplay="false"/>
+                    
+                    <p:panelGrid>
+                        <p:row>
+                            <p:column>
+                                <h:outputLabel>Paint Tag ID</h:outputLabel>
+                            </p:column>
+                            <p:column>
+                                <h:inputText value="#{paintTagManagementManagedBean.selectedPaintTagToUpdate.tagId}"
+                            </p:column>
+                        </p:row>
+                        
+                        <p:row>
+                            <p:column>
+                                <h:outputLabel> Tag Name</h:outputLabel>
+                            </p:column>
+                            <p:column>
+                                <h:inputText value="#{paintTagManagementManagedBean.selectedPaintTagToUpdate.tagName}"
+                            </p:column>
+                        </p:row>
+                        
+                        <p:row>
+                            <p:column colspan="3">
+                                <p:commandButton value="Update Paint Tag" update="@form formAllPaintTags:dataTableAllPaintTags" actionListener="#{paintTagManagementManagedBean.updatePaintTag}" oncomplete="PF('dialogUpdatePaintTag').show()"/>                           
+                            </p:column>
+                        </p:row>
+                    </p:panelGrid>
+                </p:dialog>
+            </h:form>
+            
+            <h:form id="formCreateNewPaintTag">
+                <p:dialog id="dialogCreateNewPaintTag" widgetVar="dialogCreateNewPaintTag" header="Create New Paint Tag" closable="true">
+                    <p:messages id="messagesCreateNewPaintTag" redisplay="false"/>
+                    
+                    <p:panelGrid>
+                        <p:row>
+                            <p:column>
+                                <h:outputLabel value="Tag Name: "/>
+                            </p:column>
+                            <p:column>
+                                <h:inputText value="#{paintTagManagementManagedBean.newPaintTag.tagName}"
+                            </p:column>
+                        </p:row>
+                        
+                        <p:row>
+                            <p:column colspan="3">
+                                <p:commandButton type="reset" value="Clear" />&nbsp;
+                                <p:commandButton value="Create New Paint Tag" update="@form formAllPaintTags:dataTableAllPaintTags" actionListener="#{paintTagManagementManagedBean.createNewPaintTag}" oncomplete="PF('dialogCreateNewPaintTag').show();" />
+                            </p:column>
+                        </p:row>
+                    </p:panelGrid>
+                </p:dialog>
+            </h:form>
+        </div>
+    </ui:define>
+        
+</ui:composition>
