@@ -68,10 +68,10 @@ public class PaintCategoryManagementManagedBean implements Serializable {
             if (this.newPaintCategoryParentCategoryId == -1) {
                 this.newPaintCategoryParentCategoryId = null;
             }
-            System.out.println("************" + this.newPaintCategory.getCategoryName() + this.newPaintCategoryParentCategoryId);
+//            System.out.println("************" + this.newPaintCategory.getCategoryName() + this.newPaintCategoryParentCategoryId);
             PaintCategory pc = getPaintCategorySessionBeanLocal().createNewPaintCategory(this.newPaintCategory, this.newPaintCategoryParentCategoryId);
             getPaintCategories().add(pc);
-            System.out.println("*************************" + pc.getCategoryName() + "ID: " + pc.getParentCategoryEntity().getPaintCategoryId());
+//            System.out.println("*************************" + pc.getCategoryName() + "ID: " + pc.getParentCategoryEntity().getPaintCategoryId());
             setNewPaintCategory(new PaintCategory());
             setNewPaintCategoryParentCategoryId(null);
             
