@@ -1,0 +1,173 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+                xmlns:h="http://xmlns.jcp.org/jsf/html"
+                xmlns:f="http://xmlns.jcp.org/jsf/core"
+                template="/template/defaultTemplate.xhtml"
+                xmlns:ez="http://xmlns.jcp.org/jsf/composite/ezcomp"
+                xmlns:p="http://primefaces.org/ui">
+    
+    <ui:define name="content">
+        
+        <ez:Breadcrumb pageName="paintCategoryManagement" />
+        
+        <div>
+            <h3>Paint Category Management</h3>
+            
+            <h:form>
+            
+                <p:menubar>
+
+                    <p:submenu label="File" icon="ui-icon-document">
+                        <p:menuitem value="Create New Paint Category" onclick="PF('dialogCreateNewPaintCategory').show()" icon="fa fa-plus" />
+                    </p:submenu>                                        
+
+                </p:menubar>
+                <br/>
+
+            </h:form>
+            
+            <h:form id="formAllPaintCategories">
+                <p:messages id="messages" redisplay="false" closable="true" />
+                
+                <p:dataTable id="dataTableAllPaintCategories" widgetVar="dataTableAllPaintCategories" value="#{paintCategoryManagementManagedBean.paintCategories}" var="paintCategory" rowKey="#{paintCategory.paintCategoryId}" rowIndexVar="row"
+                             rows="10" paginator="true" paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}" rowsPerPageTemplate="10,20,50">
+                    
+                    <f:facet name="header">
+                        <p:outputPanel style="text-align: right;">
+                            <h:outputText value="Search all fields:" />
+                            <p:inputText id="globalFilter" onkeyup="PF('dataTableAllPaintCategories').filter()" style="width:300px" placeholder="Enter keyword"/>
+                        </p:outputPanel>
+                    </f:facet>
+                    
+                    <p:column headerText="Paint Category ID" sortBy="#{paintCategory.paintCategoryId}" filterBy="#{paintCategory.paintCategoryId}" filterMatchMode="contains">
+                        <h:outputText value="#{paintCategory.paintCategoryId}" />
+                    </p:column>    
+                    
+                    <p:column headerText="Category Name" sortBy="#{paintCategory.categoryName}" filterBy="#{paintCategory.categoryName}" filterMatchMode="contains">
+                        <h:outputText value="#{paintCategory.categoryName}" />
+                    </p:column>   
+                    
+                    <p:column headerText="Action" style="text-align: center;">
+                        <p:commandButton update="ccViewPaintCategory:formViewPaintCategory" oncomplete="PF('dialogViewPaintCategory').show()" icon="ui-icon-document" title="View">
+                            <f:setPropertyActionListener value="#{paintCategory}" target="#{paintCategoryManagementManagedBean.viewPaintCategoryManagedBean.paintCategoryToView}" />
+                        </p:commandButton>
+                        <p:commandButton actionListener="#{paintCategoryManagementManagedBean.dpUpdatePaintCategory}" update="formUpdatePaintCategory" oncomplete="PF('dialogUpdatePaintCategory').show()" icon="ui-icon-pencil" title="Update">
+                            <f:attribute name="paintCategoryToUpdate" value="#{paintCategory}" />
+                        </p:commandButton>
+                        <p:commandButton icon="ui-icon-trash" actionListener="#{paintCategoryManagementManagedBean.deletePaintCategory}" update="formAllPaintCategories:dataTableAllPaintCategories formAllPaintCategories:messages">
+                            <f:attribute name="paintCategoryToDelete" value="#{paintCategory}" />
+                            <p:confirm header="Confirmation" message="Are you sure you want to delete #{paintCategory.categoryName}?" icon="ui-icon-alert" />
+                        </p:commandButton>
+                    </p:column>
+                    
+                </p:dataTable>
+                
+                <p:confirmDialog global="true" showEffect="fade" hideEffect="fade">
+                    <p:commandButton value="Yes" type="button" styleClass="ui-confirmdialog-yes" icon="ui-icon-check" />
+                    <p:commandButton value="No" type="button" styleClass="ui-confirmdialog-no" icon="ui-icon-close" />
+                </p:confirmDialog>
+                
+            </h:form>
+            
+            <ez:ViewPaintCategory id="ccViewPaintCategory" />
+            
+            <h:form id="formCreateNewPaintCategory">
+
+                <p:dialog id="dialogCreateNewPaintCategory" widgetVar="dialogCreateNewPaintCategory" header="Create New Paint Category" closable="true">
+
+                    <p:messages id="messagesCreateNewPaintCategory" redisplay="false" />
+
+                    <p:panelGrid>
+
+                        <p:row>
+                            <p:column>
+                                <p:outputLabel for="categoryName" value="Category Name: " style="font-weight: bold;" />
+                            </p:column>
+                            <p:column>
+                                    <p:inputText id="categoryName" value="#{paintCategoryManagementManagedBean.newPaintCategory.categoryName}" placeholder="Category Name" required="true" requiredMessage="Category name is required" />
+                            </p:column>
+                            <p:column>
+                                <p:message for="categoryName" />
+                            </p:column>
+                        </p:row>
+                        
+                        <p:row>
+                            <p:column>
+                                <p:outputLabel for="selCategories" value="Parent category " style="font-weight: bold;" />
+                            </p:column>
+                            <p:column>
+                                <p:selectOneMenu id="selCategories" value="#{paintCategoryManagementManagedBean.newPaintCategoryParentCategoryId}">
+                                    <f:selectItem itemValue="0" itemLabel="[Select One]" noSelectionOption="true" />
+                                    <f:selectItem itemValue="-1" itemLabel="No parent" />
+                                    <f:selectItems value="#{paintCategoryManagementManagedBean.paintCategories}" var="paintCategory" itemValue="#{paintCategory.paintCategoryId}" itemLabel="#{paintCategory.categoryName}" />
+                                </p:selectOneMenu>
+                            </p:column>
+                            <p:column>
+                                <p:message for="selCategories" />
+                            </p:column>
+                        </p:row>
+
+                        <p:row>
+                            <p:column colspan="3">
+                                <p:commandButton type="reset" value="Clear" />&nbsp;
+                                <p:commandButton  value="Create New Paint Category" update="@form formAllPaintCategories:dataTableAllPaintCategories" actionListener="#{paintCategoryManagementManagedBean.createNewPaintCategory}" oncomplete="PF('dialogCreateNewPaintCategory').show();" />
+                            </p:column>
+                        </p:row>
+
+                    </p:panelGrid>
+
+                </p:dialog>
+
+            </h:form>
+            
+            <h:form id="formUpdatePaintCategory">
+
+                <p:dialog id="dialogUpdatePaintCategory" widgetVar="dialogUpdatePaintCategory" header="Update Paint Category" closable="true">
+
+                    <p:messages id="messagesUpdatePaintCategory" redisplay="false" />
+
+                    <p:panelGrid>
+
+                        <p:row>
+                            <p:column>
+                                <h:outputLabel value="Paint Category ID: " />
+                            </p:column>
+                            <p:column>
+                                <h:outputText value="#{paintCategoryManagementManagedBean.selectedPaintCategoryToUpdate.paintCategoryId}" />
+                            </p:column>
+                            <p:column>
+                                &nbsp;
+                            </p:column>
+                        </p:row>
+
+                        <p:row>
+                            <p:column>
+                                <p:outputLabel value="Category Name: " />
+                            </p:column>
+                            <p:column>
+                                <p:inputText id="categoryName" value="#{paintCategoryManagementManagedBean.selectedPaintCategoryToUpdate.categoryName}" placeholder="Category X" required="true" requiredMessage="Category Name is required" />
+                            </p:column>
+                            <p:column>
+                                &nbsp;
+                            </p:column>
+                        </p:row>
+
+                        <p:row>
+                            <p:column colspan="3">
+                                <p:commandButton value="Update Paint Category" update="@form formAllPaintCategories:dataTableAllPaintCategories" actionListener="#{paintCategoryManagementManagedBean.updatePaintCategory}" oncomplete="PF('dialogUpdatePaintCategory').show();" />
+                            </p:column>
+                        </p:row>
+
+                    </p:panelGrid>
+
+                </p:dialog>
+
+            </h:form>
+            
+            
+        </div>
+        
+    </ui:define>
+    
+</ui:composition>

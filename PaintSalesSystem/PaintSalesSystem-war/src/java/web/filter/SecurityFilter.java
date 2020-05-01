@@ -85,6 +85,7 @@ public class SecurityFilter implements Filter
             if(path.equals("/paintManagement/filterPaintsByCategories.xhtml") ||
                     path.equals("/paintManagement/filterPaintsByTags.xhtml") ||
                     path.equals("/paintManagement/paintManagement.xhtml") ||
+                    path.equals("/paintManagement/paintCategoryManagement.xhtml") ||
                     path.equals("/paintManagement/searchPaintsByColourCode.xhtml") ||
                     path.equals("/deliveryManagement/deliveryManagement.xhtml") ||
                     path.equals("/deliveryManagement/filterDelivery.xhtml") ||
@@ -106,6 +107,7 @@ public class SecurityFilter implements Filter
                     path.equals("/paintManagement/filterPaintsByTags.xhtml") ||
                     path.equals("/paintManagement/paintManagement.xhtml") ||
                     path.equals("/paintManagement/searchPaintsByColourCode.xhtml") ||
+                    path.equals("/paintManagement/paintCategoryManagement.xhtml") ||
                     path.equals("/deliveryManagement/deliveryManagement.xhtml") ||
                     path.equals("/deliveryManagement/filterDelivery.xhtml") ||
                     path.equals("/paintServiceManagement/paintServiceManagement.xhtml") ||
