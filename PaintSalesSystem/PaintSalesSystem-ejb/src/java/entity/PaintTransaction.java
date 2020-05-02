@@ -32,31 +32,6 @@ public class PaintTransaction extends TransactionLineItem {
         this.volume = volume;
     }
 
-//    @Override
-//    public int hashCode() {
-//        int hash = 0;
-//        hash += (paintTransactionId != null ? paintTransactionId.hashCode() : 0);
-//        return hash;
-//    }
-//
-//    @Override
-//    public boolean equals(Object object) {
-//        // TODO: Warning - this method won't work in the case the paintTransactionId fields are not set
-//        if (!(object instanceof PaintTransaction)) {
-//            return false;
-//        }
-//        PaintTransaction other = (PaintTransaction) object;
-//        if ((this.paintTransactionId == null && other.paintTransactionId != null) || (this.paintTransactionId != null && !this.paintTransactionId.equals(other.paintTransactionId))) {
-//            return false;
-//        }
-//        return true;
-//    }
-//
-//    @Override
-//    public String toString() {
-//        return "entity.PaintTransaction[ id=" + paintTransactionId + " ]";
-//    }
-
     /**
      * @return the volume
      */

@@ -117,20 +117,6 @@ public class PaintService implements Serializable {
         this.paintServiceId = paintServiceId;
     }
     
-    
-    /**
-     * @return the paintServiceTransactionId
-     */
-    public Long getPaintServiceTransactionId() {
-        return this.paintServiceTransaction.getTransactionLineItemId();
-    }
-
-    /**
-     * @return the employeeId
-     */
-    public Long getEmployeeId() {
-        return employee.getEmployeeId();
-    }
 
     /**
      * @return the paintServiceTransaction
