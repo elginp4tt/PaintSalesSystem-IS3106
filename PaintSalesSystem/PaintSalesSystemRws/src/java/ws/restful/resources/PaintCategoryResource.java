@@ -57,7 +57,7 @@ public class PaintCategoryResource {
     @Produces(MediaType.APPLICATION_JSON)
     public Response retrieveAllPaintCategories() {
         try {
-        List<PaintCategory> paintCategories = paintCategorySessionBean.retrieveAllCategories();
+        List<PaintCategory> paintCategories = paintCategorySessionBean.retrieveAllLeafCategories();
         
         for(PaintCategory pc :paintCategories)
             {
