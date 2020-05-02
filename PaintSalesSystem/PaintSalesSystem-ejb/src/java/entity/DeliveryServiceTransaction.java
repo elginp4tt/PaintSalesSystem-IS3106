@@ -15,7 +15,7 @@ import javax.persistence.OneToOne;
 @Entity
 public class DeliveryServiceTransaction extends TransactionLineItem {
     
-    @OneToOne(mappedBy = "deliveryServiceTransaction")
+    @OneToOne(mappedBy = "deliveryServiceTransaction", cascade = CascadeType.PERSIST)
     private Delivery delivery;
 
     public DeliveryServiceTransaction() 
@@ -29,14 +29,10 @@ public class DeliveryServiceTransaction extends TransactionLineItem {
     public void setDelivery(Delivery delivery)
     {
         this.delivery = delivery;
-        delivery.setDeliveryServiceTransaction(this);
+        if(delivery != null)
+        {
+            delivery.setDeliveryServiceTransaction(this);
+        }
+        
     }
-    
-    
-    
-    
-
-    
-    
-    
 }

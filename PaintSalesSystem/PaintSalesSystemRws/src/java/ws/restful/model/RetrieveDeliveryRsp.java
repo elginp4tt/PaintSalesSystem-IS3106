@@ -12,6 +12,7 @@ import entity.Delivery;
  * @author Elgin Patt
  */
 public class RetrieveDeliveryRsp {
+    
     private Delivery delivery;
 
     public RetrieveDeliveryRsp() {

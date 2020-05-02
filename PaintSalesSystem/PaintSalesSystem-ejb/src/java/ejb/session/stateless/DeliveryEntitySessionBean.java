@@ -17,7 +17,9 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Set;
+import javax.annotation.Resource;
 import javax.ejb.EJB;
+import javax.ejb.EJBContext;
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
@@ -55,6 +57,9 @@ public class DeliveryEntitySessionBean implements DeliveryEntitySessionBeanLocal
     private final static DateTimeFormatter ft = DateTimeFormatter.ofPattern("dd/MM/yy HH:mm:ss");
     private final static DateFormat dateFormat = new SimpleDateFormat("dd/MM/yy HH:mm:ss");
 
+    @Resource
+    private EJBContext eJBContext;
+    
     public DeliveryEntitySessionBean() {
         validatorFactory = Validation.buildDefaultValidatorFactory();
         validator = validatorFactory.getValidator();
@@ -82,6 +87,7 @@ public class DeliveryEntitySessionBean implements DeliveryEntitySessionBeanLocal
         }
         catch(PersistenceException ex)
         {
+            eJBContext.setRollbackOnly();
             throw new UnknownPersistenceException(ex.getMessage());
             
         }

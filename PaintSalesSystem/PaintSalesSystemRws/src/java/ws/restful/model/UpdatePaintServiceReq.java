@@ -11,27 +11,26 @@ import entity.PaintService;
  *
  * @author CHEN BINGSEN
  */
-public class CreateNewPaintServiceReq 
+public class UpdatePaintServiceReq 
 {
 
-    private PaintService paintService;
-
-    public CreateNewPaintServiceReq() {
-    }
-
-    public CreateNewPaintServiceReq(PaintService paintService) {
-        this.paintService = paintService;
-    }
-    
-    
-    
     public PaintService getPaintService() {
         return paintService;
     }
 
-    public void setPaintService(PaintService paintService) {
+    
+
+    public UpdatePaintServiceReq() {
+    }
+
+    public UpdatePaintServiceReq(PaintService paintService) {
         this.paintService = paintService;
     }
     
+    
+    public void setPaintService(PaintService paintService) {
+        this.paintService = paintService;
+    }
+    private PaintService paintService;
     
 }

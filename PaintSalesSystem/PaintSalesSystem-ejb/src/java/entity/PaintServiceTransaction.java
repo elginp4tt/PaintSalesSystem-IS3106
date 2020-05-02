@@ -17,11 +17,10 @@ import javax.persistence.OneToOne;
 public class PaintServiceTransaction extends TransactionLineItem {
 
     
-    @OneToOne(mappedBy = "paintServiceTransaction")
+    @OneToOne(mappedBy = "paintServiceTransaction", cascade = CascadeType.PERSIST)
     private PaintService paintService;
    
     public PaintServiceTransaction() {
-        super();
     }
     
     
@@ -33,7 +32,10 @@ public class PaintServiceTransaction extends TransactionLineItem {
     public void setPaintService(PaintService paintService) 
     {
         this.paintService = paintService;
-        paintService.setPaintServiceTransaction(this);
+        if(paintService != null)
+        {
+            paintService.setPaintServiceTransaction(this);
+        }
     }
     
 }

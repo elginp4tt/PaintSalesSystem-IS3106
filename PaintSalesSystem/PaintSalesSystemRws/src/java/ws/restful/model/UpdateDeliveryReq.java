@@ -11,27 +11,28 @@ import entity.Delivery;
  *
  * @author CHEN BINGSEN
  */
-public class CreateNewDeliveryReq {
+public class UpdateDeliveryReq {
 
+    
+    
+    
+    //assume they can only update location, postal code, start time
+    //assume that customer have the same timezone
+    private Delivery delivery;
+
+    public UpdateDeliveryReq() {
+    }
+
+    public UpdateDeliveryReq(Delivery delivery) {
+        this.delivery = delivery;
+    }
+    
+    
     public Delivery getDelivery() {
         return delivery;
     }
 
-    public CreateNewDeliveryReq() {
-    }
-
-    public CreateNewDeliveryReq(Delivery delivery) {
-        this.delivery = delivery;
-    }
-
-    
-    
     public void setDelivery(Delivery delivery) {
         this.delivery = delivery;
     }
-    
-    private Delivery delivery;
-    
-    
-    
 }
