@@ -61,11 +61,12 @@ public class PaintCategorySessionBean implements PaintCategorySessionBeanLocal
                     }
 
                     newPaintCategory.setParentCategoryEntity(parentPaintCategory);
+                    parentPaintCategory.getSubCategoryEntities().add(newPaintCategory);
                 }
                 
                 em.persist(newPaintCategory);
                 em.flush();
-
+                
                 return newPaintCategory;
             }
             catch(PersistenceException ex)
@@ -200,7 +201,6 @@ public class PaintCategorySessionBean implements PaintCategorySessionBeanLocal
                 }
                 
                 paintCategoryToUpdate.setCategoryName(paintCategory.getCategoryName());
-                paintCategoryToUpdate.setDescription(paintCategory.getDescription());                               
                 
                 if(parentCategoryId != null)
                 {
@@ -217,7 +217,10 @@ public class PaintCategorySessionBean implements PaintCategorySessionBeanLocal
                             throw new UpdateCategoryException("Parent category cannot have any product associated with it");
                         }
                         
+                        paintCategoryToUpdate.getParentCategoryEntity().getSubCategoryEntities().remove(paintCategoryToUpdate);
                         paintCategoryToUpdate.setParentCategoryEntity(parentPaintCategoryToUpdate);
+                        parentPaintCategoryToUpdate.getSubCategoryEntities().add(paintCategoryToUpdate);
+                        
                     }
                 }
                 else
@@ -253,7 +256,11 @@ public class PaintCategorySessionBean implements PaintCategorySessionBeanLocal
         }
         else
         {
+            if(paintCategoryToRemove.getParentCategoryEntity()!= null) {
+                paintCategoryToRemove.getParentCategoryEntity().getSubCategoryEntities().remove(paintCategoryToRemove);
+            }
             paintCategoryToRemove.setParentCategoryEntity(null);
+            
             
             em.remove(paintCategoryToRemove);
         }                

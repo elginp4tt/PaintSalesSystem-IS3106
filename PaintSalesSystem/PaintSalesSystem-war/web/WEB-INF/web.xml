@@ -26,7 +26,7 @@
             30
         </session-timeout>
     </session-config>
-    <!--    <context-param>
+<!--    <context-param>
         <param-name>primefaces.THEME</param-name>
         <param-value>yourtheme</param-value>
     </context-param>-->
