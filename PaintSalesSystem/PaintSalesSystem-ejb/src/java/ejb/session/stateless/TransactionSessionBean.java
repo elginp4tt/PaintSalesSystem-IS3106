@@ -109,12 +109,14 @@ public class TransactionSessionBean implements TransactionSessionBeanLocal {
         Transaction transaction = em.find(Transaction.class, transactionId);
 
         if (transaction != null) {
+            transaction.getTransactionLineItems().size();
+            
             return transaction;
         } else {
             throw new TransactionNotFoundException("Transaction ID " + transactionId + " does not exist!");
         }
     }
-
+    
     @Override
     public Transaction createNewTransaction(Transaction newTransaction, Long customerId) throws CustomerNotFoundException, CreateNewTransactionException {
         if (newTransaction != null) {

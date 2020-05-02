@@ -8,6 +8,7 @@ package ejb.session.stateless;
 import entity.Paint;
 import entity.PaintCategory;
 import entity.PaintTag;
+import entity.TransactionLineItem;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -410,27 +411,27 @@ public class PaintSessionBean implements PaintSessionBeanLocal {
     @Override
     public void deletePaint(Long paintId) throws PaintNotFoundException, DeletePaintException
     {
-//        Paint paintToRemove = retrievePaintByPaintId(paintId);
-//        
+        Paint paintToRemove = retrievePaintByPaintId(paintId);
+        
 //        List<TransactionLineItem> transactionLineItems = transactionSessionBeanLocal.retrieveTransactionLineItemsByPaintId(paintId);
-//        
+        
 //        if(transactionLineItems.isEmpty())
 //        {
-//            for(PaintCategory paintCategory:paintToRemove.getPaintCategories())
-//            {
-//                paintCategory.getPaints().remove(paintToRemove);
-//            }
-//            paintToRemove.getPaintCategories().clear();
-//
-//            
-//            for(PaintTag paintTag:paintToRemove.getTags())
-//            {
-//                paintTag.getPaints().remove(paintToRemove);
-//            }
-//            
-//            paintToRemove.getTags().clear();
-//            
-//            em.remove(paintToRemove);
+            for(PaintCategory paintCategory:paintToRemove.getPaintCategories())
+            {
+                paintCategory.getPaints().remove(paintToRemove);
+            }
+            paintToRemove.getPaintCategories().clear();
+
+            
+            for(PaintTag paintTag:paintToRemove.getTags())
+            {
+                paintTag.getPaints().remove(paintToRemove);
+            }
+            
+            paintToRemove.getTags().clear();
+            
+            em.remove(paintToRemove);
 //        }
 //        else
 //        {

@@ -69,10 +69,10 @@
                             <f:setPropertyActionListener value="#{paint}" target="#{paintManagedBean.viewPaintManagedBean.paintToView}" />
                         </p:commandButton>
                         <p:commandButton actionListener="#{paintManagedBean.doUpdatePaint}" update="formUpdatePaint" oncomplete="PF('dialogUpdatePaint').show()" icon="ui-icon-pencil" title="Update">
-                            <f:attribute name="paintToUpdate" value="#{paint}" />
+                            <f:attribute name="paintEntityToUpdate" value="#{paint}" />
                         </p:commandButton>
                         <p:commandButton icon="ui-icon-trash" actionListener="#{paintManagedBean.deletePaint}" update="formAllPaints:dataTableAllPaints formAllPaints:messages">
-                            <f:attribute name="paintToDelete" value="#{paint}" />
+                            <f:attribute name="paintEntityToDelete" value="#{paint}" />
                             <p:confirm header="Confirmation" message="Are you sure you want to delete #{paint.name} (SKU Code: #{paint.colourCode})?" icon="ui-icon-alert" />
                         </p:commandButton>
                     </p:column>

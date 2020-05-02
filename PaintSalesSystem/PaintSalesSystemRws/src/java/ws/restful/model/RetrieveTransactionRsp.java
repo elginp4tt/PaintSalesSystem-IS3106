@@ -5,35 +5,31 @@
  */
 package ws.restful.model;
 
+import entity.DeliveryServiceTransaction;
 import entity.Transaction;
+import entity.TransactionLineItem;
+import java.util.List;
 
 /**
  *
  * @author Elgin Patt
  */
 public class RetrieveTransactionRsp {
-    private Transaction transaction;
-
+    private List<TransactionLineItem> transactionLineItems;
+  
     public RetrieveTransactionRsp() {
     }
 
-    public RetrieveTransactionRsp(Transaction transaction) {
-        this.transaction = transaction;
+    public RetrieveTransactionRsp(List<TransactionLineItem> transactionLineItems) {
+        this.transactionLineItems = transactionLineItems;
     }
 
-    /**
-     * @return the transaction
-     */
-    public Transaction getTransaction() {
-        return transaction;
+    public List<TransactionLineItem> getTransactionLineItems() {
+        return transactionLineItems;
     }
 
-    /**
-     * @param transaction the transaction to set
-     */
-    public void setTransaction(Transaction transaction) {
-        this.transaction = transaction;
+    public void setTransactionLineItems(List<TransactionLineItem> transactionLineItems) {
+        this.transactionLineItems = transactionLineItems;
     }
-    
     
 }

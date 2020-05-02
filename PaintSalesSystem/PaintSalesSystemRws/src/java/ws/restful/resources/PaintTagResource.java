@@ -32,7 +32,7 @@ import ws.restful.model.RetrieveAllTagsRsp;
  *
  * @author Elgin Patt
  */
-@Path("Paint")
+@Path("PaintTag")
 public class PaintTagResource {
 
     PaintTagSessionBeanLocal paintTagSessionBean = lookupPaintTagSessionBeanLocal();
@@ -53,11 +53,14 @@ public class PaintTagResource {
      * @return an instance of java.lang.String
      */
     @GET
-    @Path("/paintTag")
+    @Path("/retrieveAllPaintTags")
     @Produces(MediaType.APPLICATION_JSON)
     public Response retrieveAllPaintTags() {
         try {
         List<PaintTag> paintTags = paintTagSessionBean.retrieveAllTags();
+        for (PaintTag t: paintTags) {
+            t.getPaints().clear();
+        }
         
         RetrieveAllTagsRsp retrieveAllTagsRsp = new RetrieveAllTagsRsp(paintTags);
         

@@ -16,8 +16,8 @@ public class CreateNewCustomerRsp {
     public CreateNewCustomerRsp() {
     }
 
-    public CreateNewCustomerRsp(Long newPaintId) {
-        this.newCustomerId = newPaintId;
+    public CreateNewCustomerRsp(Long newCustomerId) {
+        this.newCustomerId = newCustomerId;
     }
 
     /**

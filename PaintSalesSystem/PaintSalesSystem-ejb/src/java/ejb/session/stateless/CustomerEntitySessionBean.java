@@ -102,7 +102,7 @@ public class CustomerEntitySessionBean implements CustomerEntitySessionBeanLocal
         
         Customer customer = retrieveCustomerByUsername(username);
         
-        if (!customer.getPassword().equals(password)){
+        if (customer.getPassword().equals(password)){
             return customer;
         }
         

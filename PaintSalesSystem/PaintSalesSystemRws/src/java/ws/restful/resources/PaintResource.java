@@ -121,31 +121,6 @@ public class PaintResource {
         }
     }
 
-
-    @PUT
-    @Consumes(MediaType.APPLICATION_JSON)
-    @Produces(MediaType.APPLICATION_JSON)
-    public Response createNewPaint(CreateNewPaintReq createNewPaintReq) {
-        if (createNewPaintReq != null) {
-            try {
-                Long newPaintId = paintSessionBean.createNewPaint(createNewPaintReq.getNewPaint(), createNewPaintReq.getCategoryIds(), createNewPaintReq.getTagIds()).getPaintId();
-
-                CreateNewPaintRsp createNewPaintRsp = new CreateNewPaintRsp(newPaintId);
-                
-                return Response.status(Status.CREATED).entity(createNewPaintRsp).build();
-
-            } catch (PaintExistException | UnknownPersistenceException | InputDataValidationException | CreateNewPaintException ex) {
-                ErrorRsp errorRsp = new ErrorRsp("Invalid request");
-
-                return Response.status(Status.INTERNAL_SERVER_ERROR).entity(errorRsp).build();
-            }
-        } else {
-            ErrorRsp errorRsp = new ErrorRsp("Invalid request");
-
-            return Response.status(Status.BAD_REQUEST).entity(errorRsp).build();
-        }
-    }
-
     private PaintSessionBeanLocal lookupPaintSessionBeanLocal() {
         try {
             javax.naming.Context c = new InitialContext();

@@ -33,10 +33,6 @@ public class PaintCategory implements Serializable {
     @Column(nullable = false, unique = true)
     private String categoryName;
     
-    @Column(length = 128)
-    @Size(max = 128)
-    private String description;
-    
     @OneToMany(mappedBy = "parentCategoryEntity")
     private List<PaintCategory> subCategoryEntities;
     
@@ -115,20 +111,6 @@ public class PaintCategory implements Serializable {
      */
     public void setPaints(List<Paint> paints) {
         this.paints = paints;
-    }
-
-    /**
-     * @return the description
-     */
-    public String getDescription() {
-        return description;
-    }
-
-    /**
-     * @param description the description to set
-     */
-    public void setDescription(String description) {
-        this.description = description;
     }
 
     /**
