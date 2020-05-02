@@ -20,9 +20,9 @@ import javax.inject.Inject;
  *
  * @author matto
  */
-@Named(value = "searchPaintsByColourCodeManagedBean")
+@Named(value = "searchPaintsByNameManagedBean")
 @ViewScoped
-public class SearchPaintsByColourCodeManagedBean implements Serializable {
+public class SearchPaintsByNameManagedBean implements Serializable {
 
     @EJB
     private PaintSessionBeanLocal paintSessionBeanLocal;
@@ -36,7 +36,7 @@ public class SearchPaintsByColourCodeManagedBean implements Serializable {
     /**
      * Creates a new instance of SearchPaintsByColourCodeManagedBean
      */
-    public SearchPaintsByColourCodeManagedBean() {
+    public SearchPaintsByNameManagedBean() {
     }
     
     @PostConstruct

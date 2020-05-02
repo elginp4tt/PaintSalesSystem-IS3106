@@ -182,59 +182,187 @@ public class DataInitSessionBean {
             em.persist(messageOfTheDay1);
             em.persist(messageOfTheDay2);
             
-              //adding paint categories
-            PaintCategory pc0 = paintCategorySessionBeanLocal.createNewPaintCategory(new PaintCategory("Category 0"), null);
-            PaintCategory pc1 = paintCategorySessionBeanLocal.createNewPaintCategory(new PaintCategory("Category 1"), pc0.getPaintCategoryId());
-            PaintCategory pc2 = paintCategorySessionBeanLocal.createNewPaintCategory(new PaintCategory("Category 2"), pc0.getPaintCategoryId());
-            PaintCategory pc3 = paintCategorySessionBeanLocal.createNewPaintCategory(new PaintCategory("Category 3"), pc0.getPaintCategoryId());
+			//adding parent paint categories
+            PaintCategory pcSeasons = paintCategorySessionBeanLocal.createNewPaintCategory(new PaintCategory("Seasons"), null);
+            PaintCategory pcMood = paintCategorySessionBeanLocal.createNewPaintCategory(new PaintCategory("Mood"), null);
+            PaintCategory pcRooms = paintCategorySessionBeanLocal.createNewPaintCategory(new PaintCategory("Rooms"), null);
+			
+			//adding child paint categories
+            PaintCategory pcSpring = paintCategorySessionBeanLocal.createNewPaintCategory(new PaintCategory("Spring"), pcSeasons.getPaintCategoryId());
+            PaintCategory pcSummer = paintCategorySessionBeanLocal.createNewPaintCategory(new PaintCategory("Summer"), pcSeasons.getPaintCategoryId());
+            PaintCategory pcWinter = paintCategorySessionBeanLocal.createNewPaintCategory(new PaintCategory("Winter"), pcSeasons.getPaintCategoryId());
+            PaintCategory pcAutumn = paintCategorySessionBeanLocal.createNewPaintCategory(new PaintCategory("Autumn"), pcSeasons.getPaintCategoryId());
+            PaintCategory pcBright = paintCategorySessionBeanLocal.createNewPaintCategory(new PaintCategory("Bright"), pcMood.getPaintCategoryId());
+            PaintCategory pcDark = paintCategorySessionBeanLocal.createNewPaintCategory(new PaintCategory("Dark"), pcMood.getPaintCategoryId());
+            PaintCategory pcHappy = paintCategorySessionBeanLocal.createNewPaintCategory(new PaintCategory("Happy"), pcMood.getPaintCategoryId());
+            PaintCategory pcLivingRm = paintCategorySessionBeanLocal.createNewPaintCategory(new PaintCategory("Living Room"), pcRooms.getPaintCategoryId());
+            PaintCategory pcBedroom = paintCategorySessionBeanLocal.createNewPaintCategory(new PaintCategory("Bedroom"), pcRooms.getPaintCategoryId());
 
             //adding tags
             PaintTag hotTag = paintTagSessionBeanLocal.createNewPaintTag(new PaintTag("Hot"));
             PaintTag discountTag = paintTagSessionBeanLocal.createNewPaintTag(new PaintTag("Discount"));
             PaintTag cheapTag = paintTagSessionBeanLocal.createNewPaintTag(new PaintTag("Cheap"));
+            PaintTag limitedEdTag = paintTagSessionBeanLocal.createNewPaintTag(new PaintTag("Limited Edition"));
+            PaintTag seasonalTag = paintTagSessionBeanLocal.createNewPaintTag(new PaintTag("Seasonal"));
+            PaintTag designerTag = paintTagSessionBeanLocal.createNewPaintTag(new PaintTag("Designer"));
+            PaintTag pokemonTag = paintTagSessionBeanLocal.createNewPaintTag(new PaintTag("Pokemon"));
 
             //adding paints
-            Paint paint1 = new Paint("Paint001", "P001", BigDecimal.valueOf(20.0), 100, 100, 3);
+            Paint skyBlue=new Paint("Sky Blue","#87CEEB",BigDecimal.valueOf(35.0),100,100,4);
             List<Long> paintCategories = new ArrayList<>();
             List<Long> paintTags = new ArrayList<>();
-            paintCategories.add(pc1.getPaintCategoryId());
-            paintCategories.add(pc2.getPaintCategoryId());
+            paintCategories.add(pcSpring.getPaintCategoryId());
+            paintCategories.add(pcSummer.getPaintCategoryId());
+            paintCategories.add(pcBright.getPaintCategoryId());
+            paintCategories.add(pcHappy.getPaintCategoryId());
             paintTags.add(cheapTag.getTagId());
-            Paint paintToPersist = paintSessionBeanLocal.createNewPaint(paint1, paintCategories, paintTags);
-
-            Paint paint2 = new Paint("Paint002", "P002", BigDecimal.valueOf(50.0), 100, 100, 5);
-            paintCategories = new ArrayList<>();
-            paintTags = new ArrayList<>();
-            paintCategories.add(pc2.getPaintCategoryId());
-            paintCategories.add(pc3.getPaintCategoryId());
             paintTags.add(hotTag.getTagId());
-            paintTags.add(discountTag.getTagId());
-            paintToPersist = paintSessionBeanLocal.createNewPaint(paint2, paintCategories, paintTags);
+            Paint paintToPersist = paintSessionBeanLocal.createNewPaint(skyBlue, paintCategories, paintTags);
 
-            Paint paint3 = new Paint("Paint003", "P003", BigDecimal.valueOf(10.0), 100, 100, 1);
+            Paint fuschiaPurple=new Paint("Fuschia Purple","#CC397B",BigDecimal.valueOf(30.0),100,100,2);
             paintCategories = new ArrayList<>();
             paintTags = new ArrayList<>();
-            paintCategories.add(pc1.getPaintCategoryId());
-            paintCategories.add(pc3.getPaintCategoryId());
+            paintCategories.add(pcDark.getPaintCategoryId());
+            paintCategories.add(pcLivingRm.getPaintCategoryId());
+            paintCategories.add(pcBedroom.getPaintCategoryId());
             paintTags.add(cheapTag.getTagId());
-            paintToPersist = paintSessionBeanLocal.createNewPaint(paint3, paintCategories, paintTags);
+            paintTags.add(seasonalTag.getTagId());
+            paintToPersist = paintSessionBeanLocal.createNewPaint(fuschiaPurple, paintCategories, paintTags);
 
-            Paint paint4 = new Paint("Paint004", "P004", BigDecimal.valueOf(30.0), 100, 100, 4);
+            Paint terrificTurq=new Paint("Terrific Turquoise","#40E0D0",BigDecimal.valueOf(40.0),100,100,5);
             paintCategories = new ArrayList<>();
             paintTags = new ArrayList<>();
-            paintCategories.add(pc3.getPaintCategoryId());
-            paintTags.add(discountTag.getTagId());
-            paintToPersist = paintSessionBeanLocal.createNewPaint(paint4, paintCategories, paintTags);
-
-            Paint paint5 = new Paint("Paint005", "P005", BigDecimal.valueOf(20.0), 100, 100, 2);
-            paintCategories = new ArrayList<>();
-            paintTags = new ArrayList<>();
-            paintCategories.add(pc1.getPaintCategoryId());
-            paintCategories.add(pc3.getPaintCategoryId());            
+            paintCategories.add(pcWinter.getPaintCategoryId());
+            paintCategories.add(pcBedroom.getPaintCategoryId());
+            paintTags.add(cheapTag.getTagId());
             paintTags.add(hotTag.getTagId());
-            paintTags.add(discountTag.getTagId());
+            paintToPersist = paintSessionBeanLocal.createNewPaint(terrificTurq, paintCategories, paintTags);
+
+            Paint apricotOrange=new Paint("Apricot Orange","#FBCEB1",BigDecimal.valueOf(25.0),100,100,1);
+            paintCategories = new ArrayList<>();
+            paintTags = new ArrayList<>();
+            paintCategories.add(pcSpring.getPaintCategoryId());
+            paintCategories.add(pcSummer.getPaintCategoryId());
+            paintCategories.add(pcBright.getPaintCategoryId());
+            paintCategories.add(pcHappy.getPaintCategoryId());
+            paintCategories.add(pcLivingRm.getPaintCategoryId());
             paintTags.add(cheapTag.getTagId());
-            paintToPersist = paintSessionBeanLocal.createNewPaint(paint5, paintCategories, paintTags);
+            paintTags.add(hotTag.getTagId());
+            paintToPersist = paintSessionBeanLocal.createNewPaint(apricotOrange, paintCategories, paintTags);
+			
+			Paint groovyGreen=new Paint("Groovy Green","#858758",BigDecimal.valueOf(35.0),100,100,4);
+            paintCategories = new ArrayList<>();
+            paintTags = new ArrayList<>();
+            paintCategories.add(pcLivingRm.getPaintCategoryId());
+            paintCategories.add(pcWinter.getPaintCategoryId());
+            paintTags.add(cheapTag.getTagId());
+            paintToPersist = paintSessionBeanLocal.createNewPaint(groovyGreen, paintCategories, paintTags);
+			
+			Paint timber=new Paint("Timber" ,"#C19A6B",BigDecimal.valueOf(20.0),100,100,1);
+            paintCategories = new ArrayList<>();
+            paintTags = new ArrayList<>();
+            paintCategories.add(pcDark.getPaintCategoryId());
+            paintCategories.add(pcAutumn.getPaintCategoryId());
+            paintCategories.add(pcLivingRm.getPaintCategoryId());
+            paintCategories.add(pcBedroom.getPaintCategoryId());
+            paintTags.add(cheapTag.getTagId());
+            paintTags.add(discountTag.getTagId());
+            paintToPersist = paintSessionBeanLocal.createNewPaint(timber, paintCategories, paintTags);
+			
+			Paint bobbyBrown=new Paint("Bobby Brown","#80604D",BigDecimal.valueOf(23.0),100,100,3);
+            paintCategories = new ArrayList<>();
+            paintTags = new ArrayList<>();
+            paintCategories.add(pcAutumn.getPaintCategoryId());
+            paintCategories.add(pcWinter.getPaintCategoryId());
+            paintCategories.add(pcDark.getPaintCategoryId());
+            paintCategories.add(pcBedroom.getPaintCategoryId());
+            paintTags.add(cheapTag.getTagId());
+            paintTags.add(discountTag.getTagId());
+            paintToPersist = paintSessionBeanLocal.createNewPaint(bobbyBrown, paintCategories, paintTags);
+			
+			Paint bloodRed=new Paint("Blood Red","#8A0303",BigDecimal.valueOf(36.0),100,100,5);
+            paintCategories = new ArrayList<>();
+            paintTags = new ArrayList<>();
+            paintCategories.add(pcAutumn.getPaintCategoryId());
+            paintCategories.add(pcSummer.getPaintCategoryId());
+            paintCategories.add(pcDark.getPaintCategoryId());
+            paintTags.add(hotTag.getTagId());
+            paintTags.add(seasonalTag.getTagId());
+            paintToPersist = paintSessionBeanLocal.createNewPaint(bloodRed, paintCategories, paintTags);
+			
+			Paint magenta=new Paint("Magenta ","#FF00FF",BigDecimal.valueOf(23.0),100,100,2);
+            paintCategories = new ArrayList<>();
+            paintTags = new ArrayList<>();
+            paintCategories.add(pcDark.getPaintCategoryId());
+            paintCategories.add(pcBedroom.getPaintCategoryId());
+            paintCategories.add(pcWinter.getPaintCategoryId());
+            paintTags.add(cheapTag.getTagId());
+            paintToPersist = paintSessionBeanLocal.createNewPaint(magenta, paintCategories, paintTags);
+			
+			Paint sunflowerYellow=new Paint("Sunflower Yellow","#E8DE2A",BigDecimal.valueOf(36.0),100,100,5);
+            paintCategories = new ArrayList<>();
+            paintTags = new ArrayList<>();
+            paintCategories.add(pcSpring.getPaintCategoryId());
+            paintCategories.add(pcSummer.getPaintCategoryId());
+            paintCategories.add(pcHappy.getPaintCategoryId());
+            paintTags.add(hotTag.getTagId());
+            paintToPersist = paintSessionBeanLocal.createNewPaint(sunflowerYellow, paintCategories, paintTags);
+			
+			Paint movingViolet=new Paint("Moving Violet","#5B0A91",BigDecimal.valueOf(35.0),100,100,3);
+            paintCategories = new ArrayList<>();
+            paintTags = new ArrayList<>();
+            paintCategories.add(pcSpring.getPaintCategoryId());
+            paintCategories.add(pcBright.getPaintCategoryId());
+            paintTags.add(cheapTag.getTagId());
+            paintToPersist = paintSessionBeanLocal.createNewPaint(movingViolet, paintCategories, paintTags);
+			
+			Paint electricBlue=new Paint("Electric Blue","#7DF9FF",BigDecimal.valueOf(41.0),100,100,4);
+            paintCategories = new ArrayList<>();
+            paintTags = new ArrayList<>();
+            paintCategories.add(pcHappy.getPaintCategoryId());
+            paintCategories.add(pcBright.getPaintCategoryId());
+            paintCategories.add(pcSpring.getPaintCategoryId());
+            paintTags.add(seasonalTag.getTagId());
+            paintToPersist = paintSessionBeanLocal.createNewPaint(electricBlue, paintCategories, paintTags);
+			
+			Paint pikachuYellow=new Paint("Pikachu Yellow","#FBCA13",BigDecimal.valueOf(60.0),100,100,5);
+            paintCategories = new ArrayList<>();
+            paintTags = new ArrayList<>();
+            paintCategories.add(pcHappy.getPaintCategoryId());
+            paintCategories.add(pcBright.getPaintCategoryId());
+            paintCategories.add(pcSummer.getPaintCategoryId());
+            paintTags.add(pokemonTag.getTagId());
+            paintTags.add(limitedEdTag.getTagId());
+            paintToPersist = paintSessionBeanLocal.createNewPaint(pikachuYellow, paintCategories, paintTags);
+			
+			Paint charmanderOrange=new Paint("Charmander Orange","#F4B185",BigDecimal.valueOf(60.0),100,100,5);
+            paintCategories = new ArrayList<>();
+            paintTags = new ArrayList<>();
+            paintCategories.add(pcHappy.getPaintCategoryId());
+            paintCategories.add(pcBright.getPaintCategoryId());
+            paintCategories.add(pcSummer.getPaintCategoryId());
+            paintTags.add(pokemonTag.getTagId());
+            paintTags.add(limitedEdTag.getTagId());
+            paintToPersist = paintSessionBeanLocal.createNewPaint(charmanderOrange, paintCategories, paintTags);
+			
+			Paint bulbasaurGreen=new Paint("Bulbasaur Green","#89C893",BigDecimal.valueOf(60.0),100,100,5);
+            paintCategories = new ArrayList<>();
+            paintTags = new ArrayList<>();
+            paintCategories.add(pcHappy.getPaintCategoryId());
+            paintCategories.add(pcBright.getPaintCategoryId());
+            paintCategories.add(pcSummer.getPaintCategoryId());
+            paintTags.add(pokemonTag.getTagId());
+            paintTags.add(limitedEdTag.getTagId());
+            paintToPersist = paintSessionBeanLocal.createNewPaint(bulbasaurGreen, paintCategories, paintTags);
+
+            Paint myGrandfatherRoad=new Paint("My Grandfather's Road","#828181",BigDecimal.valueOf(80.0),100,100,5);
+            paintCategories = new ArrayList<>();
+            paintTags = new ArrayList<>();
+            paintCategories.add(pcLivingRm.getPaintCategoryId());
+            paintCategories.add(pcHappy.getPaintCategoryId());            
+            paintTags.add(designerTag.getTagId());
+            paintTags.add(limitedEdTag.getTagId());
+            paintToPersist = paintSessionBeanLocal.createNewPaint(myGrandfatherRoad, paintCategories, paintTags);
 
         } catch (Exception ex) {
             ex.printStackTrace();
