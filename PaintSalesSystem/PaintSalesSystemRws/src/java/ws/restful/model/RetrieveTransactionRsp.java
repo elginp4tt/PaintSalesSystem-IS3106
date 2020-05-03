@@ -14,22 +14,24 @@ import java.util.List;
  *
  * @author Elgin Patt
  */
-public class RetrieveTransactionRsp {
-    private List<TransactionLineItem> transactionLineItems;
+public class RetrieveTransactionRsp
+{
+
+    private Transaction transaction;
   
     public RetrieveTransactionRsp() {
     }
 
-    public RetrieveTransactionRsp(List<TransactionLineItem> transactionLineItems) {
-        this.transactionLineItems = transactionLineItems;
+    public RetrieveTransactionRsp(Transaction transaction) {
+        this.transaction = transaction;
+    }
+    
+    public Transaction getTransaction() {
+        return transaction;
     }
 
-    public List<TransactionLineItem> getTransactionLineItems() {
-        return transactionLineItems;
-    }
-
-    public void setTransactionLineItems(List<TransactionLineItem> transactionLineItems) {
-        this.transactionLineItems = transactionLineItems;
+    public void setTransaction(Transaction transaction) {
+        this.transaction = transaction;
     }
     
 }

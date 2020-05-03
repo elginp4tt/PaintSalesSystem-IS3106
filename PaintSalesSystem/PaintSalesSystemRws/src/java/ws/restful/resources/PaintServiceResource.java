@@ -46,6 +46,7 @@ import util.exception.CustomerNotFoundException;
 import util.exception.InputDataValidationException;
 import util.exception.PaintServiceNotFoundException;
 import util.exception.UnknownPersistenceException;
+import ws.restful.model.CreateNewDeliveryRsp;
 import ws.restful.model.CreateNewPaintServiceReq;
 import ws.restful.model.CreateNewPaintServiceRsp;
 import ws.restful.model.ErrorRsp;
@@ -82,61 +83,45 @@ public class PaintServiceResource {
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
     public Response createNewPaintService(@QueryParam("username") String username,
-            CreateNewPaintServiceReq createNewPaintServiceReq) 
+            CreateNewPaintServiceReq createNewPaintServiceReq)
     {
         
-        if (createNewPaintServiceReq != null) 
+        if (createNewPaintServiceReq != null)
         {
-            try 
+            
+            PaintService newPaintService = createNewPaintServiceReq.getPaintService();
+            DateTimeFormatter ft = DateTimeFormatter.ofPattern("dd/MM/yy HH:mm:ss");
+            DateFormat dateFormat = new SimpleDateFormat("dd/MM/yy HH:mm:ss");
+            LocalDateTime newPaintServiceStartTime = LocalDateTime.parse(dateFormat.format(newPaintService.getPaintServiceStartTime()),ft);
+            LocalDateTime today = LocalDateTime.parse(dateFormat.format(new Date()),ft);
+            LocalDateTime earliest = today.plusDays(2).withHour(10).withMinute(0).withSecond(0).withNano(0);
+            
+            if(newPaintServiceStartTime.isBefore(earliest))
             {
-                PaintService newPaintService = createNewPaintServiceReq.getPaintService();
-                DateTimeFormatter ft = DateTimeFormatter.ofPattern("dd/MM/yy HH:mm:ss");
-                DateFormat dateFormat = new SimpleDateFormat("dd/MM/yy HH:mm:ss");
-                LocalDateTime newPaintServiceStartTime = LocalDateTime.parse(dateFormat.format(newPaintService.getPaintServiceStartTime()),ft);
-                LocalDateTime today = LocalDateTime.parse(dateFormat.format(new Date()),ft);
-                LocalDateTime earliest = today.plusDays(2).withHour(10).withMinute(0).withSecond(0).withNano(0);
-                
-                if(newPaintServiceStartTime.isBefore(earliest))
-                {
-                    ErrorRsp errorRsp = new ErrorRsp("The earliest time you can book is " + earliest.format(ft) + ".");
-                    return Response.status(Status.BAD_REQUEST).entity(errorRsp).build();
-                }
-                
-                if(!(newPaintServiceStartTime.getHour() >= 10 && newPaintServiceStartTime.getHour() <= 21 && newPaintServiceStartTime.getMinute() <= 59))
-                {
-                    ErrorRsp errorRsp = new ErrorRsp("The selected time is not within the operation hours(10am - 10pm).");
-                    return Response.status(Response.Status.BAD_REQUEST).entity(errorRsp).build();
-                }
-                
-                Customer customer = customerEntitySessionBean.retrieveCustomerByUsername(username);
-                Transaction newTransaction = new Transaction();
-                
-                PaintServiceTransaction newPaintServiceTransaction = new PaintServiceTransaction();
-                newPaintServiceTransaction.setItemName("Paint Service");
-                newPaintServiceTransaction.setPrice(BigDecimal.valueOf(200.0));
-                newPaintServiceTransaction.setQuantity(BigInteger.valueOf(1l));
-                newTransaction.addSaleTransactionLineItemEntity(newPaintServiceTransaction);
-                
-                LocalDateTime newPaintServiceEndTime = newPaintServiceStartTime.plusDays(3);//default delivery duration is 3 days
-                Date endTime = Date.from(newPaintServiceEndTime.atZone( ZoneId.systemDefault()).toInstant());
-                newPaintService.setPaintServiceEndTime(endTime);
-                newPaintServiceTransaction.setPaintService(newPaintService);
-                
-//                transactionSessionBean.createNewTransaction(newTransaction, customer.getCustomerId());
-                return Response.status(Response.Status.OK).build();
-            }
-            catch(CustomerNotFoundException ex)
-            {
-                ErrorRsp errorRsp = new ErrorRsp(ex.getMessage());
+                ErrorRsp errorRsp = new ErrorRsp("The earliest time you can book is " + earliest.format(ft) + ".");
                 return Response.status(Status.BAD_REQUEST).entity(errorRsp).build();
             }
-            catch(Exception ex)
+            
+            if(!(newPaintServiceStartTime.getHour() >= 10 && newPaintServiceStartTime.getHour() <= 21 && newPaintServiceStartTime.getMinute() <= 59))
             {
-                ErrorRsp errorRsp = new ErrorRsp(ex.getMessage());
-                return Response.status(Status.INTERNAL_SERVER_ERROR).entity(errorRsp).build();
+                ErrorRsp errorRsp = new ErrorRsp("The selected time is not within the operation hours(10am - 10pm).");
+                return Response.status(Response.Status.BAD_REQUEST).entity(errorRsp).build();
             }
-        } 
-        else 
+            
+            PaintServiceTransaction newPaintServiceTransaction = new PaintServiceTransaction();
+            newPaintServiceTransaction.setItemName("Paint Service");
+            newPaintServiceTransaction.setPrice(BigDecimal.valueOf(50.0));
+            newPaintServiceTransaction.setQuantity(BigInteger.valueOf(1l));
+            
+            LocalDateTime newPaintServiceEndTime = newPaintServiceStartTime.plusDays(3);//default delivery duration is 3 days
+            Date endTime = Date.from(newPaintServiceEndTime.atZone( ZoneId.systemDefault()).toInstant());
+            newPaintService.setPaintServiceEndTime(endTime);
+            newPaintServiceTransaction.setPaintService(newPaintService);
+            newPaintService.setPaintServiceTransaction(null);
+                
+            return Response.status(Response.Status.OK).entity(new CreateNewPaintServiceRsp(newPaintServiceTransaction.getPaintService(),newPaintServiceTransaction)).build();
+        }
+        else
         {
             ErrorRsp errorRsp = new ErrorRsp("Invalid request");
             return Response.status(Status.BAD_REQUEST).entity(errorRsp).build();

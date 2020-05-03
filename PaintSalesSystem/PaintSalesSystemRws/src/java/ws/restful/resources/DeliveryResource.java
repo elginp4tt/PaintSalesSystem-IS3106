@@ -91,8 +91,7 @@ public class DeliveryResource {
         if (createNewDeliveryReq != null)
         {
             
-            try
-            {
+            
                 Delivery newDelivery = createNewDeliveryReq.getDelivery();
                 DateTimeFormatter ft = DateTimeFormatter.ofPattern("dd/MM/yy HH:mm:ss");
                 DateFormat dateFormat = new SimpleDateFormat("dd/MM/yy HH:mm:ss");
@@ -125,42 +124,6 @@ public class DeliveryResource {
                 
                 
                 return Response.status(Response.Status.OK).entity(new CreateNewDeliveryRsp(newDeliveryTransaction, newDeliveryTransaction.getDelivery())).build();
-                
-                
-//                //original idea
-//                Customer customer = customerEntitySessionBean.retrieveCustomerByUsername(username);
-//                Transaction newTransaction = new Transaction();
-//                
-//                DeliveryServiceTransaction newDeliveryTransaction = new DeliveryServiceTransaction();
-//                newDeliveryTransaction.setItemName("Delivery Service");
-//                newDeliveryTransaction.setPrice(BigDecimal.valueOf(50.0));
-//                newDeliveryTransaction.setQuantity(BigInteger.valueOf(1l));
-//                newTransaction.addSaleTransactionLineItemEntity(newDeliveryTransaction);
-//                
-//                
-//                LocalDateTime newDeliveryEndTime = newDeliveryStartTime.plusMinutes(30);//default delivery duration is 30 minutes
-//                Date endTime = Date.from(newDeliveryEndTime.atZone( ZoneId.systemDefault()).toInstant());
-//                newDelivery.setDeliveryEndTime(endTime);
-//                newDeliveryTransaction.setDelivery(newDelivery);
-//                
-//                transactionSessionBean.createNewTransaction(newTransaction, customer.getCustomerId());
-//                return Response.status(Response.Status.OK).build();
-            }
-//            catch(CustomerNotFoundException | CreateNewTransactionException ex)
-//            {
-//                ErrorRsp errorRsp = new ErrorRsp(ex.getMessage());
-//                return Response.status(Status.BAD_REQUEST).entity(errorRsp).build();
-//            }
-//            catch(EntityInstanceExistsInCollectionException ex)
-//            {
-//                ErrorRsp errorRsp = new ErrorRsp(ex.getMessage());
-//                return Response.status(Status.INTERNAL_SERVER_ERROR).entity(errorRsp).build();
-//            }
-            catch(Exception ex)
-            {
-                ErrorRsp errorRsp = new ErrorRsp(ex.getMessage());
-                return Response.status(Status.INTERNAL_SERVER_ERROR).entity(errorRsp).build();
-            }
             
         } 
         else 

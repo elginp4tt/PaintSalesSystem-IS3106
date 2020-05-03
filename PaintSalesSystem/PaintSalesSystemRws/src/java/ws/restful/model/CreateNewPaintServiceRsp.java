@@ -5,33 +5,45 @@
  */
 package ws.restful.model;
 
+import entity.PaintService;
+import entity.PaintServiceTransaction;
+
 /**
  *
  * @author Elgin Patt
  */
 public class CreateNewPaintServiceRsp {
-    private Long newPaintServiceId;
+
+    
+    
+    private PaintService paintService;
+    private PaintServiceTransaction paintServiceTransaction;
 
     public CreateNewPaintServiceRsp() {
     }
 
-    public CreateNewPaintServiceRsp(Long newPaintServiceId) {
-        this.newPaintServiceId = newPaintServiceId;
+    public CreateNewPaintServiceRsp(PaintService paintService, PaintServiceTransaction paintServiceTransaction) {
+        this.paintService = paintService;
+        this.paintServiceTransaction = paintServiceTransaction;
     }
 
-    /**
-     * @return the newPaintServiceId
-     */
-    public Long getNewPaintServiceId() {
-        return newPaintServiceId;
-    }
-
-    /**
-     * @param newPaintServiceId the newPaintServiceId to set
-     */
-    public void setNewPaintServiceId(Long newPaintServiceId) {
-        this.newPaintServiceId = newPaintServiceId;
-    }
     
+    
+    
+    public PaintService getPaintService() {
+        return paintService;
+    }
+
+    public void setPaintService(PaintService paintService) {
+        this.paintService = paintService;
+    }
+
+    public PaintServiceTransaction getPaintServiceTransaction() {
+        return paintServiceTransaction;
+    }
+
+    public void setPaintServiceTransaction(PaintServiceTransaction paintServiceTransaction) {
+        this.paintServiceTransaction = paintServiceTransaction;
+    }
     
 }
