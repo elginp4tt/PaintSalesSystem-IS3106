@@ -6,6 +6,8 @@
 package ejb.session.stateless;
 
 import entity.Customer;
+import entity.Paint;
+import entity.PaintTransaction;
 import entity.Transaction;
 import entity.TransactionLineItem;
 import java.util.List;
@@ -29,7 +31,12 @@ import util.exception.TransactionNotFoundException;
 public class TransactionSessionBean implements TransactionSessionBeanLocal {
 
     @EJB
+    private PaintSessionBeanLocal paintSessionBean;
+
+    @EJB
     private CustomerEntitySessionBeanLocal customerEntitySessionBeanLocal;
+    
+    
 
     @PersistenceContext(unitName = "PaintSalesSystem-ejbPU")
     private EntityManager em;
@@ -119,19 +126,30 @@ public class TransactionSessionBean implements TransactionSessionBeanLocal {
     
     @Override
     public Transaction createNewTransaction(Transaction newTransaction, Long customerId) throws CustomerNotFoundException, CreateNewTransactionException {
+        System.out.println("**********EJB createNewTransaction");
+        System.out.println("***New Transaction: " + newTransaction.getTransactionLineItems().size());
         if (newTransaction != null) {
+            System.out.println("**********EJB createNewTransaction: Ater check null");
             try {
                 Customer customer = customerEntitySessionBeanLocal.retrieveCustomerByCustomerId(customerId);
                 newTransaction.setCustomer(customer);
                 customer.getTransactions().add(newTransaction);
 
                 em.persist(newTransaction);
+                System.out.println("**********EJB createNewTransaction: Ater persist transaction");
 
                 for (TransactionLineItem transactionLineItem : newTransaction.getTransactionLineItems()) {
                     //debit quantity
+                    if (transactionLineItem instanceof PaintTransaction){
+                       Paint paintToDebit = paintSessionBean.retrievePaintByPaintId(((PaintTransaction) transactionLineItem).getPaint().getPaintId());
+                       Integer quantityToUpdate = paintToDebit.getQuantityOnHand() - Integer.valueOf(transactionLineItem.getQuantity().toString());
+                       paintToDebit.setQuantityOnHand(quantityToUpdate);
+                        System.out.println("**********EJB updating paint qty");
+                    }
+                    
                     em.persist(transactionLineItem);
                 }
-
+                System.out.println("**********EJB createNewTransaction: Ater persist TLE");
                 em.flush();
                 return newTransaction;
             } catch (Exception ex) {
@@ -141,5 +159,9 @@ public class TransactionSessionBean implements TransactionSessionBeanLocal {
         } else {
             throw new CreateNewTransactionException("Transaction information not provided");
         }
+    }
+
+    public void persist(Object object) {
+        em.persist(object);
     }
 }

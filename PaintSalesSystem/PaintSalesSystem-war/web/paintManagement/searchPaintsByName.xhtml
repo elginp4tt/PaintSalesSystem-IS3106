@@ -18,18 +18,18 @@
                 
                 <p:layout >
                     <p:layoutUnit position="west">
-                        <p:inputText id="txtSearchString" value="#{searchPaintsByColourCodeManagedBean.searchString}" placeholder="Enter keyword">
-                            <p:ajax event="keyup" process="@this" update="formMain:dataTableMain" listener="#{searchPaintsByColourCodeManagedBean.searchPaint}" />
+                        <p:inputText id="txtSearchString" value="#{searchPaintsByNameManagedBean.searchString}" placeholder="Enter keyword">
+                            <p:ajax event="keyup" process="@this" update="formMain:dataTableMain" listener="#{searchPaintsByNameManagedBean.searchPaint}" />
                         </p:inputText>
                         
                         <p:separator />
                         
                         <p:commandButton value="Search">
-                            <p:ajax event="click" process="@this txtSearchString" update="formMain:dataTableMain" listener="#{searchPaintsByColourCodeManagedBean.searchPaint}" />
+                            <p:ajax event="click" process="@this txtSearchString" update="formMain:dataTableMain" listener="#{searchPaintsByNameManagedBean.searchPaint}" />
                         </p:commandButton>
                     </p:layoutUnit>
                     <p:layoutUnit position="center">
-                        <p:dataTable id="dataTableMain" widgetVar="dataTableMain" value="#{searchPaintsByColourCodeManagedBean.paints}" var="paint" rowKey="#{paint.paintId}" rowIndexVar="row"                             
+                        <p:dataTable id="dataTableMain" widgetVar="dataTableMain" value="#{searchPaintsByNameManagedBean.paints}" var="paint" rowKey="#{paint.paintId}" rowIndexVar="row"                             
                                      rows="10" paginatorPosition="bottom"
                                      paginator="true" paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}" rowsPerPageTemplate="10,20,50">
                             
@@ -59,7 +59,7 @@
                             
                             <p:column headerText="Action" >
                                 <p:commandButton update="ccViewPaint:formViewPaint" oncomplete="PF('dialogViewPaint').show()" icon="ui-icon-document" title="View">
-                                    <f:setPropertyActionListener value="#{paint}" target="#{searchPaintsByColourCodeManagedBean.viewPaintManagedBean.paintToView}" />
+                                    <f:setPropertyActionListener value="#{paint}" target="#{searchPaintsByNameManagedBean.viewPaintManagedBean.paintToView}" />
                                 </p:commandButton>                        
                             </p:column>
                             

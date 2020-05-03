@@ -117,11 +117,11 @@ public class TransactionResource {
 //            //Transaction Line item id makes cyclic references/dependencies
             for (TransactionLineItem e : tle) {
 //                  toSendBack.add(new TransactionLineItem(e.getItemName(), e.getQuantity(),e.getPrice()));
-                System.out.println("e class:" + e.getClass().toString());
-                System.out.println("e id:" + e.getTransactionLineItemId());
-                System.out.println("e name:" + e.getItemName());
-                System.out.println("e qty:" + e.getQuantity());
-                System.out.println("e price:" + e.getPrice());
+//                System.out.println("e class:" + e.getClass().toString());
+//                System.out.println("e id:" + e.getTransactionLineItemId());
+//                System.out.println("e name:" + e.getItemName());
+//                System.out.println("e qty:" + e.getQuantity());
+//                System.out.println("e price:" + e.getPrice());
 
                 //Bingsen working method
                 if (e instanceof PaintServiceTransaction) {
@@ -129,14 +129,14 @@ public class TransactionResource {
                     pst.getPaintService().setPaintServiceTransaction(null);
                     pst.getPaintService().setEmployee(null);
 //                    paintserviceoo = pst;
-                    System.out.println("***here1");
+//                    System.out.println("***here1");
 //                    System.out.println("***PST ID: " + pst.getPaintService().getPaintServiceId());
                 } else if (e instanceof DeliveryServiceTransaction) {
                     DeliveryServiceTransaction dst = (DeliveryServiceTransaction) e;
                     dst.getDelivery().setDeliveryServiceTransaction(null);
                     dst.getDelivery().setEmployee(null);
 //                    deliveroo = dst;
-                    System.out.println("***here2");
+//                    System.out.println("***here2");
                 }
             }
             //Working delivery service transaction codes 
@@ -151,7 +151,7 @@ public class TransactionResource {
 
 //            paintserviceoo.getPaintService().getEmployee().setDeliveries(null);
 //            toSendBack.add(paintserviceoo);
-            System.out.println("***here7");
+//            System.out.println("***here7");
             return Response.status(Status.OK).entity(new RetrieveTransactionRsp(tle)).build();
         } catch (TransactionNotFoundException ex) {
             ErrorRsp errorRsp = new ErrorRsp(ex.getMessage());
@@ -164,28 +164,31 @@ public class TransactionResource {
         }
     }
     
+    
     @PUT
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
     public Response createNewTransaction(CreateNewTransactionReq createNewTransactionReq) {
-        if (createNewTransactionReq != null) {
-            try {
-                Long newTransactionId = transactionSessionBean.createNewTransaction(createNewTransactionReq.getNewTransaction(), createNewTransactionReq.getCustomerId()).getTransactionId();
-                
-                CreateNewTransactionRsp createNewTransactionRsp = new CreateNewTransactionRsp(newTransactionId);
-                
-                return Response.status(Status.CREATED).entity(createNewTransactionRsp).build();
-                
-            } catch (CustomerNotFoundException | CreateNewTransactionException ex) {
-                ErrorRsp errorRsp = new ErrorRsp("Invalid request");
-                
-                return Response.status(Status.INTERNAL_SERVER_ERROR).entity(errorRsp).build();
-            }
-        } else {
-            ErrorRsp errorRsp = new ErrorRsp("Invalid request");
-            
-            return Response.status(Status.BAD_REQUEST).entity(errorRsp).build();
-        }
+        System.out.println("**********Create New Transaction: Reached!");
+//        if (createNewTransactionReq != null) {
+//            try {
+//                Long newTransactionId = transactionSessionBean.createNewTransaction(createNewTransactionReq.getNewTransaction(), createNewTransactionReq.getCustomerId()).getTransactionId();
+//                System.out.println("**********Create New Transaction ID:" + newTransactionId);
+//                CreateNewTransactionRsp createNewTransactionRsp = new CreateNewTransactionRsp(newTransactionId);
+//                
+//                return Response.status(Status.CREATED).entity(createNewTransactionRsp).build();
+//                
+//            } catch (CustomerNotFoundException | CreateNewTransactionException ex) {
+//                ErrorRsp errorRsp = new ErrorRsp("Invalid request");
+//                
+//                return Response.status(Status.INTERNAL_SERVER_ERROR).entity(errorRsp).build();
+//            }
+//        } else {
+//            ErrorRsp errorRsp = new ErrorRsp("Invalid request");
+//            
+//            return Response.status(Status.BAD_REQUEST).entity(errorRsp).build();
+//        }
+         return Response.status(Status.CREATED).build();
     }
     
     private CustomerEntitySessionBeanLocal lookupCustomerEntitySessionBeanLocal() {
