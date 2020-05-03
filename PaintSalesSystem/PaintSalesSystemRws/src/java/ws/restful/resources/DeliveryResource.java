@@ -49,6 +49,7 @@ import util.exception.EntityInstanceExistsInCollectionException;
 import util.exception.InputDataValidationException;
 import util.exception.UnknownPersistenceException;
 import ws.restful.model.CreateNewDeliveryReq;
+import ws.restful.model.CreateNewDeliveryRsp;
 import ws.restful.model.ErrorRsp;
 import ws.restful.model.RetrieveAllDeliveriesRsp;
 import ws.restful.model.RetrieveDeliveryRsp;
@@ -104,34 +105,57 @@ public class DeliveryResource {
                     ErrorRsp errorRsp = new ErrorRsp("The earliest time you can book is " + earliest.format(ft) + ".");
                     return Response.status(Status.BAD_REQUEST).entity(errorRsp).build();
                 }
-                Customer customer = customerEntitySessionBean.retrieveCustomerByUsername(username);
-                Transaction newTransaction = new Transaction();
+                
+                if(!(newDeliveryStartTime.getHour() >= 10 && newDeliveryStartTime.getHour() <= 21 && newDeliveryStartTime.getMinute() <= 59))
+                {
+                    ErrorRsp errorRsp = new ErrorRsp("The selected time is not within the operation hours(10am - 10pm).");
+                    return Response.status(Response.Status.BAD_REQUEST).entity(errorRsp).build();
+                }
                 
                 DeliveryServiceTransaction newDeliveryTransaction = new DeliveryServiceTransaction();
                 newDeliveryTransaction.setItemName("Delivery Service");
                 newDeliveryTransaction.setPrice(BigDecimal.valueOf(50.0));
                 newDeliveryTransaction.setQuantity(BigInteger.valueOf(1l));
-                newTransaction.addSaleTransactionLineItemEntity(newDeliveryTransaction);
-                
                 
                 LocalDateTime newDeliveryEndTime = newDeliveryStartTime.plusMinutes(30);//default delivery duration is 30 minutes
                 Date endTime = Date.from(newDeliveryEndTime.atZone( ZoneId.systemDefault()).toInstant());
                 newDelivery.setDeliveryEndTime(endTime);
                 newDeliveryTransaction.setDelivery(newDelivery);
+                newDelivery.setDeliveryServiceTransaction(null);
                 
-                transactionSessionBean.createNewTransaction(newTransaction, customer.getCustomerId());
-                return Response.status(Response.Status.OK).build();
+                
+                return Response.status(Response.Status.OK).entity(new CreateNewDeliveryRsp(newDeliveryTransaction, newDeliveryTransaction.getDelivery())).build();
+                
+                
+//                //original idea
+//                Customer customer = customerEntitySessionBean.retrieveCustomerByUsername(username);
+//                Transaction newTransaction = new Transaction();
+//                
+//                DeliveryServiceTransaction newDeliveryTransaction = new DeliveryServiceTransaction();
+//                newDeliveryTransaction.setItemName("Delivery Service");
+//                newDeliveryTransaction.setPrice(BigDecimal.valueOf(50.0));
+//                newDeliveryTransaction.setQuantity(BigInteger.valueOf(1l));
+//                newTransaction.addSaleTransactionLineItemEntity(newDeliveryTransaction);
+//                
+//                
+//                LocalDateTime newDeliveryEndTime = newDeliveryStartTime.plusMinutes(30);//default delivery duration is 30 minutes
+//                Date endTime = Date.from(newDeliveryEndTime.atZone( ZoneId.systemDefault()).toInstant());
+//                newDelivery.setDeliveryEndTime(endTime);
+//                newDeliveryTransaction.setDelivery(newDelivery);
+//                
+//                transactionSessionBean.createNewTransaction(newTransaction, customer.getCustomerId());
+//                return Response.status(Response.Status.OK).build();
             }
-            catch(CustomerNotFoundException | CreateNewTransactionException ex)
-            {
-                ErrorRsp errorRsp = new ErrorRsp(ex.getMessage());
-                return Response.status(Status.BAD_REQUEST).entity(errorRsp).build();
-            }
-            catch(EntityInstanceExistsInCollectionException ex)
-            {
-                ErrorRsp errorRsp = new ErrorRsp(ex.getMessage());
-                return Response.status(Status.INTERNAL_SERVER_ERROR).entity(errorRsp).build();
-            }
+//            catch(CustomerNotFoundException | CreateNewTransactionException ex)
+//            {
+//                ErrorRsp errorRsp = new ErrorRsp(ex.getMessage());
+//                return Response.status(Status.BAD_REQUEST).entity(errorRsp).build();
+//            }
+//            catch(EntityInstanceExistsInCollectionException ex)
+//            {
+//                ErrorRsp errorRsp = new ErrorRsp(ex.getMessage());
+//                return Response.status(Status.INTERNAL_SERVER_ERROR).entity(errorRsp).build();
+//            }
             catch(Exception ex)
             {
                 ErrorRsp errorRsp = new ErrorRsp(ex.getMessage());

@@ -102,6 +102,12 @@ public class PaintServiceResource {
                     return Response.status(Status.BAD_REQUEST).entity(errorRsp).build();
                 }
                 
+                if(!(newPaintServiceStartTime.getHour() >= 10 && newPaintServiceStartTime.getHour() <= 21 && newPaintServiceStartTime.getMinute() <= 59))
+                {
+                    ErrorRsp errorRsp = new ErrorRsp("The selected time is not within the operation hours(10am - 10pm).");
+                    return Response.status(Response.Status.BAD_REQUEST).entity(errorRsp).build();
+                }
+                
                 Customer customer = customerEntitySessionBean.retrieveCustomerByUsername(username);
                 Transaction newTransaction = new Transaction();
                 
@@ -116,7 +122,7 @@ public class PaintServiceResource {
                 newPaintService.setPaintServiceEndTime(endTime);
                 newPaintServiceTransaction.setPaintService(newPaintService);
                 
-                transactionSessionBean.createNewTransaction(newTransaction, customer.getCustomerId());
+//                transactionSessionBean.createNewTransaction(newTransaction, customer.getCustomerId());
                 return Response.status(Response.Status.OK).build();
             }
             catch(CustomerNotFoundException ex)
