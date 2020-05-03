@@ -5,54 +5,40 @@
  */
 package ws.restful.model;
 
-import entity.Transaction;
+import entity.TransactionLineItem;
+import java.util.List;
 
 /**
  *
- * @author Elgin Patt
+ * @author Ko Jia Le
  */
 public class CreateNewTransactionReq {
-    
-    private Transaction newTransaction;
+    private List<TransactionLineItem> newTransactionLineItems;
     private Long customerId;
 
     public CreateNewTransactionReq() {
     }
 
-    public CreateNewTransactionReq(Transaction newTransaction, Long customerId) {
-        this.newTransaction = newTransaction;
+    public CreateNewTransactionReq(List<TransactionLineItem> newTransactionLineItems, Long customerId) {
+        this.newTransactionLineItems = newTransactionLineItems;
         this.customerId = customerId;
     }
 
-
-    /**
-     * @return the newTransaction
-     */
-    public Transaction getNewTransaction() {
-        return newTransaction;
+    public List<TransactionLineItem> getNewTransactionLineItems() {
+        return newTransactionLineItems;
     }
 
-    /**
-     * @param newTransaction the newTransaction to set
-     */
-    public void setNewTransaction(Transaction newTransaction) {
-        this.newTransaction = newTransaction;
+    public void setNewTransactionLineItems(List<TransactionLineItem> newTransactionLineItems) {
+        this.newTransactionLineItems = newTransactionLineItems;
     }
 
-    /**
-     * @return the customerId
-     */
     public Long getCustomerId() {
         return customerId;
     }
 
-    /**
-     * @param customerId the customerId to set
-     */
     public void setCustomerId(Long customerId) {
         this.customerId = customerId;
     }
-    
     
     
 }
