@@ -58,7 +58,6 @@ public class PaintTagSessionBean implements PaintTagSessionBeanLocal {
             {
                 em.persist(newPaintTag);
                 em.flush();
-
                 return newPaintTag;
             }
             catch(PersistenceException ex)
