@@ -99,6 +99,8 @@ public class DataInitSessionBean {
             Customer newCustomer8 = new Customer("Dicky", "Chong", "dicky@gmail.com", "79 Anson Road #10-03 79 Anson Road, 079906, Singapore", "dicky", "password");
             Customer newCustomer9 = new Customer("Alroy", "Poon", "alroy@gmail.com", "6 Gul Street 3, 629264, Singapore", "alroy", "password");
             Customer newCustomer10 = new Customer("Jackie", "Chan", "jackie@gmail.com", "164, Kallang Way, ,02-16/17 349248, Singapore", "jackie", "password");
+//            Customer newCustomer11 = new Member("Jackie", "Chan", "jackie@gmail.com", "164, Kallang Way, ,02-16/17 349248, Singapore", "jackie", "password");
+//            Customer newCustomer12 = new Member("Jackie", "Chan", "jackie@gmail.com", "164, Kallang Way, ,02-16/17 349248, Singapore", "jackie", "password");
             
             Transaction newTransaction1 = new Transaction();
 

@@ -86,9 +86,14 @@ public class CustomerResource {
     public Response updateCustomer(UpdateCustomerReq updateCustomerReq) {
         System.out.println("*********updatecustomer");
         System.out.println("***" + updateCustomerReq.getToUpdateCustomer());
+        
         if (updateCustomerReq != null) {
             try {
                 Customer updatedCustomer = customerEntitySessionBean.updateCustomerForIonic(updateCustomerReq.getToUpdateCustomer());
+                List<Transaction> transactions = updatedCustomer.getTransactions();
+                for (Transaction t : transactions){
+                    t.setCustomer(null);
+                }
                 
                 UpdateCustomerRsp updateCustomerRsp = new UpdateCustomerRsp (updatedCustomer);
                 
