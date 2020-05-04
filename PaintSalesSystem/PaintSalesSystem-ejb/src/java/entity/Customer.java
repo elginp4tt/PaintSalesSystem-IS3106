@@ -6,6 +6,7 @@
 package entity;
 
 import java.io.Serializable;
+import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.List;
 import javax.persistence.Column;
@@ -42,13 +43,26 @@ public class Customer implements Serializable {
     @Size(min = 6, max = 16)
     private String password;
     
+    private BigInteger loyaltyPoints;
+    
     @OneToMany(mappedBy = "customer")
     private List<Transaction> transactions;
 
     public Customer() {
         transactions = new ArrayList<>();
     }
-
+    
+    public Customer(String firstName, String lastName, String email, String homeAddress, String username, String password, BigInteger loyaltyPoints) {
+        this();
+        this.firstName = firstName;
+        this.lastName = lastName;
+        this.email = email;
+        this.homeAddress = homeAddress;
+        this.username = username;
+        this.password = password;
+        this.loyaltyPoints = BigInteger.ZERO;
+    }
+    
     public Customer(String firstName, String lastName, String email, String homeAddress, String username, String password) {
         this();
         this.firstName = firstName;
@@ -57,6 +71,7 @@ public class Customer implements Serializable {
         this.homeAddress = homeAddress;
         this.username = username;
         this.password = password;
+        this.loyaltyPoints = null;
     }
     
     
@@ -195,6 +210,11 @@ public class Customer implements Serializable {
         this.password = password;
     }
 
-    
-    
+    public BigInteger getLoyaltyPoints() {
+        return loyaltyPoints;
+    }
+
+    public void setLoyaltyPoints(BigInteger loyaltyPoints) {
+        this.loyaltyPoints = loyaltyPoints;
+    }
 }

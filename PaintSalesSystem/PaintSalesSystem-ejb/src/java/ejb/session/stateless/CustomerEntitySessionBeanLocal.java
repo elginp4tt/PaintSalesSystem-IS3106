@@ -36,5 +36,9 @@ public interface CustomerEntitySessionBeanLocal {
     public Customer customerLogin(String username, String password) throws CustomerNotFoundException;
 
     public Customer updateCustomerForIonic(Customer customer) throws CustomerNotFoundException, UpdateCustomerException, InputDataValidationException;
+
+    public List<Customer> retrieveCustomerByCondition(String condition);
+
+    public Customer makeCustomerMember(String username) throws CustomerNotFoundException;
     
 }

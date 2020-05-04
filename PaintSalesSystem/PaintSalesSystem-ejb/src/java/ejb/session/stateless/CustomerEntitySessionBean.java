@@ -2,6 +2,8 @@ package ejb.session.stateless;
 
 import entity.Customer;
 import entity.Member;
+import java.math.BigInteger;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 import javax.ejb.Stateless;
@@ -80,15 +82,15 @@ public class CustomerEntitySessionBean implements CustomerEntitySessionBeanLocal
             throw new CustomerNotFoundException("Customer ID " + customerId + " does not exists!");
         }
     }
-    
+
     @Override
     public Customer retrieveCustomerByUsername(String username) throws CustomerNotFoundException {
-        
+
         Query query = em.createQuery("Select c FROM Customer c WHERE c.username = :inUsername");
         query.setParameter("inUsername", username);
 
         try {
-            
+
             Customer customer = (Customer) query.getSingleResult();
             customer.getTransactions().size();
             return customer;
@@ -96,19 +98,50 @@ public class CustomerEntitySessionBean implements CustomerEntitySessionBeanLocal
             throw new CustomerNotFoundException("Customer Username " + username + " does not exist!");
         }
     }
+    
+    @Override
+    public List<Customer> retrieveCustomerByCondition(String condition) {
+        List<Customer> allCust = retrieveAllCustomers();
+        List<Customer> sortedCust = new ArrayList<>();
+
+        if (condition.equals("All Customer")) {
+            return allCust;
+        } else if (condition.equals("Normal Customer")) {
+            for (Customer c : allCust) {
+                if (c.getLoyaltyPoints() == null) {
+                    sortedCust.add(c);
+                }
+            }
+        } else if (condition.equals("Member Customer")) {
+            for (Customer c : allCust) {
+                if (c.getLoyaltyPoints() != null) {
+                    sortedCust.add(c);
+                }
+            }
+
+        }
+        return sortedCust;
+    }
+    
+    @Override
+    public Customer makeCustomerMember (String username) throws CustomerNotFoundException{
+        Customer customer = retrieveCustomerByUsername(username);
+        customer.setLoyaltyPoints(BigInteger.ZERO);
+        return customer;
+    }
 
     @Override
     public Customer customerLogin(String username, String password) throws CustomerNotFoundException {
-        
+
         Customer customer = retrieveCustomerByUsername(username);
-        
-        if (customer.getPassword().equals(password)){
+
+        if (customer.getPassword().equals(password)) {
             return customer;
         }
-        
+
         throw new CustomerNotFoundException("Customer Password does not match the account");
     }
-    
+
     @Override
     public void updateCustomer(Customer customer) throws CustomerNotFoundException, UpdateCustomerException, InputDataValidationException {
         if (customer != null && customer.getCustomerId() != null) {
@@ -133,7 +166,7 @@ public class CustomerEntitySessionBean implements CustomerEntitySessionBeanLocal
             throw new CustomerNotFoundException("Customer ID not provided for customer record to be updated.");
         }
     }
-    
+
     @Override
     public Customer updateCustomerForIonic(Customer customer) throws CustomerNotFoundException, UpdateCustomerException, InputDataValidationException {
         if (customer != null && customer.getCustomerId() != null) {
@@ -159,6 +192,7 @@ public class CustomerEntitySessionBean implements CustomerEntitySessionBeanLocal
             throw new CustomerNotFoundException("Customer ID not provided for customer record to be updated.");
         }
     }
+    
 
     @Override
     public void deleteCustomer(Long customerId) throws CustomerNotFoundException, DeleteCustomerException {

@@ -11,65 +11,88 @@
         <div>
             <ez:Breadcrumb pageName="customerManagement" />
             <h3>Customer Management</h3>
-            
+
             <h:form id="formAllCustomer">
                 <p:messages id="messages" redisplay="false" closable="true" />
 
-                <p:dataTable id="dataTableAllCustomers" widgetVar="dataTableAllCustomers" value="#{customerManagedBean.customers}" 
-                             var="customer" rowKey="#{customer.customerId}" rowIndexVar="row"
-                             filteredValue="#{customerManagedBean.filteredCustomer}"
-                             rows="10" paginator="true" paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}" rowsPerPageTemplate="10,20,50">
+                <p:layout>
 
-                    <f:facet name="header">
-                        <p:outputPanel style="text-align: right;">
-                            <h:outputText value="Search all fields:" />
-                            <p:inputText id="globalFilter" onkeyup="PF('dataTableAllCustomers').filter()" style="width:300px" placeholder="Enter keyword"/>
-                        </p:outputPanel>
-                    </f:facet>
+                    <p:layoutUnit position="west" resizable="true">
+
+                        <p:outputLabel for="selCondition" value="Customer Type: " style="font-weight: bold;" />
+                        <p:selectOneMenu id="selCondition" value="#{customerManagedBean.condition}">
+
+                            <f:selectItem itemValue="All Customer" itemLabel="All Customer" itemDescription="All Customer" />
+                            <f:selectItem itemValue="Normal Customer" itemLabel="Normal Customer" itemDescription="Normal Customer" />
+                            <f:selectItem itemValue="Member Customer" itemLabel="Member Customer" itemDescription="Member Customer" />
+
+                            <p:ajax process="@form" update="formAllCustomer:dataTableAllCustomers" listener="#{customerManagedBean.filterCustomer}" />
+
+                        </p:selectOneMenu>                              
+
+                    </p:layoutUnit>
+                    <p:layoutUnit position="center">
+                        <p:dataTable id="dataTableAllCustomers" widgetVar="dataTableAllCustomers" value="#{customerManagedBean.customers}" 
+                                     var="customer" rowKey="#{customer.customerId}" rowIndexVar="row"
+                                     filteredValue="#{customerManagedBean.filteredCustomer}"
+                                     rows="10" paginator="true" paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}" rowsPerPageTemplate="10,20,50">
+
+                            <f:facet name="header">
+                                <p:outputPanel style="text-align: right;">
+                                    <h:outputText value="Search all fields:" />
+                                    <p:inputText id="globalFilter" onkeyup="PF('dataTableAllCustomers').filter()" style="width:300px" placeholder="Enter keyword"/>
+                                </p:outputPanel>
+                            </f:facet>
 
 
-                    <p:column headerText="First Name" sortBy="#{customer.firstName}" filterBy="#{customer.firstName}" filterMatchMode="contains">
-                        <h:outputText value="#{customer.firstName}" />
-                    </p:column>
+                            <p:column headerText="First Name" sortBy="#{customer.firstName}" filterBy="#{customer.firstName}" filterMatchMode="contains">
+                                <h:outputText value="#{customer.firstName}" />
+                            </p:column>
 
-                    <p:column headerText="Last Name" sortBy="#{customer.lastName}" filterBy="#{customer.lastName}" filterMatchMode="contains">
-                        <h:outputText value="#{customer.lastName}" />
-                    </p:column>
+                            <p:column headerText="Last Name" sortBy="#{customer.lastName}" filterBy="#{customer.lastName}" filterMatchMode="contains">
+                                <h:outputText value="#{customer.lastName}" />
+                            </p:column>
 
-                    <p:column headerText="Email" sortBy="#{customer.email}" filterBy="#{customer.email}" filterMatchMode="contains">
-                        <h:outputText value="#{customer.email}" />
-                    </p:column>
+                            <p:column headerText="Email" sortBy="#{customer.email}" filterBy="#{customer.email}" filterMatchMode="contains">
+                                <h:outputText value="#{customer.email}" />
+                            </p:column>
 
-                    <p:column headerText="Home Address" sortBy="#{customer.homeAddress}" filterBy="#{customer.homeAddress}" filterMatchMode="contains">
-                        <h:outputText value="#{customer.homeAddress}" />
-                    </p:column>
+                            <p:column headerText="Home Address" sortBy="#{customer.homeAddress}" filterBy="#{customer.homeAddress}" filterMatchMode="contains">
+                                <h:outputText value="#{customer.homeAddress}" />
+                            </p:column>
 
-                    <p:column headerText="Userame" sortBy="#{customer.username}" filterBy="#{customer.username}" filterMatchMode="contains">
-                        <h:outputText value="#{customer.username}" />
-                    </p:column>
+                            <p:column headerText="Userame" sortBy="#{customer.username}" filterBy="#{customer.username}" filterMatchMode="contains">
+                                <h:outputText value="#{customer.username}" />
+                            </p:column>
+                            
+                            <p:column headerText=" Loyalty Point" sortBy="#{customer.loyaltyPoints}" filterBy="#{customer.loyaltyPoints}" filterMatchMode="contains">
+                                <h:outputText rendered="#{customerManagedBean.checkPoint(customer.loyaltyPoints) == false}" value="#{customer.loyaltyPoints}" />
+                                <h:outputText rendered="#{customerManagedBean.checkPoint(customer.loyaltyPoints) == true}" value="Nill/Not A Member" />
+                            </p:column>
 
-                    <p:column headerText="Action" style="text-align: center;">
-                        <p:commandButton update="ccViewCustomer:formViewCustomer" oncomplete="PF('dialogViewCustomer').show()" icon="ui-icon-document" title="View">
-                            <f:setPropertyActionListener value="#{customer}" target="#{customerManagedBean.customerToView}" />
-                        </p:commandButton>
-                        <p:commandButton actionListener="#{customerManagedBean.doUpdateCustomer}" update="formUpdateCustomer" oncomplete="PF('dialogUpdateCustomer').show()" icon="ui-icon-pencil" title="Update" >
-                            <f:attribute name="customerToUpdate" value="#{customer}"/>
-                        </p:commandButton> 
-                        <p:commandButton actionListener="#{customerManagedBean.deleteCustomer}" update="formAllCustomer:dataTableAllCustomers formAllCustomer:messages" icon="ui-icon-trash">
-                            <f:attribute name="customerToDelete" value="#{customer}" />
-                            <p:confirm header="Confirmation" message="Are you sure you want to delete #{customer.firstName} #{customer.lastName}?" icon="ui-icon-alert" />
-                        </p:commandButton>
-                    </p:column>
+                            <p:column headerText="Action" style="text-align: center;">
+                                <p:commandButton update="ccViewCustomer:formViewCustomer" oncomplete="PF('dialogViewCustomer').show()" icon="ui-icon-document" title="View">
+                                    <f:setPropertyActionListener value="#{customer}" target="#{customerManagedBean.customerToView}" />
+                                </p:commandButton>
+                                <p:commandButton actionListener="#{customerManagedBean.doUpdateCustomer}" update="formUpdateCustomer" oncomplete="PF('dialogUpdateCustomer').show()" icon="ui-icon-pencil" title="Update" >
+                                    <f:attribute name="customerToUpdate" value="#{customer}"/>
+                                </p:commandButton> 
+                                <p:commandButton actionListener="#{customerManagedBean.deleteCustomer}" update="formAllCustomer:dataTableAllCustomers formAllCustomer:messages" icon="ui-icon-trash">
+                                    <f:attribute name="customerToDelete" value="#{customer}" />
+                                    <p:confirm header="Confirmation" message="Are you sure you want to delete #{customer.firstName} #{customer.lastName}?" icon="ui-icon-alert" />
+                                </p:commandButton>
+                            </p:column>
 
-                </p:dataTable>
+                        </p:dataTable>
 
-                <p:confirmDialog global="true" showEffect="fade" hideEffect="fade">
-                    <div align="center" draggable ="false">
-                        <p:commandButton value="Yes" type="button" styleClass="ui-confirmdialog-yes" icon="ui-icon-check" />
-                        <p:commandButton value="No" type="button" styleClass="ui-confirmdialog-no" icon="ui-icon-close" />
-                    </div>
-                </p:confirmDialog>
-
+                        <p:confirmDialog global="true" showEffect="fade" hideEffect="fade">
+                            <div align="center" draggable ="false">
+                                <p:commandButton value="Yes" type="button" styleClass="ui-confirmdialog-yes" icon="ui-icon-check" />
+                                <p:commandButton value="No" type="button" styleClass="ui-confirmdialog-no" icon="ui-icon-close" />
+                            </div>
+                        </p:confirmDialog>
+                    </p:layoutUnit>
+                </p:layout>
             </h:form>
 
             <ez:viewCustomer id="ccViewCustomer"/>

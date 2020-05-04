@@ -33,6 +33,7 @@ import util.exception.UpdateCustomerException;
 import ws.restful.model.CreateNewCustomerReq;
 import ws.restful.model.CreateNewCustomerRsp;
 import ws.restful.model.LoginRsp;
+import ws.restful.model.MakeCustomerMemberRsp;
 import ws.restful.model.UpdateCustomerReq;
 import ws.restful.model.UpdateCustomerRsp;
 
@@ -90,10 +91,10 @@ public class CustomerResource {
         if (updateCustomerReq != null) {
             try {
                 Customer updatedCustomer = customerEntitySessionBean.updateCustomerForIonic(updateCustomerReq.getToUpdateCustomer());
-                List<Transaction> transactions = updatedCustomer.getTransactions();
-                for (Transaction t : transactions){
-                    t.setCustomer(null);
-                }
+//                List<Transaction> transactions = updatedCustomer.getTransactions();
+//                for (Transaction t : transactions){
+//                    t.setCustomer(null);
+//                }
                 
                 UpdateCustomerRsp updateCustomerRsp = new UpdateCustomerRsp (updatedCustomer);
                 
@@ -107,6 +108,28 @@ public class CustomerResource {
             ErrorRsp errorRsp = new ErrorRsp("Invalid request");
 
             return Response.status(Status.BAD_REQUEST).entity(errorRsp).build();
+        }
+    }
+    
+    @Path("makeCustomerMember")
+    @GET
+    @Consumes(MediaType.TEXT_PLAIN)
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response makeCustomerMember (@QueryParam("username") String username){
+        try {
+            Customer customer = customerEntitySessionBean.makeCustomerMember(username);
+            
+            List<Transaction> custTransactions = customer.getTransactions();
+            for (Transaction cts : custTransactions) {
+                cts.setCustomer(null);
+                cts.setTransactionLineItems(null);
+            }
+            
+            return Response.status(Status.OK).entity(new MakeCustomerMemberRsp(customer)).build();
+        }catch (CustomerNotFoundException ex){
+            ErrorRsp errorRsp = new ErrorRsp(ex.getMessage());
+
+            return Response.status(Status.INTERNAL_SERVER_ERROR).entity(errorRsp).build();
         }
     }
 

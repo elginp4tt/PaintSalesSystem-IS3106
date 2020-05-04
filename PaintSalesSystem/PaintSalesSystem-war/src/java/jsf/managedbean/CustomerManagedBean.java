@@ -8,6 +8,7 @@ package jsf.managedbean;
 import ejb.session.stateless.CustomerEntitySessionBeanLocal;
 import entity.Customer;
 import java.io.Serializable;
+import java.math.BigDecimal;
 import java.util.List;
 import javax.annotation.PostConstruct;
 import javax.ejb.EJB;
@@ -40,8 +41,11 @@ public class CustomerManagedBean implements Serializable {
 
     private Customer selectedCustomerToDelete;
 
+    private String condition;
+
     public CustomerManagedBean() {
         customerToView = new Customer();
+        condition = "All Customer";
     }
 
     @PostConstruct
@@ -49,6 +53,13 @@ public class CustomerManagedBean implements Serializable {
         setCustomers(customerEntitySessionBeanLocal.retrieveAllCustomers());
     }
 
+    public void filterCustomer() {
+        customers = customerEntitySessionBeanLocal.retrieveCustomerByCondition(condition);
+    }
+    
+    public boolean checkPoint (BigDecimal point){
+        return point == null;
+    }
     public void doUpdateCustomer(ActionEvent event) {
         selectedCustomerToUpdate = (Customer) event.getComponent().getAttributes().get("customerToUpdate");
     }
@@ -95,6 +106,14 @@ public class CustomerManagedBean implements Serializable {
 
     public void setCustomerToView(Customer customerToView) {
         this.customerToView = customerToView;
+    }
+
+    public String getCondition() {
+        return condition;
+    }
+
+    public void setCondition(String condition) {
+        this.condition = condition;
     }
 
     public Customer getSelectedCustomerToUpdate() {
