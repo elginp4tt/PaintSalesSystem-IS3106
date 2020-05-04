@@ -29,9 +29,12 @@ import util.exception.CustomerNotFoundException;
 import util.exception.InputDataValidationException;
 import ws.restful.model.ErrorRsp;
 import util.exception.UnknownPersistenceException;
+import util.exception.UpdateCustomerException;
 import ws.restful.model.CreateNewCustomerReq;
 import ws.restful.model.CreateNewCustomerRsp;
 import ws.restful.model.LoginRsp;
+import ws.restful.model.UpdateCustomerReq;
+import ws.restful.model.UpdateCustomerRsp;
 
 /**
  * REST Web Service
@@ -42,7 +45,6 @@ import ws.restful.model.LoginRsp;
 public class CustomerResource {
 
     CustomerEntitySessionBeanLocal customerEntitySessionBean = lookupCustomerEntitySessionBeanLocal();
-
 
     @Context
     private UriInfo context;
@@ -62,7 +64,7 @@ public class CustomerResource {
             try {
                 Long newCustomerId = customerEntitySessionBean.createNewCustomer(createNewCustomerReq.getNewCustomer());
                 CreateNewCustomerRsp createNewCustomerRsp = new CreateNewCustomerRsp(newCustomerId);
-                
+
                 return Response.status(Status.CREATED).entity(createNewCustomerRsp).build();
 
             } catch (UnknownPersistenceException | InputDataValidationException ex) {
@@ -76,38 +78,57 @@ public class CustomerResource {
             return Response.status(Status.BAD_REQUEST).entity(errorRsp).build();
         }
     }
-    
+
+    @Path("updateCustomer")
+    @PUT
+    @Consumes(MediaType.APPLICATION_JSON)
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response updateCustomer(UpdateCustomerReq updateCustomerReq) {
+        System.out.println("*********updatecustomer");
+        System.out.println("***" + updateCustomerReq.getToUpdateCustomer());
+        if (updateCustomerReq != null) {
+            try {
+                Customer updatedCustomer = customerEntitySessionBean.updateCustomerForIonic(updateCustomerReq.getToUpdateCustomer());
+                
+                UpdateCustomerRsp updateCustomerRsp = new UpdateCustomerRsp (updatedCustomer);
+                
+                return Response.status(Status.OK).entity(updateCustomerRsp).build();
+            } catch (CustomerNotFoundException | InputDataValidationException | UpdateCustomerException ex) {
+                ErrorRsp errorRsp = new ErrorRsp("Invalid request");
+
+                return Response.status(Status.INTERNAL_SERVER_ERROR).entity(errorRsp).build();
+            }
+        } else {
+            ErrorRsp errorRsp = new ErrorRsp("Invalid request");
+
+            return Response.status(Status.BAD_REQUEST).entity(errorRsp).build();
+        }
+    }
+
     @Path("customerLogin")
     @GET
     @Consumes(MediaType.TEXT_PLAIN)
     @Produces(MediaType.APPLICATION_JSON)
-    public Response customerLogin(@QueryParam("username") String username, 
-                                @QueryParam("password") String password)
-    {
-        try
-        {
+    public Response customerLogin(@QueryParam("username") String username,
+            @QueryParam("password") String password) {
+        try {
             Customer customer = customerEntitySessionBean.customerLogin(username, password);
 
-            customer.setPassword(null); 
-            
-            List <Transaction> custTransactions = customer.getTransactions();
-            for (Transaction cts : custTransactions){
+//            customer.setPassword(null); 
+            List<Transaction> custTransactions = customer.getTransactions();
+            for (Transaction cts : custTransactions) {
                 cts.setCustomer(null);
                 cts.setTransactionLineItems(null);
-            } 
-            
+            }
+
             return Response.status(Status.OK).entity(new LoginRsp(customer)).build();
-        }
-        catch(CustomerNotFoundException ex)
-        {
+        } catch (CustomerNotFoundException ex) {
             ErrorRsp errorRsp = new ErrorRsp(ex.getMessage());
-            
+
             return Response.status(Status.UNAUTHORIZED).entity(errorRsp).build();
-        }
-        catch(Exception ex)
-        {
+        } catch (Exception ex) {
             ErrorRsp errorRsp = new ErrorRsp(ex.getMessage());
-            
+
             return Response.status(Status.INTERNAL_SERVER_ERROR).entity(errorRsp).build();
         }
     }

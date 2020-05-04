@@ -119,6 +119,33 @@ public class CustomerEntitySessionBean implements CustomerEntitySessionBeanLocal
                     customerToUpdate.setLastName(customer.getLastName());
                     customerToUpdate.setEmail(customer.getEmail());
                     customerToUpdate.setHomeAddress(customer.getHomeAddress());
+                    customerToUpdate.setPassword(customer.getPassword());
+                } else {
+                    throw new UpdateCustomerException("Username of customer record to be updated does not match the existing record");
+                }
+            } else {
+                throw new InputDataValidationException(prepareInputDataValidationErrorsMessage(constraintViolations));
+            }
+        } else {
+            throw new CustomerNotFoundException("Customer ID not provided for customer record to be updated.");
+        }
+    }
+    
+    @Override
+    public Customer updateCustomerForIonic(Customer customer) throws CustomerNotFoundException, UpdateCustomerException, InputDataValidationException {
+        if (customer != null && customer.getCustomerId() != null) {
+            Set<ConstraintViolation<Customer>> constraintViolations = validator.validate(customer);
+
+            if (constraintViolations.isEmpty()) {
+                Customer customerToUpdate = retrieveCustomerByCustomerId(customer.getCustomerId());
+
+                if (customerToUpdate.getUsername().equals(customer.getUsername())) {
+                    customerToUpdate.setFirstName(customer.getFirstName());
+                    customerToUpdate.setLastName(customer.getLastName());
+                    customerToUpdate.setEmail(customer.getEmail());
+                    customerToUpdate.setHomeAddress(customer.getHomeAddress());
+                    customerToUpdate.setPassword(customer.getPassword());
+                    return customerToUpdate;
                 } else {
                     throw new UpdateCustomerException("Username of customer record to be updated does not match the existing record");
                 }

@@ -78,12 +78,28 @@ public class DataInitSessionBean {
 
     private void initializeData() {
         try {
-            Employee newEmployee1 = new Employee("manager1", "password", "Default", "manager", AccessRightEnum.MANAGER);
-            Employee newEmployee2 = new Employee("employee1", "password", "Default", "employee", AccessRightEnum.NORMAL);
-            Employee newEmployee3 = new Employee("employee2", "password", "Default", "employee", AccessRightEnum.NORMAL);
-            Customer newCustomer1 = new Customer("customer1", "customer1", "customer@gmail.com", "customer address", "customer1", "password");
-            Customer newCustomer2 = new Customer("customer2", "customer2", "customer2@gmail.com", "customer 2 address", "customer2", "password");
-            Customer newCustomer3 = new Customer("customer3", "customer3", "customer3@gmail.com", "customer 3 address", "customer3", "password");
+            Employee newEmployee1 = new Employee("manager1", "password", "Bob", "Tan", AccessRightEnum.MANAGER);
+            Employee newEmployee2 = new Employee("maanger2", "password", "Marian", "Tan", AccessRightEnum.MANAGER);
+            Employee newEmployee3 = new Employee("manager3", "password", "Maria", "Tan", AccessRightEnum.MANAGER);
+            Employee newEmployee4 = new Employee("employee1", "password", "Bobby", "Tay", AccessRightEnum.NORMAL);
+            Employee newEmployee5 = new Employee("employee2", "password", "Mary", "Chong", AccessRightEnum.NORMAL);
+            Employee newEmployee6 = new Employee("employee3", "password", "Ann", "Chia", AccessRightEnum.NORMAL);
+            Employee newEmployee7 = new Employee("employee4", "password", "Annie", "Chan", AccessRightEnum.NORMAL);
+            Employee newEmployee8 = new Employee("employee5", "password", "Brian", "Chua", AccessRightEnum.NORMAL);
+            Employee newEmployee9 = new Employee("employee6", "password", "Eric", "Khoo", AccessRightEnum.NORMAL);
+            Employee newEmployee10 = new Employee("employee7", "password", "Erica", "Chen", AccessRightEnum.NORMAL);
+            
+            Customer newCustomer1 = new Customer("Brandon", "Tonelli", "bradon@gmail.com", "487, Bedok South Avenue 2, 469316, Singapore", "brandon", "password");
+            Customer newCustomer2 = new Customer("Jasmine", "Tay", "jasmine@gmail.com", "456 Alexandra Road #16-02 NOL Building Singapore 119962, Singapore", "jasmine", "password");
+            Customer newCustomer3 = new Customer("Cherry", "Chia", "cherry@gmail.com", "196 Pandan Loop #05-24, 128384, Singapore", "cherry", "password");
+            Customer newCustomer4 = new Customer("Alton", "Tong", "alton@gmail.com", "71 Ayer Rajah Crescent 05-25, 139951, Singapore", "alton", "password");
+            Customer newCustomer5 = new Customer("Alphon", "Cheng", "alphon@gmail.com", "52 Florence Road, 549506, Singapore", "alphon", "password");
+            Customer newCustomer6 = new Customer("Andy", "Wong", "andy@gmail.com", "4 Shenton Way #10-03 Sgx Centre Ii, 068807, Singapore", "andy", "password");
+            Customer newCustomer7 = new Customer("Rachel", "Ang", "rachel@gmail.com", "177 River Valley Rd #03-40, 179030, Singapore", "rachel", "password");
+            Customer newCustomer8 = new Customer("Dicky", "Chong", "dicky@gmail.com", "79 Anson Road #10-03 79 Anson Road, 079906, Singapore", "dicky", "password");
+            Customer newCustomer9 = new Customer("Alroy", "Poon", "alroy@gmail.com", "6 Gul Street 3, 629264, Singapore", "alroy", "password");
+            Customer newCustomer10 = new Customer("Jackie", "Chan", "jackie@gmail.com", "164, Kallang Way, ,02-16/17 349248, Singapore", "jackie", "password");
+            
             Transaction newTransaction1 = new Transaction();
 
             Delivery newDelivery1 = new Delivery();
@@ -165,6 +181,15 @@ public class DataInitSessionBean {
             em.persist(newCustomer1);
             em.persist(newCustomer2);
             em.persist(newCustomer3);
+            em.persist(newCustomer4);
+            em.persist(newCustomer5);
+            em.persist(newCustomer6);
+            em.persist(newCustomer7);
+            em.persist(newCustomer8);
+            em.persist(newCustomer9);
+            em.persist(newCustomer10);
+            
+            
             em.persist(newTransaction1);
             em.persist(newDeliveryTransaction1);
             em.persist(newDeliveryTransaction2);
@@ -179,6 +204,13 @@ public class DataInitSessionBean {
             em.persist(newEmployee1);
             em.persist(newEmployee2);
             em.persist(newEmployee3);
+            em.persist(newEmployee4);
+            em.persist(newEmployee5);
+            em.persist(newEmployee6);
+            em.persist(newEmployee7);
+            em.persist(newEmployee8);
+            em.persist(newEmployee9);
+            em.persist(newEmployee10);
             em.persist(messageOfTheDay1);
             em.persist(messageOfTheDay2);
             
