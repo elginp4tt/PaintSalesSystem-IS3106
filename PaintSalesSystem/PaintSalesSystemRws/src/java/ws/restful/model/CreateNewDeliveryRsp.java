@@ -5,33 +5,43 @@
  */
 package ws.restful.model;
 
+import entity.Delivery;
+import entity.DeliveryServiceTransaction;
+
 /**
  *
- * @author Elgin Patt
+ * @author CHEN BINGSEN
  */
-public class CreateNewDeliveryRsp {
-    private Long newDeliveryId;
+public class CreateNewDeliveryRsp 
+{
+
+    private DeliveryServiceTransaction deliveryServiceTransaction;
+    private Delivery delivery;
 
     public CreateNewDeliveryRsp() {
     }
 
-    public CreateNewDeliveryRsp(Long newDeliveryId) {
-        this.newDeliveryId = newDeliveryId;
-    }
-
-    /**
-     * @return the newDeliveryId
-     */
-    public Long getNewDeliveryId() {
-        return newDeliveryId;
-    }
-
-    /**
-     * @param newDeliveryId the newDeliveryId to set
-     */
-    public void setNewDeliveryId(Long newDeliveryId) {
-        this.newDeliveryId = newDeliveryId;
+    public CreateNewDeliveryRsp(DeliveryServiceTransaction deliveryServiceTransaction, Delivery delivery) {
+        this.deliveryServiceTransaction = deliveryServiceTransaction;
+        this.delivery = delivery;
     }
     
+    
+    
+    public DeliveryServiceTransaction getDeliveryServiceTransaction() {
+        return deliveryServiceTransaction;
+    }
+
+    public void setDeliveryServiceTransaction(DeliveryServiceTransaction deliveryServiceTransaction) {
+        this.deliveryServiceTransaction = deliveryServiceTransaction;
+    }
+
+    public Delivery getDelivery() {
+        return delivery;
+    }
+
+    public void setDelivery(Delivery delivery) {
+        this.delivery = delivery;
+    }
     
 }

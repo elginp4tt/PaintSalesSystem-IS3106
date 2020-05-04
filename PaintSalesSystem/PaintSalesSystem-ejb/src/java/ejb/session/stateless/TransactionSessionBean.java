@@ -126,17 +126,17 @@ public class TransactionSessionBean implements TransactionSessionBeanLocal {
     
     @Override
     public Transaction createNewTransaction(Transaction newTransaction, Long customerId) throws CustomerNotFoundException, CreateNewTransactionException {
-        System.out.println("**********EJB createNewTransaction");
-        System.out.println("***New Transaction: " + newTransaction.getTransactionLineItems().size());
+//        System.out.println("**********EJB createNewTransaction");
+//        System.out.println("***New Transaction: " + newTransaction.getTransactionLineItems().size());
         if (newTransaction != null) {
-            System.out.println("**********EJB createNewTransaction: Ater check null");
+//            System.out.println("**********EJB createNewTransaction: Ater check null");
             try {
                 Customer customer = customerEntitySessionBeanLocal.retrieveCustomerByCustomerId(customerId);
                 newTransaction.setCustomer(customer);
                 customer.getTransactions().add(newTransaction);
 
                 em.persist(newTransaction);
-                System.out.println("**********EJB createNewTransaction: Ater persist transaction");
+//                System.out.println("**********EJB createNewTransaction: Ater persist transaction");
 
                 for (TransactionLineItem transactionLineItem : newTransaction.getTransactionLineItems()) {
                     //debit quantity
@@ -144,12 +144,12 @@ public class TransactionSessionBean implements TransactionSessionBeanLocal {
                        Paint paintToDebit = paintSessionBean.retrievePaintByPaintId(((PaintTransaction) transactionLineItem).getPaint().getPaintId());
                        Integer quantityToUpdate = paintToDebit.getQuantityOnHand() - Integer.valueOf(transactionLineItem.getQuantity().toString());
                        paintToDebit.setQuantityOnHand(quantityToUpdate);
-                        System.out.println("**********EJB updating paint qty");
+//                        System.out.println("**********EJB updating paint qty");
                     }
                     
                     em.persist(transactionLineItem);
                 }
-                System.out.println("**********EJB createNewTransaction: Ater persist TLE");
+//                System.out.println("**********EJB createNewTransaction: Ater persist TLE");
                 em.flush();
                 return newTransaction;
             } catch (Exception ex) {

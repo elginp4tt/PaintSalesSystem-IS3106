@@ -60,6 +60,9 @@ public class PaintService implements Serializable {
         this.employee = employee;
     }
     
+    public Employee getEmployee() {
+        return employee;
+    }
     
     public void setEmployee(Employee employee) 
     {
@@ -130,13 +133,6 @@ public class PaintService implements Serializable {
      */
     public void setPaintServiceTransaction(PaintServiceTransaction paintServiceTransaction) {
         this.paintServiceTransaction = paintServiceTransaction;
-    }
-
-    /**
-     * @return the employee
-     */
-    public Employee getEmployee() {
-        return employee;
     }
 
 

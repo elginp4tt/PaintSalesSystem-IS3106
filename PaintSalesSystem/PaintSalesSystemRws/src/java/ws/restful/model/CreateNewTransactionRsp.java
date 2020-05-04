@@ -5,33 +5,30 @@
  */
 package ws.restful.model;
 
+import entity.Transaction;
+
 /**
  *
- * @author Elgin Patt
+ * @author CHEN BINGSEN
  */
-public class CreateNewTransactionRsp {
-    
-    private Long newTransactionId;
+public class CreateNewTransactionRsp 
+{
+
+    private Long transactionId;
 
     public CreateNewTransactionRsp() {
     }
 
-    public CreateNewTransactionRsp(Long newTransactionId) {
-        this.newTransactionId = newTransactionId;
+    public CreateNewTransactionRsp(Long transactionId) {
+        this.transactionId = transactionId;
+    }
+    
+    public Long getTransactionId() {
+        return transactionId;
     }
 
-    /**
-     * @return the newTransactionId
-     */
-    public Long getNewTransactionId() {
-        return newTransactionId;
+    public void setTransactionId(Long transactionId) {
+        this.transactionId = transactionId;
     }
-
-    /**
-     * @param newTransactionId the newTransactionId to set
-     */
-    public void setNewTransactionId(Long newTransactionId) {
-        this.newTransactionId = newTransactionId;
-    }
-       
+    
 }

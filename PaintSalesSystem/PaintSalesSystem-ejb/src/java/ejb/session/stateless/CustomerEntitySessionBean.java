@@ -88,7 +88,10 @@ public class CustomerEntitySessionBean implements CustomerEntitySessionBeanLocal
         query.setParameter("inUsername", username);
 
         try {
-            return (Customer) query.getSingleResult();
+            
+            Customer customer = (Customer) query.getSingleResult();
+            customer.getTransactions().size();
+            return customer;
         } catch (NoResultException | NonUniqueResultException ex) {
             throw new CustomerNotFoundException("Customer Username " + username + " does not exist!");
         }
